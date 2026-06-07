@@ -1,0 +1,1 @@
+# nix-go-bindings
