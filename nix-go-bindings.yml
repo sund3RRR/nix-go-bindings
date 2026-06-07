@@ -1,0 +1,55 @@
+GENERATOR:
+  PackageName: nix
+  PackageDescription: "Generated Go bindings for the Nix C API."
+  PackageLicense: "LGPL-2.1-or-later"
+  Includes:
+    - nix_go_store.h
+  PkgConfigOpts:
+    - nix-util-c
+    - nix-store-c
+
+PARSER:
+  Defines:
+    __STDC_VERSION__: 199901
+  IncludePaths:
+    - .
+  SourcesPaths:
+    - nix_go_store.h
+
+TRANSLATOR:
+  ConstRules:
+    defines: eval
+    enum: eval
+
+  Rules:
+    global:
+      - { action: accept, from: "^go_nix_" }
+      - { action: accept, from: "^Store$" }
+      - { action: accept, from: "^StorePath$" }
+      - { action: accept, from: "^nix_c_context$" }
+      - { action: accept, from: "^nix_derivation$" }
+      - { action: accept, from: "^nix_err$" }
+
+    post-global:
+      - { action: replace, from: "^go_nix_", to: "" }
+      - { load: snakecase }
+      - { transform: export }
+      - { action: replace, from: "^nix_", to: "" }
+      - { action: replace, from: "^NIX_OK$", to: "Nix_Ok" }
+      - { action: replace, from: "^NIX_ERR_", to: "Nix_Err_" }
+      - { action: replace, from: "^NIX_LVL_", to: "Nix_Lvl_" }
+      - { action: replace, from: "^NIX_TYPE_", to: "Nix_Type_" }
+      - { action: replace, from: "^NIX_", to: "Nix_" }
+      - { action: replace, from: "_t$" }
+    private:
+      - { transform: unexport }
+
+  MemTips:
+    - { target: "^Store$", self: raw }
+    - { target: "^StorePath$", self: raw }
+    - { target: "^nix_c_context$", self: raw }
+    - { target: "^nix_derivation$", self: raw }
+
+  PtrTips:
+    function:
+      - { target: "^go_nix_", default: "sref" }
