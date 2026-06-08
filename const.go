@@ -6,9 +6,10 @@
 package nix
 
 /*
-#cgo pkg-config: nix-util-c nix-store-c
+#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c
 #include "nix_go_util.h"
 #include "nix_go_store.h"
+#include "nix_go_fetchers.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */

@@ -6,9 +6,10 @@
 package nix
 
 /*
-#cgo pkg-config: nix-util-c nix-store-c
+#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c
 #include "nix_go_util.h"
 #include "nix_go_store.h"
+#include "nix_go_fetchers.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
@@ -206,6 +207,52 @@ func (x *StorePath) PassRef() *C.StorePath {
 		x = (*StorePath)(allocStorePathMemory(1))
 	}
 	return (*C.StorePath)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixFetchersSettings) Ref() *C.nix_fetchers_settings {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_fetchers_settings)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixFetchersSettings) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixFetchersSettingsRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixFetchersSettingsRef(ref unsafe.Pointer) *NixFetchersSettings {
+	return (*NixFetchersSettings)(ref)
+}
+
+// NewNixFetchersSettings allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixFetchersSettings() *NixFetchersSettings {
+	return (*NixFetchersSettings)(allocNixFetchersSettingsMemory(1))
+}
+
+// allocNixFetchersSettingsMemory allocates memory for type C.nix_fetchers_settings in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixFetchersSettingsMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixFetchersSettingsValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixFetchersSettingsValue = unsafe.Sizeof([1]C.nix_fetchers_settings{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixFetchersSettings) PassRef() *C.nix_fetchers_settings {
+	if x == nil {
+		x = (*NixFetchersSettings)(allocNixFetchersSettingsMemory(1))
+	}
+	return (*C.nix_fetchers_settings)(unsafe.Pointer(x))
 }
 
 // Ref returns a reference to C object as it is.

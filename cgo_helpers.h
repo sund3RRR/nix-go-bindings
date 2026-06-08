@@ -5,6 +5,7 @@
 
 #include "nix_go_util.h"
 #include "nix_go_store.h"
+#include "nix_go_fetchers.h"
 #include <stdlib.h>
 #pragma once
 

@@ -6,9 +6,10 @@
 package nix
 
 /*
-#cgo pkg-config: nix-util-c nix-store-c
+#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c
 #include "nix_go_util.h"
 #include "nix_go_store.h"
+#include "nix_go_fetchers.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
@@ -17,6 +18,22 @@ import (
 	"runtime"
 	"unsafe"
 )
+
+// FetchersSettingsNew function as declared in nix-go-bindings/nix_go_fetchers.h:11
+func FetchersSettingsNew(ctx *NixCContext) *NixFetchersSettings {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	__ret := C.go_nix_fetchers_settings_new(cctx)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := *(**NixFetchersSettings)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// FetchersSettingsFree function as declared in nix-go-bindings/nix_go_fetchers.h:12
+func FetchersSettingsFree(settings *NixFetchersSettings) {
+	csettings, csettingsAllocMap := (*C.nix_fetchers_settings)(unsafe.Pointer(settings)), cgoAllocsUnknown
+	C.go_nix_fetchers_settings_free(csettings)
+	runtime.KeepAlive(csettingsAllocMap)
+}
 
 // LibstoreInit function as declared in nix-go-bindings/nix_go_store.h:42
 func LibstoreInit(ctx *NixCContext) NixErr {

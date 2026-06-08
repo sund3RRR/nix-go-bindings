@@ -113,8 +113,8 @@ The upstream C API packages are:
   - [ ] Expression evaluation and function calls.
   - [ ] Value allocation, ref-counting, forcing, getters, and initializers.
   - [ ] Lists, attrsets, primops, external values, realized strings, and GC hooks.
-- [ ] `nix-fetchers-c`
-  - [ ] Fetchers settings lifecycle.
+- [x] `nix-fetchers-c`
+  - [x] Fetchers settings lifecycle.
 - [ ] `nix-flake-c`
   - [ ] Flake settings lifecycle and eval-state integration.
   - [ ] Reference parse flags and reference parsing.

@@ -6,9 +6,10 @@
 package nix
 
 /*
-#cgo pkg-config: nix-util-c nix-store-c
+#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c
 #include "nix_go_util.h"
 #include "nix_go_store.h"
+#include "nix_go_fetchers.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
@@ -23,6 +24,9 @@ type NixDerivation C.nix_derivation
 
 // StorePath as declared in nix_api_store/store_path.h:24
 type StorePath C.StorePath
+
+// NixFetchersSettings as declared in include/nix_api_fetchers.h:22
+type NixFetchersSettings C.nix_fetchers_settings
 
 // NixCContext as declared in include/nix_api_util.h:160
 type NixCContext C.nix_c_context

@@ -67,6 +67,16 @@
                   exit 1
                 fi
 
+                if [ ! -f nix_go_fetchers.h ]; then
+                  echo "missing nix_go_fetchers.h in repository root" >&2
+                  exit 1
+                fi
+
+                if [ ! -f nix_go_fetchers.c ]; then
+                  echo "missing nix_go_fetchers.c in repository root" >&2
+                  exit 1
+                fi
+
                 tmp="$(mktemp -d)"
                 trap 'rm -rf "$tmp"' EXIT HUP INT TERM
 

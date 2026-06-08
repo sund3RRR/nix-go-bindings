@@ -5,9 +5,11 @@ GENERATOR:
   Includes:
     - nix_go_util.h
     - nix_go_store.h
+    - nix_go_fetchers.h
   PkgConfigOpts:
     - nix-util-c
     - nix-store-c
+    - nix-fetchers-c
 
 PARSER:
   Defines:
@@ -17,6 +19,7 @@ PARSER:
   SourcesPaths:
     - nix_go_util.h
     - nix_go_store.h
+    - nix_go_fetchers.h
 
 TRANSLATOR:
   ConstRules:
@@ -31,6 +34,7 @@ TRANSLATOR:
       - { action: accept, from: "^go_nix_store_path_hash_part$" }
       - { action: accept, from: "^nix_c_context$" }
       - { action: accept, from: "^nix_derivation$" }
+      - { action: accept, from: "^nix_fetchers_settings$" }
       - { action: accept, from: "^nix_err$" }
       - { action: accept, from: "^nix_verbosity$" }
       - { action: accept, from: "^NIX_(OK|ERR_|LVL_)" }
@@ -71,6 +75,7 @@ TRANSLATOR:
     - { target: "^StorePath$", self: raw }
     - { target: "^nix_c_context$", self: raw }
     - { target: "^nix_derivation$", self: raw }
+    - { target: "^nix_fetchers_settings$", self: raw }
 
   PtrTips:
     function:
