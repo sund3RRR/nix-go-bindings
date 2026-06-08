@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-#include "nix_api_util.h"
+#include "nix_go_util.h"
 #include "nix_api_store.h"
 #include "nix_api_store/store_path.h"
 #include "nix_api_store/derivation.h"
@@ -50,8 +50,6 @@ char *go_nix_store_get_uri(nix_c_context *ctx, Store *store);
 char *go_nix_store_get_storedir(nix_c_context *ctx, Store *store);
 char *go_nix_store_get_version(nix_c_context *ctx, Store *store);
 char *go_nix_store_real_path(nix_c_context *ctx, Store *store, StorePath *path);
-
-void go_nix_string_free(char *s);
 
 StorePath *go_nix_store_parse_path(nix_c_context *ctx, Store *store, const char *path);
 

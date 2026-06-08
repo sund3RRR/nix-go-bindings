@@ -1,24 +1,12 @@
 #include "nix_go_store.h"
 
 #include <stdlib.h>
-#include <string.h>
 
 typedef struct go_nix_string_capture {
     char *value;
 } go_nix_string_capture;
 
-static void go_nix_capture_string(const char *s, unsigned int n, void *userdata)
-{
-    go_nix_string_capture *capture = (go_nix_string_capture *)userdata;
-
-    capture->value = (char *)malloc((size_t)n + 1);
-    if (capture->value == NULL) {
-        return;
-    }
-
-    memcpy(capture->value, s, (size_t)n);
-    capture->value[n] = '\0';
-}
+void go_nix_capture_string(const char *s, unsigned int n, void *userdata);
 
 static const char ***go_nix_params_pack(go_nix_store_params params)
 {
@@ -135,11 +123,6 @@ char *go_nix_store_real_path(nix_c_context *ctx, Store *store, StorePath *path)
     }
 
     return capture.value;
-}
-
-void go_nix_string_free(char *s)
-{
-    free(s);
 }
 
 StorePath *go_nix_store_parse_path(nix_c_context *ctx, Store *store, const char *path)

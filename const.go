@@ -7,6 +7,7 @@ package nix
 
 /*
 #cgo pkg-config: nix-util-c nix-store-c
+#include "nix_go_util.h"
 #include "nix_go_store.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
@@ -17,7 +18,29 @@ import "C"
 type NixErr int32
 
 // NixErr enumeration from include/nix_api_util.h:121
-const ()
+const (
+	NixOk             NixErr = iota
+	NixErrUnknown     NixErr = -1
+	NixErrOverflow    NixErr = -2
+	NixErrKey         NixErr = -3
+	NixErrNixError    NixErr = -4
+	NixErrRecoverable NixErr = -5
+)
+
+// NixVerbosity as declared in include/nix_api_util.h:139
+type NixVerbosity int32
+
+// NixVerbosity enumeration from include/nix_api_util.h:139
+const (
+	NixLvlError     NixVerbosity = iota
+	NixLvlWarn      NixVerbosity = 1
+	NixLvlNotice    NixVerbosity = 2
+	NixLvlInfo      NixVerbosity = 3
+	NixLvlTalkative NixVerbosity = 4
+	NixLvlChatty    NixVerbosity = 5
+	NixLvlDebug     NixVerbosity = 6
+	NixLvlVomit     NixVerbosity = 7
+)
 
 const ()
 

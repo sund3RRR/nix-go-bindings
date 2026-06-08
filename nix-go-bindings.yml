@@ -3,6 +3,7 @@ GENERATOR:
   PackageDescription: "Generated Go bindings for the Nix C API."
   PackageLicense: "LGPL-2.1-or-later"
   Includes:
+    - nix_go_util.h
     - nix_go_store.h
   PkgConfigOpts:
     - nix-util-c
@@ -14,6 +15,7 @@ PARSER:
   IncludePaths:
     - .
   SourcesPaths:
+    - nix_go_util.h
     - nix_go_store.h
 
 TRANSLATOR:
@@ -29,15 +31,34 @@ TRANSLATOR:
       - { action: accept, from: "^nix_c_context$" }
       - { action: accept, from: "^nix_derivation$" }
       - { action: accept, from: "^nix_err$" }
+      - { action: accept, from: "^nix_verbosity$" }
+      - { action: accept, from: "^NIX_(OK|ERR_|LVL_)" }
 
     post-global:
       - { action: replace, from: "^go_nix_", to: "" }
       - { load: snakecase }
       - { transform: export }
       - { action: replace, from: "^nix_", to: "" }
-      - { action: replace, from: "^NIX_OK$", to: "Nix_Ok" }
-      - { action: replace, from: "^NIX_ERR_", to: "Nix_Err_" }
-      - { action: replace, from: "^NIX_LVL_", to: "Nix_Lvl_" }
+      - { action: replace, from: "^NIXOK$", to: "NixOk" }
+      - { action: replace, from: "^NIXERRUNKNOWN$", to: "NixErrUnknown" }
+      - { action: replace, from: "^NIXERROVERFLOW$", to: "NixErrOverflow" }
+      - { action: replace, from: "^NIXERRKEY$", to: "NixErrKey" }
+      - { action: replace, from: "^NIXERRNIXERROR$", to: "NixErrNixError" }
+      - { action: replace, from: "^NIXERRRECOVERABLE$", to: "NixErrRecoverable" }
+      - { action: replace, from: "^NIXLVLERROR$", to: "NixLvlError" }
+      - { action: replace, from: "^NIXLVLWARN$", to: "NixLvlWarn" }
+      - { action: replace, from: "^NIXLVLNOTICE$", to: "NixLvlNotice" }
+      - { action: replace, from: "^NIXLVLINFO$", to: "NixLvlInfo" }
+      - { action: replace, from: "^NIXLVLTALKATIVE$", to: "NixLvlTalkative" }
+      - { action: replace, from: "^NIXLVLCHATTY$", to: "NixLvlChatty" }
+      - { action: replace, from: "^NIXLVLDEBUG$", to: "NixLvlDebug" }
+      - { action: replace, from: "^NIXLVLVOMIT$", to: "NixLvlVomit" }
+      - { action: replace, from: "^NIXERR", to: "NixErr" }
+      - { action: replace, from: "^NIXLVL", to: "NixLvl" }
+      - { action: replace, from: "^NIX_OK$", to: "NixOk" }
+      - { action: replace, from: "^NIX_ERR_NIX_ERROR$", to: "NixErrNixError" }
+      - { action: replace, from: "^NIX_ERR_", to: "NixErr" }
+      - { action: replace, from: "^NIX_LVL_", to: "NixLvl" }
       - { action: replace, from: "^NIX_TYPE_", to: "Nix_Type_" }
       - { action: replace, from: "^NIX_", to: "Nix_" }
       - { action: replace, from: "_t$" }
