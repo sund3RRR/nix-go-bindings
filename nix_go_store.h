@@ -92,6 +92,10 @@ nix_derivation *go_nix_derivation_from_json(
     const char *json
 );
 
+nix_derivation *go_nix_derivation_clone(const nix_derivation *derivation);
+void go_nix_derivation_free(nix_derivation *derivation);
+char *go_nix_derivation_to_json(nix_c_context *ctx, const nix_derivation *derivation);
+
 StorePath *go_nix_add_derivation(
     nix_c_context *ctx,
     Store *store,

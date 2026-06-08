@@ -96,7 +96,7 @@ The upstream C API packages are:
   - [x] Settings/version/verbosity helpers.
   - [x] Error helpers: message, name, code, clear, set.
   - [x] Generated enum constants for `NIX_OK`, `NIX_ERR_*`, and `NIX_LVL_*`.
-- [ ] `nix-store-c`
+- [x] `nix-store-c`
   - [x] Store initialization: `LibstoreInit`, `LibstoreInitNoLoadConfig`.
   - [x] Store lifecycle: `StoreOpen`, `StoreFree`.
   - [x] Store strings: URI, store dir, version, real path.
@@ -106,7 +106,7 @@ The upstream C API packages are:
   - [x] Derivation JSON import and `AddDerivation`.
   - [x] Closure traversal and copy helpers.
   - [x] Query path by hash part.
-  - [ ] Derivation lifecycle and JSON export: clone, free, to JSON.
+  - [x] Derivation lifecycle and JSON export: clone, free, to JSON.
 - [ ] `nix-expr-c`
   - [ ] `nix_libexpr_init`.
   - [ ] Evaluation state builder and state lifecycle.

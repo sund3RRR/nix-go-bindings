@@ -1,9 +1,34 @@
 package nix
 
 import (
+	"encoding/json"
+	"reflect"
 	"strings"
 	"testing"
 )
+
+const testDerivationJSON = `{
+  "name": "go-bindings-test",
+  "version": 4,
+  "outputs": {
+    "out": {
+      "path": "d1nf171c83f8aczqcn20r20r1bisij3i-go-bindings-test"
+    }
+  },
+  "inputs": {
+    "srcs": [],
+    "drvs": {}
+  },
+  "system": "x86_64-linux",
+  "builder": "/bin/sh",
+  "args": [],
+  "env": {
+    "builder": "/bin/sh",
+    "name": "go-bindings-test",
+    "out": "/nix/store/d1nf171c83f8aczqcn20r20r1bisij3i-go-bindings-test",
+    "system": "x86_64-linux"
+  }
+}`
 
 func errMsgString(t *testing.T, ctx *NixCContext) string {
 	t.Helper()
@@ -31,6 +56,17 @@ func newTestStore(t *testing.T, ctx *NixCContext) *Store {
 	})
 
 	return store
+}
+
+func mustParseJSON(t *testing.T, raw string) map[string]any {
+	t.Helper()
+
+	var parsed map[string]any
+	if err := json.Unmarshal([]byte(raw), &parsed); err != nil {
+		t.Fatalf("json.Unmarshal exported derivation: %v\n%s", err, raw)
+	}
+
+	return parsed
 }
 
 func storePathNameString(t *testing.T, path *StorePath) string {
@@ -188,6 +224,75 @@ func TestNixStoreOpenInvalidUriSetsContextError(t *testing.T) {
 	}
 	if msg := errMsgString(t, ctx); strings.TrimSpace(msg) == "" {
 		t.Fatal("ErrMsg after invalid StoreOpen returned an empty string")
+	}
+}
+
+func TestNixStoreDerivationLifecycleAndJSON(t *testing.T) {
+	ctx := newTestContext(t)
+	store := newTestStore(t, ctx)
+
+	derivation := DerivationFromJson(ctx, store, testDerivationJSON)
+	if derivation == nil {
+		t.Fatalf("DerivationFromJson returned nil: err=%v msg=%q", ErrCode(ctx), errMsgString(t, ctx))
+	}
+	t.Cleanup(func() {
+		DerivationFree(derivation)
+	})
+
+	exported := ownedCString(t, DerivationToJson(ctx, derivation))
+	if strings.TrimSpace(exported) == "" {
+		t.Fatal("DerivationToJson returned an empty string")
+	}
+
+	exportedJSON := mustParseJSON(t, exported)
+	if exportedJSON["name"] != "go-bindings-test" {
+		t.Fatalf("exported derivation name = %v, want go-bindings-test", exportedJSON["name"])
+	}
+	if exportedJSON["version"] != float64(4) {
+		t.Fatalf("exported derivation version = %v, want 4", exportedJSON["version"])
+	}
+	outputs, ok := exportedJSON["outputs"].(map[string]any)
+	if !ok {
+		t.Fatalf("exported derivation outputs = %T, want JSON object", exportedJSON["outputs"])
+	}
+	if _, ok := outputs["out"]; !ok {
+		t.Fatal("exported derivation outputs missing out")
+	}
+
+	clone := DerivationClone(derivation)
+	if clone == nil {
+		t.Fatalf("DerivationClone returned nil: err=%v msg=%q", ErrCode(ctx), errMsgString(t, ctx))
+	}
+	t.Cleanup(func() {
+		DerivationFree(clone)
+	})
+
+	cloneExported := ownedCString(t, DerivationToJson(ctx, clone))
+	cloneJSON := mustParseJSON(t, cloneExported)
+	if !reflect.DeepEqual(cloneJSON, exportedJSON) {
+		t.Fatalf("DerivationToJson(clone) = %#v, want %#v", cloneJSON, exportedJSON)
+	}
+}
+
+func TestNixStoreInvalidDerivationJSONSetsContextError(t *testing.T) {
+	ctx := newTestContext(t)
+	store := newTestStore(t, ctx)
+
+	derivation := DerivationFromJson(ctx, store, `{"version": 4}`)
+	if derivation != nil {
+		DerivationFree(derivation)
+		t.Fatal("DerivationFromJson unexpectedly accepted invalid derivation JSON")
+	}
+	if got := ErrCode(ctx); got == NixOk {
+		t.Fatalf("ErrCode after invalid DerivationFromJson = %v, want non-OK", got)
+	}
+	if msg := errMsgString(t, ctx); strings.TrimSpace(msg) == "" {
+		t.Fatal("ErrMsg after invalid DerivationFromJson returned an empty string")
+	}
+
+	ClearErr(ctx)
+	if got := ErrCode(ctx); got != NixOk {
+		t.Fatalf("ErrCode after ClearErr = %v, want %v", got, NixOk)
 	}
 }
 

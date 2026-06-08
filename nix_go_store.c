@@ -192,6 +192,29 @@ nix_derivation *go_nix_derivation_from_json(
     return nix_derivation_from_json(ctx, store, json);
 }
 
+nix_derivation *go_nix_derivation_clone(const nix_derivation *derivation)
+{
+    return nix_derivation_clone(derivation);
+}
+
+void go_nix_derivation_free(nix_derivation *derivation)
+{
+    nix_derivation_free(derivation);
+}
+
+char *go_nix_derivation_to_json(nix_c_context *ctx, const nix_derivation *derivation)
+{
+    go_nix_string_capture capture = {0};
+
+    nix_err err = nix_derivation_to_json(ctx, derivation, go_nix_capture_string, &capture);
+    if (err != NIX_OK) {
+        free(capture.value);
+        return NULL;
+    }
+
+    return capture.value;
+}
+
 StorePath *go_nix_add_derivation(
     nix_c_context *ctx,
     Store *store,
