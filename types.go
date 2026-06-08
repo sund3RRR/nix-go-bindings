@@ -43,8 +43,15 @@ type StoreParams struct {
 	allocs2cd443e1 interface{}
 }
 
-// StoreRealiseCallback type as declared in nix-go-bindings/nix_go_store.h:26
+// StorePathHashPart as declared in nix-go-bindings/nix_go_store.h:28
+type StorePathHashPart struct {
+	Bytes          [20]byte
+	reff3a80ce6    *C.go_nix_store_path_hash_part
+	allocsf3a80ce6 interface{}
+}
+
+// StoreRealiseCallback type as declared in nix-go-bindings/nix_go_store.h:30
 type StoreRealiseCallback func(userdata unsafe.Pointer, outname string, out *StorePath)
 
-// StorePathCallback type as declared in nix-go-bindings/nix_go_store.h:32
+// StorePathCallback type as declared in nix-go-bindings/nix_go_store.h:36
 type StorePathCallback func(context *NixCContext, userdata unsafe.Pointer, storePath *StorePath)

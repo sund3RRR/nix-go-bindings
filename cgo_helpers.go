@@ -509,6 +509,87 @@ func (x *StoreParams) Deref() {
 	x.Len = (uint64)(x.ref2cd443e1.len)
 }
 
+// allocStorePathHashPartMemory allocates memory for type C.go_nix_store_path_hash_part in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocStorePathHashPartMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStorePathHashPartValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfStorePathHashPartValue = unsafe.Sizeof([1]C.go_nix_store_path_hash_part{})
+
+// Ref returns the underlying reference to C object or nil if struct is nil.
+func (x *StorePathHashPart) Ref() *C.go_nix_store_path_hash_part {
+	if x == nil {
+		return nil
+	}
+	return x.reff3a80ce6
+}
+
+// Free invokes alloc map's free mechanism that cleanups any allocated memory using C free.
+// Does nothing if struct is nil or has no allocation map.
+func (x *StorePathHashPart) Free() {
+	if x != nil && x.allocsf3a80ce6 != nil {
+		x.allocsf3a80ce6.(*cgoAllocMap).Free()
+		x.reff3a80ce6 = nil
+	}
+}
+
+// NewStorePathHashPartRef creates a new wrapper struct with underlying reference set to the original C object.
+// Returns nil if the provided pointer to C object is nil too.
+func NewStorePathHashPartRef(ref unsafe.Pointer) *StorePathHashPart {
+	if ref == nil {
+		return nil
+	}
+	obj := new(StorePathHashPart)
+	obj.reff3a80ce6 = (*C.go_nix_store_path_hash_part)(unsafe.Pointer(ref))
+	return obj
+}
+
+// PassRef returns the underlying C object, otherwise it will allocate one and set its values
+// from this wrapping struct, counting allocations into an allocation map.
+func (x *StorePathHashPart) PassRef() (*C.go_nix_store_path_hash_part, *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	} else if x.reff3a80ce6 != nil {
+		return x.reff3a80ce6, nil
+	}
+	memf3a80ce6 := allocStorePathHashPartMemory(1)
+	reff3a80ce6 := (*C.go_nix_store_path_hash_part)(memf3a80ce6)
+	allocsf3a80ce6 := new(cgoAllocMap)
+	allocsf3a80ce6.Add(memf3a80ce6)
+
+	var cbytes_allocs *cgoAllocMap
+	reff3a80ce6.bytes, cbytes_allocs = *(*[20]C.uchar)(unsafe.Pointer(&x.Bytes)), cgoAllocsUnknown
+	allocsf3a80ce6.Borrow(cbytes_allocs)
+
+	x.reff3a80ce6 = reff3a80ce6
+	x.allocsf3a80ce6 = allocsf3a80ce6
+	return reff3a80ce6, allocsf3a80ce6
+
+}
+
+// PassValue does the same as PassRef except that it will try to dereference the returned pointer.
+func (x StorePathHashPart) PassValue() (C.go_nix_store_path_hash_part, *cgoAllocMap) {
+	if x.reff3a80ce6 != nil {
+		return *x.reff3a80ce6, nil
+	}
+	ref, allocs := x.PassRef()
+	return *ref, allocs
+}
+
+// Deref uses the underlying reference to C object and fills the wrapping struct with values.
+// Do not forget to call this method whether you get a struct for C object and want to read its values.
+func (x *StorePathHashPart) Deref() {
+	if x.reff3a80ce6 == nil {
+		return
+	}
+	x.Bytes = *(*[20]byte)(unsafe.Pointer(&x.reff3a80ce6.bytes))
+}
+
 // packPCharString creates a Go string backed by *C.char and avoids copying.
 func packPCharString(p *C.char) (raw string) {
 	if p != nil && *p != 0 {

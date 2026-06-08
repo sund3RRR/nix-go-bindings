@@ -18,7 +18,7 @@ import (
 	"unsafe"
 )
 
-// LibstoreInit function as declared in nix-go-bindings/nix_go_store.h:38
+// LibstoreInit function as declared in nix-go-bindings/nix_go_store.h:42
 func LibstoreInit(ctx *NixCContext) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	__ret := C.go_nix_libstore_init(cctx)
@@ -27,7 +27,7 @@ func LibstoreInit(ctx *NixCContext) NixErr {
 	return __v
 }
 
-// LibstoreInitNoLoadConfig function as declared in nix-go-bindings/nix_go_store.h:39
+// LibstoreInitNoLoadConfig function as declared in nix-go-bindings/nix_go_store.h:43
 func LibstoreInitNoLoadConfig(ctx *NixCContext) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	__ret := C.go_nix_libstore_init_no_load_config(cctx)
@@ -36,7 +36,7 @@ func LibstoreInitNoLoadConfig(ctx *NixCContext) NixErr {
 	return __v
 }
 
-// StoreOpen function as declared in nix-go-bindings/nix_go_store.h:41
+// StoreOpen function as declared in nix-go-bindings/nix_go_store.h:45
 func StoreOpen(ctx *NixCContext, uri string, params StoreParams) *Store {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	curi, curiAllocMap := unpackPCharString(uri)
@@ -49,14 +49,14 @@ func StoreOpen(ctx *NixCContext, uri string, params StoreParams) *Store {
 	return __v
 }
 
-// StoreFree function as declared in nix-go-bindings/nix_go_store.h:47
+// StoreFree function as declared in nix-go-bindings/nix_go_store.h:51
 func StoreFree(store *Store) {
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
 	C.go_nix_store_free(cstore)
 	runtime.KeepAlive(cstoreAllocMap)
 }
 
-// StoreGetUri function as declared in nix-go-bindings/nix_go_store.h:49
+// StoreGetUri function as declared in nix-go-bindings/nix_go_store.h:53
 func StoreGetUri(ctx *NixCContext, store *Store) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -67,7 +67,7 @@ func StoreGetUri(ctx *NixCContext, store *Store) *byte {
 	return __v
 }
 
-// StoreGetStoredir function as declared in nix-go-bindings/nix_go_store.h:50
+// StoreGetStoredir function as declared in nix-go-bindings/nix_go_store.h:54
 func StoreGetStoredir(ctx *NixCContext, store *Store) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -78,7 +78,7 @@ func StoreGetStoredir(ctx *NixCContext, store *Store) *byte {
 	return __v
 }
 
-// StoreGetVersion function as declared in nix-go-bindings/nix_go_store.h:51
+// StoreGetVersion function as declared in nix-go-bindings/nix_go_store.h:55
 func StoreGetVersion(ctx *NixCContext, store *Store) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -89,7 +89,7 @@ func StoreGetVersion(ctx *NixCContext, store *Store) *byte {
 	return __v
 }
 
-// StoreRealPath function as declared in nix-go-bindings/nix_go_store.h:52
+// StoreRealPath function as declared in nix-go-bindings/nix_go_store.h:56
 func StoreRealPath(ctx *NixCContext, store *Store, path *StorePath) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -102,7 +102,7 @@ func StoreRealPath(ctx *NixCContext, store *Store, path *StorePath) *byte {
 	return __v
 }
 
-// StoreParsePath function as declared in nix-go-bindings/nix_go_store.h:54
+// StoreParsePath function as declared in nix-go-bindings/nix_go_store.h:58
 func StoreParsePath(ctx *NixCContext, store *Store, path string) *StorePath {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -115,7 +115,60 @@ func StoreParsePath(ctx *NixCContext, store *Store, path string) *StorePath {
 	return __v
 }
 
-// StoreIsValidPath function as declared in nix-go-bindings/nix_go_store.h:56
+// StorePathClone function as declared in nix-go-bindings/nix_go_store.h:60
+func StorePathClone(path *StorePath) *StorePath {
+	cpath, cpathAllocMap := (*C.StorePath)(unsafe.Pointer(path)), cgoAllocsUnknown
+	__ret := C.go_nix_store_path_clone(cpath)
+	runtime.KeepAlive(cpathAllocMap)
+	__v := *(**StorePath)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// StorePathFree function as declared in nix-go-bindings/nix_go_store.h:61
+func StorePathFree(path *StorePath) {
+	cpath, cpathAllocMap := (*C.StorePath)(unsafe.Pointer(path)), cgoAllocsUnknown
+	C.go_nix_store_path_free(cpath)
+	runtime.KeepAlive(cpathAllocMap)
+}
+
+// StorePathName function as declared in nix-go-bindings/nix_go_store.h:62
+func StorePathName(path *StorePath) *byte {
+	cpath, cpathAllocMap := (*C.StorePath)(unsafe.Pointer(path)), cgoAllocsUnknown
+	__ret := C.go_nix_store_path_name(cpath)
+	runtime.KeepAlive(cpathAllocMap)
+	__v := *(**byte)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// StorePathHash function as declared in nix-go-bindings/nix_go_store.h:63
+func StorePathHash(ctx *NixCContext, path *StorePath, hash *StorePathHashPart) NixErr {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	cpath, cpathAllocMap := (*C.StorePath)(unsafe.Pointer(path)), cgoAllocsUnknown
+	chash, chashAllocMap := hash.PassRef()
+	__ret := C.go_nix_store_path_hash(cctx, cpath, chash)
+	runtime.KeepAlive(chashAllocMap)
+	runtime.KeepAlive(cpathAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := (NixErr)(__ret)
+	return __v
+}
+
+// StoreCreateFromParts function as declared in nix-go-bindings/nix_go_store.h:68
+func StoreCreateFromParts(ctx *NixCContext, hash *StorePathHashPart, name string, nameLen uint64) *StorePath {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	chash, chashAllocMap := hash.PassRef()
+	cname, cnameAllocMap := unpackPCharString(name)
+	cnameLen, cnameLenAllocMap := (C.size_t)(nameLen), cgoAllocsUnknown
+	__ret := C.go_nix_store_create_from_parts(cctx, chash, cname, cnameLen)
+	runtime.KeepAlive(cnameLenAllocMap)
+	runtime.KeepAlive(cnameAllocMap)
+	runtime.KeepAlive(chashAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := *(**StorePath)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// StoreIsValidPath function as declared in nix-go-bindings/nix_go_store.h:75
 func StoreIsValidPath(ctx *NixCContext, store *Store, path *StorePath) bool {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -128,7 +181,7 @@ func StoreIsValidPath(ctx *NixCContext, store *Store, path *StorePath) bool {
 	return __v
 }
 
-// StoreRealise function as declared in nix-go-bindings/nix_go_store.h:62
+// StoreRealise function as declared in nix-go-bindings/nix_go_store.h:81
 func StoreRealise(ctx *NixCContext, store *Store, path *StorePath, userdata unsafe.Pointer, callback StoreRealiseCallback) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -145,7 +198,7 @@ func StoreRealise(ctx *NixCContext, store *Store, path *StorePath, userdata unsa
 	return __v
 }
 
-// DerivationFromJson function as declared in nix-go-bindings/nix_go_store.h:70
+// DerivationFromJson function as declared in nix-go-bindings/nix_go_store.h:89
 func DerivationFromJson(ctx *NixCContext, store *Store, json string) *NixDerivation {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -158,7 +211,7 @@ func DerivationFromJson(ctx *NixCContext, store *Store, json string) *NixDerivat
 	return __v
 }
 
-// AddDerivation function as declared in nix-go-bindings/nix_go_store.h:76
+// AddDerivation function as declared in nix-go-bindings/nix_go_store.h:95
 func AddDerivation(ctx *NixCContext, store *Store, derivation *NixDerivation) *StorePath {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -171,7 +224,7 @@ func AddDerivation(ctx *NixCContext, store *Store, derivation *NixDerivation) *S
 	return __v
 }
 
-// StoreCopyClosure function as declared in nix-go-bindings/nix_go_store.h:82
+// StoreCopyClosure function as declared in nix-go-bindings/nix_go_store.h:101
 func StoreCopyClosure(ctx *NixCContext, srcStore *Store, dstStore *Store, path *StorePath) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	csrcStore, csrcStoreAllocMap := (*C.Store)(unsafe.Pointer(srcStore)), cgoAllocsUnknown
@@ -186,7 +239,7 @@ func StoreCopyClosure(ctx *NixCContext, srcStore *Store, dstStore *Store, path *
 	return __v
 }
 
-// StoreGetFsClosure function as declared in nix-go-bindings/nix_go_store.h:89
+// StoreGetFsClosure function as declared in nix-go-bindings/nix_go_store.h:108
 func StoreGetFsClosure(ctx *NixCContext, store *Store, storePath *StorePath, flipDirection bool, includeOutputs bool, includeDerivers bool, userdata unsafe.Pointer, callback StorePathCallback) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -209,7 +262,7 @@ func StoreGetFsClosure(ctx *NixCContext, store *Store, storePath *StorePath, fli
 	return __v
 }
 
-// StoreDrvFromStorePath function as declared in nix-go-bindings/nix_go_store.h:100
+// StoreDrvFromStorePath function as declared in nix-go-bindings/nix_go_store.h:119
 func StoreDrvFromStorePath(ctx *NixCContext, store *Store, path *StorePath) *NixDerivation {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -222,7 +275,7 @@ func StoreDrvFromStorePath(ctx *NixCContext, store *Store, path *StorePath) *Nix
 	return __v
 }
 
-// StoreQueryPathFromHashPart function as declared in nix-go-bindings/nix_go_store.h:106
+// StoreQueryPathFromHashPart function as declared in nix-go-bindings/nix_go_store.h:125
 func StoreQueryPathFromHashPart(ctx *NixCContext, store *Store, hash string) *StorePath {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -235,7 +288,7 @@ func StoreQueryPathFromHashPart(ctx *NixCContext, store *Store, hash string) *St
 	return __v
 }
 
-// StoreCopyPath function as declared in nix-go-bindings/nix_go_store.h:112
+// StoreCopyPath function as declared in nix-go-bindings/nix_go_store.h:131
 func StoreCopyPath(ctx *NixCContext, srcStore *Store, dstStore *Store, path *StorePath, repair bool, checkSigs bool) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	csrcStore, csrcStoreAllocMap := (*C.Store)(unsafe.Pointer(srcStore)), cgoAllocsUnknown
