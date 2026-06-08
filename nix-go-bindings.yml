@@ -28,6 +28,7 @@ TRANSLATOR:
       - { action: accept, from: "^go_nix_" }
       - { action: accept, from: "^Store$" }
       - { action: accept, from: "^StorePath$" }
+      - { action: accept, from: "^go_nix_store_path_hash_part$" }
       - { action: accept, from: "^nix_c_context$" }
       - { action: accept, from: "^nix_derivation$" }
       - { action: accept, from: "^nix_err$" }

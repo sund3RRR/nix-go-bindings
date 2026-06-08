@@ -130,6 +130,43 @@ StorePath *go_nix_store_parse_path(nix_c_context *ctx, Store *store, const char 
     return nix_store_parse_path(ctx, store, path);
 }
 
+StorePath *go_nix_store_path_clone(const StorePath *path)
+{
+    return nix_store_path_clone(path);
+}
+
+void go_nix_store_path_free(StorePath *path)
+{
+    nix_store_path_free(path);
+}
+
+char *go_nix_store_path_name(const StorePath *path)
+{
+    go_nix_string_capture capture = {0};
+
+    nix_store_path_name(path, go_nix_capture_string, &capture);
+    return capture.value;
+}
+
+nix_err go_nix_store_path_hash(
+    nix_c_context *ctx,
+    const StorePath *path,
+    go_nix_store_path_hash_part *hash
+)
+{
+    return nix_store_path_hash(ctx, path, (nix_store_path_hash_part *)hash);
+}
+
+StorePath *go_nix_store_create_from_parts(
+    nix_c_context *ctx,
+    const go_nix_store_path_hash_part *hash,
+    const char *name,
+    size_t name_len
+)
+{
+    return nix_store_create_from_parts(ctx, (const nix_store_path_hash_part *)hash, name, name_len);
+}
+
 bool go_nix_store_is_valid_path(nix_c_context *ctx, Store *store, const StorePath *path)
 {
     return nix_store_is_valid_path(ctx, store, path);

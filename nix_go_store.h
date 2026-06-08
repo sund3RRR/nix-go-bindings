@@ -23,6 +23,10 @@ typedef struct go_nix_store_params {
     size_t len;
 } go_nix_store_params;
 
+typedef struct go_nix_store_path_hash_part {
+    unsigned char bytes[20];
+} go_nix_store_path_hash_part;
+
 typedef void (*go_nix_store_realise_callback)(
     void *userdata,
     const char *outname,
@@ -52,6 +56,21 @@ char *go_nix_store_get_version(nix_c_context *ctx, Store *store);
 char *go_nix_store_real_path(nix_c_context *ctx, Store *store, StorePath *path);
 
 StorePath *go_nix_store_parse_path(nix_c_context *ctx, Store *store, const char *path);
+
+StorePath *go_nix_store_path_clone(const StorePath *path);
+void go_nix_store_path_free(StorePath *path);
+char *go_nix_store_path_name(const StorePath *path);
+nix_err go_nix_store_path_hash(
+    nix_c_context *ctx,
+    const StorePath *path,
+    go_nix_store_path_hash_part *hash
+);
+StorePath *go_nix_store_create_from_parts(
+    nix_c_context *ctx,
+    const go_nix_store_path_hash_part *hash,
+    const char *name,
+    size_t name_len
+);
 
 bool go_nix_store_is_valid_path(
     nix_c_context *ctx,
