@@ -6,10 +6,12 @@ GENERATOR:
     - nix_go_util.h
     - nix_go_store.h
     - nix_go_fetchers.h
+    - nix_go_expr.h
   PkgConfigOpts:
     - nix-util-c
     - nix-store-c
     - nix-fetchers-c
+    - nix-expr-c
 
 PARSER:
   Defines:
@@ -20,6 +22,7 @@ PARSER:
     - nix_go_util.h
     - nix_go_store.h
     - nix_go_fetchers.h
+    - nix_go_expr.h
 
 TRANSLATOR:
   ConstRules:
@@ -32,17 +35,46 @@ TRANSLATOR:
       - { action: accept, from: "^Store$" }
       - { action: accept, from: "^StorePath$" }
       - { action: accept, from: "^go_nix_store_path_hash_part$" }
+      - { action: accept, from: "^go_nix_string_item$" }
+      - { action: accept, from: "^go_nix_string_array$" }
+      - { action: accept, from: "^go_nix_value_item$" }
+      - { action: accept, from: "^go_nix_value_array$" }
+      - { action: accept, from: "^go_nix_value_type$" }
+      - { action: accept, from: "^go_nix_(primop_fun|finalizer)$" }
+      - { action: accept, from: "^go_nix_external_" }
       - { action: accept, from: "^nix_c_context$" }
       - { action: accept, from: "^nix_derivation$" }
       - { action: accept, from: "^nix_fetchers_settings$" }
+      - { action: accept, from: "^nix_eval_state_builder$" }
+      - { action: accept, from: "^EvalState$" }
+      - { action: accept, from: "^nix_value$" }
+      - { action: accept, from: "^BindingsBuilder$" }
+      - { action: accept, from: "^ListBuilder$" }
+      - { action: accept, from: "^PrimOp$" }
+      - { action: accept, from: "^ExternalValue$" }
+      - { action: accept, from: "^nix_realised_string$" }
+      - { action: accept, from: "^nix_(string_return|printer|string_context)$" }
       - { action: accept, from: "^nix_err$" }
       - { action: accept, from: "^nix_verbosity$" }
       - { action: accept, from: "^NIX_(OK|ERR_|LVL_)" }
+      - { action: accept, from: "^GO_NIX_TYPE_" }
 
     post-global:
       - { action: replace, from: "^go_nix_", to: "" }
       - { load: snakecase }
       - { transform: export }
+      - { action: replace, from: "^GONIXTYPETHUNK$", to: "NixTypeThunk" }
+      - { action: replace, from: "^GONIXTYPEINT$", to: "NixTypeInt" }
+      - { action: replace, from: "^GONIXTYPEFLOAT$", to: "NixTypeFloat" }
+      - { action: replace, from: "^GONIXTYPEBOOL$", to: "NixTypeBool" }
+      - { action: replace, from: "^GONIXTYPESTRING$", to: "NixTypeString" }
+      - { action: replace, from: "^GONIXTYPEPATH$", to: "NixTypePath" }
+      - { action: replace, from: "^GONIXTYPENULL$", to: "NixTypeNull" }
+      - { action: replace, from: "^GONIXTYPEATTRS$", to: "NixTypeAttrs" }
+      - { action: replace, from: "^GONIXTYPELIST$", to: "NixTypeList" }
+      - { action: replace, from: "^GONIXTYPEFUNCTION$", to: "NixTypeFunction" }
+      - { action: replace, from: "^GONIXTYPEEXTERNAL$", to: "NixTypeExternal" }
+      - { action: replace, from: "^GONIXTYPEFAILED$", to: "NixTypeFailed" }
       - { action: replace, from: "^nix_", to: "" }
       - { action: replace, from: "^NIXOK$", to: "NixOk" }
       - { action: replace, from: "^NIXERRUNKNOWN$", to: "NixErrUnknown" }
@@ -76,6 +108,17 @@ TRANSLATOR:
     - { target: "^nix_c_context$", self: raw }
     - { target: "^nix_derivation$", self: raw }
     - { target: "^nix_fetchers_settings$", self: raw }
+    - { target: "^nix_eval_state_builder$", self: raw }
+    - { target: "^EvalState$", self: raw }
+    - { target: "^nix_value$", self: raw }
+    - { target: "^BindingsBuilder$", self: raw }
+    - { target: "^ListBuilder$", self: raw }
+    - { target: "^PrimOp$", self: raw }
+    - { target: "^ExternalValue$", self: raw }
+    - { target: "^nix_realised_string$", self: raw }
+    - { target: "^nix_string_return$", self: raw }
+    - { target: "^nix_printer$", self: raw }
+    - { target: "^nix_string_context$", self: raw }
 
   PtrTips:
     function:

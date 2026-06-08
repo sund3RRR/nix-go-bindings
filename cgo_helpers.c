@@ -6,6 +6,38 @@
 #include "_cgo_export.h"
 #include "cgo_helpers.h"
 
+void go_nix_primop_fun_dadd0fa9(void* user_data, nix_c_context* context, EvalState* state, nix_value** args, nix_value* ret) {
+	primopFunDADD0FA9(user_data, context, state, args, ret);
+}
+
+void go_nix_finalizer_1fcdc1fe(void* obj, void* cd) {
+	finalizer1FCDC1FE(obj, cd);
+}
+
+void go_nix_external_print_fun_c6fee685(void* self, nix_printer* printer) {
+	externalPrintFunC6FEE685(self, printer);
+}
+
+void go_nix_external_string_fun_902e48c3(void* self, nix_string_return* res) {
+	externalStringFun902E48C3(self, res);
+}
+
+void go_nix_external_coerce_fun_4ceca53f(void* self, nix_string_context* ctx, int coerce_more, int copy_to_store, nix_string_return* res) {
+	externalCoerceFun4CECA53F(self, ctx, coerce_more, copy_to_store, res);
+}
+
+int go_nix_external_equal_fun_af9e7e74(void* self, void* other) {
+	return externalEqualFunAF9E7E74(self, other);
+}
+
+void go_nix_external_json_fun_d703fc66(void* self, EvalState* state, _Bool strict, nix_string_context* ctx, _Bool copy_to_store, nix_string_return* res) {
+	externalJsonFunD703FC66(self, state, strict, ctx, copy_to_store, res);
+}
+
+void go_nix_external_xml_fun_7dea5d0(void* self, EvalState* state, int strict, int location, void* doc, nix_string_context* ctx, void* drvs_seen, int pos) {
+	externalXmlFun7DEA5D0(self, state, strict, location, doc, ctx, drvs_seen, pos);
+}
+
 void go_nix_store_realise_callback_8324f29f(void* userdata, char* outname, StorePath* out) {
 	storeRealiseCallback8324F29F(userdata, outname, out);
 }

@@ -6,10 +6,11 @@
 package nix
 
 /*
-#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c
+#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c
 #include "nix_go_util.h"
 #include "nix_go_store.h"
 #include "nix_go_fetchers.h"
+#include "nix_go_expr.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
@@ -30,6 +31,106 @@ type NixFetchersSettings C.nix_fetchers_settings
 
 // NixCContext as declared in include/nix_api_util.h:160
 type NixCContext C.nix_c_context
+
+// NixEvalStateBuilder as declared in nix-go-bindings/nix_go_expr.h:14
+type NixEvalStateBuilder C.nix_eval_state_builder
+
+// EvalState as declared in nix-go-bindings/nix_go_expr.h:15
+type EvalState C.EvalState
+
+// NixValue as declared in nix-go-bindings/nix_go_expr.h:16
+type NixValue C.nix_value
+
+// BindingsBuilder as declared in nix-go-bindings/nix_go_expr.h:17
+type BindingsBuilder C.BindingsBuilder
+
+// ListBuilder as declared in nix-go-bindings/nix_go_expr.h:18
+type ListBuilder C.ListBuilder
+
+// PrimOp as declared in nix-go-bindings/nix_go_expr.h:19
+type PrimOp C.PrimOp
+
+// ExternalValue as declared in nix-go-bindings/nix_go_expr.h:20
+type ExternalValue C.ExternalValue
+
+// NixRealisedString as declared in nix-go-bindings/nix_go_expr.h:21
+type NixRealisedString C.nix_realised_string
+
+// NixStringReturn as declared in nix-go-bindings/nix_go_expr.h:22
+type NixStringReturn C.nix_string_return
+
+// NixPrinter as declared in nix-go-bindings/nix_go_expr.h:23
+type NixPrinter C.nix_printer
+
+// NixStringContext as declared in nix-go-bindings/nix_go_expr.h:24
+type NixStringContext C.nix_string_context
+
+// StringItem as declared in nix-go-bindings/nix_go_expr.h:43
+type StringItem struct {
+	Value          []byte
+	ref72036a06    *C.go_nix_string_item
+	allocs72036a06 interface{}
+}
+
+// StringArray as declared in nix-go-bindings/nix_go_expr.h:48
+type StringArray struct {
+	Items          []StringItem
+	Len            uint64
+	refb20d6eae    *C.go_nix_string_array
+	allocsb20d6eae interface{}
+}
+
+// ValueItem as declared in nix-go-bindings/nix_go_expr.h:52
+type ValueItem struct {
+	Value          *NixValue
+	refa57cd5ac    *C.go_nix_value_item
+	allocsa57cd5ac interface{}
+}
+
+// ValueArray as declared in nix-go-bindings/nix_go_expr.h:57
+type ValueArray struct {
+	Items          []ValueItem
+	Len            uint64
+	ref84d95be7    *C.go_nix_value_array
+	allocs84d95be7 interface{}
+}
+
+// PrimopFun type as declared in nix-go-bindings/nix_go_expr.h:59
+type PrimopFun func(userData unsafe.Pointer, context *NixCContext, state *EvalState, args **NixValue, ret *NixValue)
+
+// Finalizer type as declared in nix-go-bindings/nix_go_expr.h:67
+type Finalizer func(obj unsafe.Pointer, cd unsafe.Pointer)
+
+// ExternalPrintFun type as declared in nix-go-bindings/nix_go_expr.h:69
+type ExternalPrintFun func(self unsafe.Pointer, printer *NixPrinter)
+
+// ExternalStringFun type as declared in nix-go-bindings/nix_go_expr.h:70
+type ExternalStringFun func(self unsafe.Pointer, res *NixStringReturn)
+
+// ExternalCoerceFun type as declared in nix-go-bindings/nix_go_expr.h:71
+type ExternalCoerceFun func(self unsafe.Pointer, ctx *NixStringContext, coerceMore int32, copyToStore int32, res *NixStringReturn)
+
+// ExternalEqualFun type as declared in nix-go-bindings/nix_go_expr.h:78
+type ExternalEqualFun func(self unsafe.Pointer, other unsafe.Pointer) int32
+
+// ExternalJsonFun type as declared in nix-go-bindings/nix_go_expr.h:79
+type ExternalJsonFun func(self unsafe.Pointer, state *EvalState, strict bool, ctx *NixStringContext, copyToStore bool, res *NixStringReturn)
+
+// ExternalXmlFun type as declared in nix-go-bindings/nix_go_expr.h:87
+type ExternalXmlFun func(self unsafe.Pointer, state *EvalState, strict int32, location int32, doc unsafe.Pointer, ctx *NixStringContext, drvsSeen unsafe.Pointer, pos int32)
+
+// ExternalValueDesc as declared in nix-go-bindings/nix_go_expr.h:106
+type ExternalValueDesc struct {
+	Print            ExternalPrintFun
+	ShowType         ExternalStringFun
+	TypeOf           ExternalStringFun
+	CoerceToString   ExternalCoerceFun
+	Equal            ExternalEqualFun
+	PrintValueAsJson ExternalJsonFun
+	PrintValueAsXml  ExternalXmlFun
+	refaf0e485c      *C.go_nix_external_value_desc
+	allocsaf0e485c   interface{}
+}
 
 // StoreParam as declared in nix-go-bindings/nix_go_store.h:19
 type StoreParam struct {

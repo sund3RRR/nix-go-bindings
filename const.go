@@ -6,10 +6,11 @@
 package nix
 
 /*
-#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c
+#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c
 #include "nix_go_util.h"
 #include "nix_go_store.h"
 #include "nix_go_fetchers.h"
+#include "nix_go_expr.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
@@ -41,6 +42,25 @@ const (
 	NixLvlChatty    NixVerbosity = 5
 	NixLvlDebug     NixVerbosity = 6
 	NixLvlVomit     NixVerbosity = 7
+)
+
+// ValueType as declared in nix-go-bindings/nix_go_expr.h:39
+type ValueType int32
+
+// ValueType enumeration from nix-go-bindings/nix_go_expr.h:39
+const (
+	NixTypeThunk    ValueType = iota
+	NixTypeInt      ValueType = 1
+	NixTypeFloat    ValueType = 2
+	NixTypeBool     ValueType = 3
+	NixTypeString   ValueType = 4
+	NixTypePath     ValueType = 5
+	NixTypeNull     ValueType = 6
+	NixTypeAttrs    ValueType = 7
+	NixTypeList     ValueType = 8
+	NixTypeFunction ValueType = 9
+	NixTypeExternal ValueType = 10
+	NixTypeFailed   ValueType = 11
 )
 
 const ()

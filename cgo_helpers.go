@@ -6,10 +6,11 @@
 package nix
 
 /*
-#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c
+#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c
 #include "nix_go_util.h"
 #include "nix_go_store.h"
 #include "nix_go_fetchers.h"
+#include "nix_go_expr.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
@@ -301,17 +302,523 @@ func (x *NixCContext) PassRef() *C.nix_c_context {
 	return (*C.nix_c_context)(unsafe.Pointer(x))
 }
 
-// allocStoreParamMemory allocates memory for type C.go_nix_store_param in C.
+// Ref returns a reference to C object as it is.
+func (x *NixEvalStateBuilder) Ref() *C.nix_eval_state_builder {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_eval_state_builder)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixEvalStateBuilder) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixEvalStateBuilderRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixEvalStateBuilderRef(ref unsafe.Pointer) *NixEvalStateBuilder {
+	return (*NixEvalStateBuilder)(ref)
+}
+
+// NewNixEvalStateBuilder allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixEvalStateBuilder() *NixEvalStateBuilder {
+	return (*NixEvalStateBuilder)(allocNixEvalStateBuilderMemory(1))
+}
+
+// allocNixEvalStateBuilderMemory allocates memory for type C.nix_eval_state_builder in C.
 // The caller is responsible for freeing the this memory via C.free.
-func allocStoreParamMemory(n int) unsafe.Pointer {
-	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStoreParamValue))
+func allocNixEvalStateBuilderMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixEvalStateBuilderValue))
 	if mem == nil {
 		panic(fmt.Sprintln("memory alloc error: ", err))
 	}
 	return mem
 }
 
-const sizeOfStoreParamValue = unsafe.Sizeof([1]C.go_nix_store_param{})
+const sizeOfNixEvalStateBuilderValue = unsafe.Sizeof([1]C.nix_eval_state_builder{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixEvalStateBuilder) PassRef() *C.nix_eval_state_builder {
+	if x == nil {
+		x = (*NixEvalStateBuilder)(allocNixEvalStateBuilderMemory(1))
+	}
+	return (*C.nix_eval_state_builder)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *EvalState) Ref() *C.EvalState {
+	if x == nil {
+		return nil
+	}
+	return (*C.EvalState)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *EvalState) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewEvalStateRef converts the C object reference into a raw struct reference without wrapping.
+func NewEvalStateRef(ref unsafe.Pointer) *EvalState {
+	return (*EvalState)(ref)
+}
+
+// NewEvalState allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewEvalState() *EvalState {
+	return (*EvalState)(allocEvalStateMemory(1))
+}
+
+// allocEvalStateMemory allocates memory for type C.EvalState in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocEvalStateMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfEvalStateValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfEvalStateValue = unsafe.Sizeof([1]C.EvalState{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *EvalState) PassRef() *C.EvalState {
+	if x == nil {
+		x = (*EvalState)(allocEvalStateMemory(1))
+	}
+	return (*C.EvalState)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixValue) Ref() *C.nix_value {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_value)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixValue) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixValueRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixValueRef(ref unsafe.Pointer) *NixValue {
+	return (*NixValue)(ref)
+}
+
+// NewNixValue allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixValue() *NixValue {
+	return (*NixValue)(allocNixValueMemory(1))
+}
+
+// allocNixValueMemory allocates memory for type C.nix_value in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixValueMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixValueValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixValueValue = unsafe.Sizeof([1]C.nix_value{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixValue) PassRef() *C.nix_value {
+	if x == nil {
+		x = (*NixValue)(allocNixValueMemory(1))
+	}
+	return (*C.nix_value)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *BindingsBuilder) Ref() *C.BindingsBuilder {
+	if x == nil {
+		return nil
+	}
+	return (*C.BindingsBuilder)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *BindingsBuilder) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewBindingsBuilderRef converts the C object reference into a raw struct reference without wrapping.
+func NewBindingsBuilderRef(ref unsafe.Pointer) *BindingsBuilder {
+	return (*BindingsBuilder)(ref)
+}
+
+// NewBindingsBuilder allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewBindingsBuilder() *BindingsBuilder {
+	return (*BindingsBuilder)(allocBindingsBuilderMemory(1))
+}
+
+// allocBindingsBuilderMemory allocates memory for type C.BindingsBuilder in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocBindingsBuilderMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfBindingsBuilderValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfBindingsBuilderValue = unsafe.Sizeof([1]C.BindingsBuilder{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *BindingsBuilder) PassRef() *C.BindingsBuilder {
+	if x == nil {
+		x = (*BindingsBuilder)(allocBindingsBuilderMemory(1))
+	}
+	return (*C.BindingsBuilder)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *ListBuilder) Ref() *C.ListBuilder {
+	if x == nil {
+		return nil
+	}
+	return (*C.ListBuilder)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *ListBuilder) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewListBuilderRef converts the C object reference into a raw struct reference without wrapping.
+func NewListBuilderRef(ref unsafe.Pointer) *ListBuilder {
+	return (*ListBuilder)(ref)
+}
+
+// NewListBuilder allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewListBuilder() *ListBuilder {
+	return (*ListBuilder)(allocListBuilderMemory(1))
+}
+
+// allocListBuilderMemory allocates memory for type C.ListBuilder in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocListBuilderMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfListBuilderValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfListBuilderValue = unsafe.Sizeof([1]C.ListBuilder{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *ListBuilder) PassRef() *C.ListBuilder {
+	if x == nil {
+		x = (*ListBuilder)(allocListBuilderMemory(1))
+	}
+	return (*C.ListBuilder)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *PrimOp) Ref() *C.PrimOp {
+	if x == nil {
+		return nil
+	}
+	return (*C.PrimOp)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *PrimOp) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewPrimOpRef converts the C object reference into a raw struct reference without wrapping.
+func NewPrimOpRef(ref unsafe.Pointer) *PrimOp {
+	return (*PrimOp)(ref)
+}
+
+// NewPrimOp allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewPrimOp() *PrimOp {
+	return (*PrimOp)(allocPrimOpMemory(1))
+}
+
+// allocPrimOpMemory allocates memory for type C.PrimOp in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocPrimOpMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfPrimOpValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfPrimOpValue = unsafe.Sizeof([1]C.PrimOp{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *PrimOp) PassRef() *C.PrimOp {
+	if x == nil {
+		x = (*PrimOp)(allocPrimOpMemory(1))
+	}
+	return (*C.PrimOp)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *ExternalValue) Ref() *C.ExternalValue {
+	if x == nil {
+		return nil
+	}
+	return (*C.ExternalValue)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *ExternalValue) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewExternalValueRef converts the C object reference into a raw struct reference without wrapping.
+func NewExternalValueRef(ref unsafe.Pointer) *ExternalValue {
+	return (*ExternalValue)(ref)
+}
+
+// NewExternalValue allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewExternalValue() *ExternalValue {
+	return (*ExternalValue)(allocExternalValueMemory(1))
+}
+
+// allocExternalValueMemory allocates memory for type C.ExternalValue in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocExternalValueMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfExternalValueValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfExternalValueValue = unsafe.Sizeof([1]C.ExternalValue{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *ExternalValue) PassRef() *C.ExternalValue {
+	if x == nil {
+		x = (*ExternalValue)(allocExternalValueMemory(1))
+	}
+	return (*C.ExternalValue)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixRealisedString) Ref() *C.nix_realised_string {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_realised_string)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixRealisedString) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixRealisedStringRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixRealisedStringRef(ref unsafe.Pointer) *NixRealisedString {
+	return (*NixRealisedString)(ref)
+}
+
+// NewNixRealisedString allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixRealisedString() *NixRealisedString {
+	return (*NixRealisedString)(allocNixRealisedStringMemory(1))
+}
+
+// allocNixRealisedStringMemory allocates memory for type C.nix_realised_string in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixRealisedStringMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixRealisedStringValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixRealisedStringValue = unsafe.Sizeof([1]C.nix_realised_string{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixRealisedString) PassRef() *C.nix_realised_string {
+	if x == nil {
+		x = (*NixRealisedString)(allocNixRealisedStringMemory(1))
+	}
+	return (*C.nix_realised_string)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixStringReturn) Ref() *C.nix_string_return {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_string_return)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixStringReturn) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixStringReturnRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixStringReturnRef(ref unsafe.Pointer) *NixStringReturn {
+	return (*NixStringReturn)(ref)
+}
+
+// NewNixStringReturn allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixStringReturn() *NixStringReturn {
+	return (*NixStringReturn)(allocNixStringReturnMemory(1))
+}
+
+// allocNixStringReturnMemory allocates memory for type C.nix_string_return in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixStringReturnMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixStringReturnValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixStringReturnValue = unsafe.Sizeof([1]C.nix_string_return{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixStringReturn) PassRef() *C.nix_string_return {
+	if x == nil {
+		x = (*NixStringReturn)(allocNixStringReturnMemory(1))
+	}
+	return (*C.nix_string_return)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixPrinter) Ref() *C.nix_printer {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_printer)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixPrinter) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixPrinterRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixPrinterRef(ref unsafe.Pointer) *NixPrinter {
+	return (*NixPrinter)(ref)
+}
+
+// NewNixPrinter allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixPrinter() *NixPrinter {
+	return (*NixPrinter)(allocNixPrinterMemory(1))
+}
+
+// allocNixPrinterMemory allocates memory for type C.nix_printer in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixPrinterMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixPrinterValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixPrinterValue = unsafe.Sizeof([1]C.nix_printer{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixPrinter) PassRef() *C.nix_printer {
+	if x == nil {
+		x = (*NixPrinter)(allocNixPrinterMemory(1))
+	}
+	return (*C.nix_printer)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixStringContext) Ref() *C.nix_string_context {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_string_context)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixStringContext) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixStringContextRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixStringContextRef(ref unsafe.Pointer) *NixStringContext {
+	return (*NixStringContext)(ref)
+}
+
+// NewNixStringContext allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixStringContext() *NixStringContext {
+	return (*NixStringContext)(allocNixStringContextMemory(1))
+}
+
+// allocNixStringContextMemory allocates memory for type C.nix_string_context in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixStringContextMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixStringContextValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixStringContextValue = unsafe.Sizeof([1]C.nix_string_context{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixStringContext) PassRef() *C.nix_string_context {
+	if x == nil {
+		x = (*NixStringContext)(allocNixStringContextMemory(1))
+	}
+	return (*C.nix_string_context)(unsafe.Pointer(x))
+}
+
+// allocStringItemMemory allocates memory for type C.go_nix_string_item in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocStringItemMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStringItemValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfStringItemValue = unsafe.Sizeof([1]C.go_nix_string_item{})
 
 // copyPCharBytes copies the data from Go slice as *C.char.
 func copyPCharBytes(slice *sliceHeader) (*C.char, *cgoAllocMap) {
@@ -347,6 +854,846 @@ func allocCharMemory(n int) unsafe.Pointer {
 }
 
 const sizeOfCharValue = unsafe.Sizeof([1]C.char{})
+
+// Ref returns the underlying reference to C object or nil if struct is nil.
+func (x *StringItem) Ref() *C.go_nix_string_item {
+	if x == nil {
+		return nil
+	}
+	return x.ref72036a06
+}
+
+// Free invokes alloc map's free mechanism that cleanups any allocated memory using C free.
+// Does nothing if struct is nil or has no allocation map.
+func (x *StringItem) Free() {
+	if x != nil && x.allocs72036a06 != nil {
+		x.allocs72036a06.(*cgoAllocMap).Free()
+		x.ref72036a06 = nil
+	}
+}
+
+// NewStringItemRef creates a new wrapper struct with underlying reference set to the original C object.
+// Returns nil if the provided pointer to C object is nil too.
+func NewStringItemRef(ref unsafe.Pointer) *StringItem {
+	if ref == nil {
+		return nil
+	}
+	obj := new(StringItem)
+	obj.ref72036a06 = (*C.go_nix_string_item)(unsafe.Pointer(ref))
+	return obj
+}
+
+// PassRef returns the underlying C object, otherwise it will allocate one and set its values
+// from this wrapping struct, counting allocations into an allocation map.
+func (x *StringItem) PassRef() (*C.go_nix_string_item, *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	} else if x.ref72036a06 != nil {
+		return x.ref72036a06, nil
+	}
+	mem72036a06 := allocStringItemMemory(1)
+	ref72036a06 := (*C.go_nix_string_item)(mem72036a06)
+	allocs72036a06 := new(cgoAllocMap)
+	allocs72036a06.Add(mem72036a06)
+
+	var cvalue_allocs *cgoAllocMap
+	ref72036a06.value, cvalue_allocs = copyPCharBytes((*sliceHeader)(unsafe.Pointer(&x.Value)))
+	allocs72036a06.Borrow(cvalue_allocs)
+
+	x.ref72036a06 = ref72036a06
+	x.allocs72036a06 = allocs72036a06
+	return ref72036a06, allocs72036a06
+
+}
+
+// PassValue does the same as PassRef except that it will try to dereference the returned pointer.
+func (x StringItem) PassValue() (C.go_nix_string_item, *cgoAllocMap) {
+	if x.ref72036a06 != nil {
+		return *x.ref72036a06, nil
+	}
+	ref, allocs := x.PassRef()
+	return *ref, allocs
+}
+
+// Deref uses the underlying reference to C object and fills the wrapping struct with values.
+// Do not forget to call this method whether you get a struct for C object and want to read its values.
+func (x *StringItem) Deref() {
+	if x.ref72036a06 == nil {
+		return
+	}
+	hxfc4425b := (*sliceHeader)(unsafe.Pointer(&x.Value))
+	hxfc4425b.Data = unsafe.Pointer(x.ref72036a06.value)
+	hxfc4425b.Cap = 0x7fffffff
+	// hxfc4425b.Len = ? x.Value x.ref72036a06.value
+
+}
+
+// allocStringArrayMemory allocates memory for type C.go_nix_string_array in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocStringArrayMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStringArrayValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfStringArrayValue = unsafe.Sizeof([1]C.go_nix_string_array{})
+
+const sizeOfPtr = unsafe.Sizeof(&struct{}{})
+
+// unpackSStringItem transforms a sliced Go data structure into plain C format.
+func unpackSStringItem(x []StringItem) (unpacked *C.go_nix_string_item, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	allocs = new(cgoAllocMap)
+	defer runtime.SetFinalizer(allocs, func(a *cgoAllocMap) {
+		go a.Free()
+	})
+
+	len0 := len(x)
+	mem0 := allocStringItemMemory(len0)
+	allocs.Add(mem0)
+	h0 := &sliceHeader{
+		Data: mem0,
+		Cap:  len0,
+		Len:  len0,
+	}
+	v0 := *(*[]C.go_nix_string_item)(unsafe.Pointer(h0))
+	for i0 := range x {
+		allocs0 := new(cgoAllocMap)
+		v0[i0], allocs0 = x[i0].PassValue()
+		allocs.Borrow(allocs0)
+	}
+	h := (*sliceHeader)(unsafe.Pointer(&v0))
+	unpacked = (*C.go_nix_string_item)(h.Data)
+	return
+}
+
+// packSStringItem reads sliced Go data structure out from plain C format.
+func packSStringItem(v []StringItem, ptr0 *C.go_nix_string_item) {
+	const m = 0x7fffffff
+	for i0 := range v {
+		ptr1 := (*(*[m / sizeOfStringItemValue]C.go_nix_string_item)(unsafe.Pointer(ptr0)))[i0]
+		v[i0] = *NewStringItemRef(unsafe.Pointer(&ptr1))
+	}
+}
+
+// Ref returns the underlying reference to C object or nil if struct is nil.
+func (x *StringArray) Ref() *C.go_nix_string_array {
+	if x == nil {
+		return nil
+	}
+	return x.refb20d6eae
+}
+
+// Free invokes alloc map's free mechanism that cleanups any allocated memory using C free.
+// Does nothing if struct is nil or has no allocation map.
+func (x *StringArray) Free() {
+	if x != nil && x.allocsb20d6eae != nil {
+		x.allocsb20d6eae.(*cgoAllocMap).Free()
+		x.refb20d6eae = nil
+	}
+}
+
+// NewStringArrayRef creates a new wrapper struct with underlying reference set to the original C object.
+// Returns nil if the provided pointer to C object is nil too.
+func NewStringArrayRef(ref unsafe.Pointer) *StringArray {
+	if ref == nil {
+		return nil
+	}
+	obj := new(StringArray)
+	obj.refb20d6eae = (*C.go_nix_string_array)(unsafe.Pointer(ref))
+	return obj
+}
+
+// PassRef returns the underlying C object, otherwise it will allocate one and set its values
+// from this wrapping struct, counting allocations into an allocation map.
+func (x *StringArray) PassRef() (*C.go_nix_string_array, *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	} else if x.refb20d6eae != nil {
+		return x.refb20d6eae, nil
+	}
+	memb20d6eae := allocStringArrayMemory(1)
+	refb20d6eae := (*C.go_nix_string_array)(memb20d6eae)
+	allocsb20d6eae := new(cgoAllocMap)
+	allocsb20d6eae.Add(memb20d6eae)
+
+	var citems_allocs *cgoAllocMap
+	refb20d6eae.items, citems_allocs = unpackSStringItem(x.Items)
+	allocsb20d6eae.Borrow(citems_allocs)
+
+	var clen_allocs *cgoAllocMap
+	refb20d6eae.len, clen_allocs = (C.size_t)(x.Len), cgoAllocsUnknown
+	allocsb20d6eae.Borrow(clen_allocs)
+
+	x.refb20d6eae = refb20d6eae
+	x.allocsb20d6eae = allocsb20d6eae
+	return refb20d6eae, allocsb20d6eae
+
+}
+
+// PassValue does the same as PassRef except that it will try to dereference the returned pointer.
+func (x StringArray) PassValue() (C.go_nix_string_array, *cgoAllocMap) {
+	if x.refb20d6eae != nil {
+		return *x.refb20d6eae, nil
+	}
+	ref, allocs := x.PassRef()
+	return *ref, allocs
+}
+
+// Deref uses the underlying reference to C object and fills the wrapping struct with values.
+// Do not forget to call this method whether you get a struct for C object and want to read its values.
+func (x *StringArray) Deref() {
+	if x.refb20d6eae == nil {
+		return
+	}
+	packSStringItem(x.Items, x.refb20d6eae.items)
+	x.Len = (uint64)(x.refb20d6eae.len)
+}
+
+// allocValueItemMemory allocates memory for type C.go_nix_value_item in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocValueItemMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfValueItemValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfValueItemValue = unsafe.Sizeof([1]C.go_nix_value_item{})
+
+// Ref returns the underlying reference to C object or nil if struct is nil.
+func (x *ValueItem) Ref() *C.go_nix_value_item {
+	if x == nil {
+		return nil
+	}
+	return x.refa57cd5ac
+}
+
+// Free invokes alloc map's free mechanism that cleanups any allocated memory using C free.
+// Does nothing if struct is nil or has no allocation map.
+func (x *ValueItem) Free() {
+	if x != nil && x.allocsa57cd5ac != nil {
+		x.allocsa57cd5ac.(*cgoAllocMap).Free()
+		x.refa57cd5ac = nil
+	}
+}
+
+// NewValueItemRef creates a new wrapper struct with underlying reference set to the original C object.
+// Returns nil if the provided pointer to C object is nil too.
+func NewValueItemRef(ref unsafe.Pointer) *ValueItem {
+	if ref == nil {
+		return nil
+	}
+	obj := new(ValueItem)
+	obj.refa57cd5ac = (*C.go_nix_value_item)(unsafe.Pointer(ref))
+	return obj
+}
+
+// PassRef returns the underlying C object, otherwise it will allocate one and set its values
+// from this wrapping struct, counting allocations into an allocation map.
+func (x *ValueItem) PassRef() (*C.go_nix_value_item, *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	} else if x.refa57cd5ac != nil {
+		return x.refa57cd5ac, nil
+	}
+	mema57cd5ac := allocValueItemMemory(1)
+	refa57cd5ac := (*C.go_nix_value_item)(mema57cd5ac)
+	allocsa57cd5ac := new(cgoAllocMap)
+	allocsa57cd5ac.Add(mema57cd5ac)
+
+	var cvalue_allocs *cgoAllocMap
+	refa57cd5ac.value, cvalue_allocs = *(**C.nix_value)(unsafe.Pointer(&x.Value)), cgoAllocsUnknown
+	allocsa57cd5ac.Borrow(cvalue_allocs)
+
+	x.refa57cd5ac = refa57cd5ac
+	x.allocsa57cd5ac = allocsa57cd5ac
+	return refa57cd5ac, allocsa57cd5ac
+
+}
+
+// PassValue does the same as PassRef except that it will try to dereference the returned pointer.
+func (x ValueItem) PassValue() (C.go_nix_value_item, *cgoAllocMap) {
+	if x.refa57cd5ac != nil {
+		return *x.refa57cd5ac, nil
+	}
+	ref, allocs := x.PassRef()
+	return *ref, allocs
+}
+
+// Deref uses the underlying reference to C object and fills the wrapping struct with values.
+// Do not forget to call this method whether you get a struct for C object and want to read its values.
+func (x *ValueItem) Deref() {
+	if x.refa57cd5ac == nil {
+		return
+	}
+	x.Value = (*NixValue)(unsafe.Pointer(x.refa57cd5ac.value))
+}
+
+// allocValueArrayMemory allocates memory for type C.go_nix_value_array in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocValueArrayMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfValueArrayValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfValueArrayValue = unsafe.Sizeof([1]C.go_nix_value_array{})
+
+// unpackSValueItem transforms a sliced Go data structure into plain C format.
+func unpackSValueItem(x []ValueItem) (unpacked *C.go_nix_value_item, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	allocs = new(cgoAllocMap)
+	defer runtime.SetFinalizer(allocs, func(a *cgoAllocMap) {
+		go a.Free()
+	})
+
+	len0 := len(x)
+	mem0 := allocValueItemMemory(len0)
+	allocs.Add(mem0)
+	h0 := &sliceHeader{
+		Data: mem0,
+		Cap:  len0,
+		Len:  len0,
+	}
+	v0 := *(*[]C.go_nix_value_item)(unsafe.Pointer(h0))
+	for i0 := range x {
+		allocs0 := new(cgoAllocMap)
+		v0[i0], allocs0 = x[i0].PassValue()
+		allocs.Borrow(allocs0)
+	}
+	h := (*sliceHeader)(unsafe.Pointer(&v0))
+	unpacked = (*C.go_nix_value_item)(h.Data)
+	return
+}
+
+// packSValueItem reads sliced Go data structure out from plain C format.
+func packSValueItem(v []ValueItem, ptr0 *C.go_nix_value_item) {
+	const m = 0x7fffffff
+	for i0 := range v {
+		ptr1 := (*(*[m / sizeOfValueItemValue]C.go_nix_value_item)(unsafe.Pointer(ptr0)))[i0]
+		v[i0] = *NewValueItemRef(unsafe.Pointer(&ptr1))
+	}
+}
+
+// Ref returns the underlying reference to C object or nil if struct is nil.
+func (x *ValueArray) Ref() *C.go_nix_value_array {
+	if x == nil {
+		return nil
+	}
+	return x.ref84d95be7
+}
+
+// Free invokes alloc map's free mechanism that cleanups any allocated memory using C free.
+// Does nothing if struct is nil or has no allocation map.
+func (x *ValueArray) Free() {
+	if x != nil && x.allocs84d95be7 != nil {
+		x.allocs84d95be7.(*cgoAllocMap).Free()
+		x.ref84d95be7 = nil
+	}
+}
+
+// NewValueArrayRef creates a new wrapper struct with underlying reference set to the original C object.
+// Returns nil if the provided pointer to C object is nil too.
+func NewValueArrayRef(ref unsafe.Pointer) *ValueArray {
+	if ref == nil {
+		return nil
+	}
+	obj := new(ValueArray)
+	obj.ref84d95be7 = (*C.go_nix_value_array)(unsafe.Pointer(ref))
+	return obj
+}
+
+// PassRef returns the underlying C object, otherwise it will allocate one and set its values
+// from this wrapping struct, counting allocations into an allocation map.
+func (x *ValueArray) PassRef() (*C.go_nix_value_array, *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	} else if x.ref84d95be7 != nil {
+		return x.ref84d95be7, nil
+	}
+	mem84d95be7 := allocValueArrayMemory(1)
+	ref84d95be7 := (*C.go_nix_value_array)(mem84d95be7)
+	allocs84d95be7 := new(cgoAllocMap)
+	allocs84d95be7.Add(mem84d95be7)
+
+	var citems_allocs *cgoAllocMap
+	ref84d95be7.items, citems_allocs = unpackSValueItem(x.Items)
+	allocs84d95be7.Borrow(citems_allocs)
+
+	var clen_allocs *cgoAllocMap
+	ref84d95be7.len, clen_allocs = (C.size_t)(x.Len), cgoAllocsUnknown
+	allocs84d95be7.Borrow(clen_allocs)
+
+	x.ref84d95be7 = ref84d95be7
+	x.allocs84d95be7 = allocs84d95be7
+	return ref84d95be7, allocs84d95be7
+
+}
+
+// PassValue does the same as PassRef except that it will try to dereference the returned pointer.
+func (x ValueArray) PassValue() (C.go_nix_value_array, *cgoAllocMap) {
+	if x.ref84d95be7 != nil {
+		return *x.ref84d95be7, nil
+	}
+	ref, allocs := x.PassRef()
+	return *ref, allocs
+}
+
+// Deref uses the underlying reference to C object and fills the wrapping struct with values.
+// Do not forget to call this method whether you get a struct for C object and want to read its values.
+func (x *ValueArray) Deref() {
+	if x.ref84d95be7 == nil {
+		return
+	}
+	packSValueItem(x.Items, x.ref84d95be7.items)
+	x.Len = (uint64)(x.ref84d95be7.len)
+}
+
+func (x PrimopFun) PassRef() (ref *C.go_nix_primop_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if primopFunDADD0FA9Func == nil {
+		primopFunDADD0FA9Func = x
+	}
+	return (*C.go_nix_primop_fun)(C.go_nix_primop_fun_dadd0fa9), nil
+}
+
+func (x PrimopFun) PassValue() (ref C.go_nix_primop_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if primopFunDADD0FA9Func == nil {
+		primopFunDADD0FA9Func = x
+	}
+	return (C.go_nix_primop_fun)(C.go_nix_primop_fun_dadd0fa9), nil
+}
+
+func NewPrimopFunRef(ref unsafe.Pointer) *PrimopFun {
+	return (*PrimopFun)(ref)
+}
+
+//export primopFunDADD0FA9
+func primopFunDADD0FA9(cuserData unsafe.Pointer, ccontext *C.nix_c_context, cstate *C.EvalState, cargs **C.nix_value, cret *C.nix_value) {
+	if primopFunDADD0FA9Func != nil {
+		userDatadadd0fa9 := (unsafe.Pointer)(unsafe.Pointer(cuserData))
+		contextdadd0fa9 := (*NixCContext)(unsafe.Pointer(ccontext))
+		statedadd0fa9 := (*EvalState)(unsafe.Pointer(cstate))
+		argsdadd0fa9 := (**NixValue)(unsafe.Pointer(cargs))
+		retdadd0fa9 := (*NixValue)(unsafe.Pointer(cret))
+		primopFunDADD0FA9Func(userDatadadd0fa9, contextdadd0fa9, statedadd0fa9, argsdadd0fa9, retdadd0fa9)
+		return
+	}
+	panic("callback func has not been set (race?)")
+}
+
+var primopFunDADD0FA9Func PrimopFun
+
+func (x Finalizer) PassRef() (ref *C.go_nix_finalizer, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if finalizer1FCDC1FEFunc == nil {
+		finalizer1FCDC1FEFunc = x
+	}
+	return (*C.go_nix_finalizer)(C.go_nix_finalizer_1fcdc1fe), nil
+}
+
+func (x Finalizer) PassValue() (ref C.go_nix_finalizer, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if finalizer1FCDC1FEFunc == nil {
+		finalizer1FCDC1FEFunc = x
+	}
+	return (C.go_nix_finalizer)(C.go_nix_finalizer_1fcdc1fe), nil
+}
+
+func NewFinalizerRef(ref unsafe.Pointer) *Finalizer {
+	return (*Finalizer)(ref)
+}
+
+//export finalizer1FCDC1FE
+func finalizer1FCDC1FE(cobj unsafe.Pointer, ccd unsafe.Pointer) {
+	if finalizer1FCDC1FEFunc != nil {
+		obj1fcdc1fe := (unsafe.Pointer)(unsafe.Pointer(cobj))
+		cd1fcdc1fe := (unsafe.Pointer)(unsafe.Pointer(ccd))
+		finalizer1FCDC1FEFunc(obj1fcdc1fe, cd1fcdc1fe)
+		return
+	}
+	panic("callback func has not been set (race?)")
+}
+
+var finalizer1FCDC1FEFunc Finalizer
+
+func (x ExternalPrintFun) PassRef() (ref *C.go_nix_external_print_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalPrintFunC6FEE685Func == nil {
+		externalPrintFunC6FEE685Func = x
+	}
+	return (*C.go_nix_external_print_fun)(C.go_nix_external_print_fun_c6fee685), nil
+}
+
+func (x ExternalPrintFun) PassValue() (ref C.go_nix_external_print_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalPrintFunC6FEE685Func == nil {
+		externalPrintFunC6FEE685Func = x
+	}
+	return (C.go_nix_external_print_fun)(C.go_nix_external_print_fun_c6fee685), nil
+}
+
+func NewExternalPrintFunRef(ref unsafe.Pointer) *ExternalPrintFun {
+	return (*ExternalPrintFun)(ref)
+}
+
+//export externalPrintFunC6FEE685
+func externalPrintFunC6FEE685(cself unsafe.Pointer, cprinter *C.nix_printer) {
+	if externalPrintFunC6FEE685Func != nil {
+		selfc6fee685 := (unsafe.Pointer)(unsafe.Pointer(cself))
+		printerc6fee685 := (*NixPrinter)(unsafe.Pointer(cprinter))
+		externalPrintFunC6FEE685Func(selfc6fee685, printerc6fee685)
+		return
+	}
+	panic("callback func has not been set (race?)")
+}
+
+var externalPrintFunC6FEE685Func ExternalPrintFun
+
+func (x ExternalStringFun) PassRef() (ref *C.go_nix_external_string_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalStringFun902E48C3Func == nil {
+		externalStringFun902E48C3Func = x
+	}
+	return (*C.go_nix_external_string_fun)(C.go_nix_external_string_fun_902e48c3), nil
+}
+
+func (x ExternalStringFun) PassValue() (ref C.go_nix_external_string_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalStringFun902E48C3Func == nil {
+		externalStringFun902E48C3Func = x
+	}
+	return (C.go_nix_external_string_fun)(C.go_nix_external_string_fun_902e48c3), nil
+}
+
+func NewExternalStringFunRef(ref unsafe.Pointer) *ExternalStringFun {
+	return (*ExternalStringFun)(ref)
+}
+
+//export externalStringFun902E48C3
+func externalStringFun902E48C3(cself unsafe.Pointer, cres *C.nix_string_return) {
+	if externalStringFun902E48C3Func != nil {
+		self902e48c3 := (unsafe.Pointer)(unsafe.Pointer(cself))
+		res902e48c3 := (*NixStringReturn)(unsafe.Pointer(cres))
+		externalStringFun902E48C3Func(self902e48c3, res902e48c3)
+		return
+	}
+	panic("callback func has not been set (race?)")
+}
+
+var externalStringFun902E48C3Func ExternalStringFun
+
+func (x ExternalCoerceFun) PassRef() (ref *C.go_nix_external_coerce_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalCoerceFun4CECA53FFunc == nil {
+		externalCoerceFun4CECA53FFunc = x
+	}
+	return (*C.go_nix_external_coerce_fun)(C.go_nix_external_coerce_fun_4ceca53f), nil
+}
+
+func (x ExternalCoerceFun) PassValue() (ref C.go_nix_external_coerce_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalCoerceFun4CECA53FFunc == nil {
+		externalCoerceFun4CECA53FFunc = x
+	}
+	return (C.go_nix_external_coerce_fun)(C.go_nix_external_coerce_fun_4ceca53f), nil
+}
+
+func NewExternalCoerceFunRef(ref unsafe.Pointer) *ExternalCoerceFun {
+	return (*ExternalCoerceFun)(ref)
+}
+
+//export externalCoerceFun4CECA53F
+func externalCoerceFun4CECA53F(cself unsafe.Pointer, cctx *C.nix_string_context, ccoerceMore C.int, ccopyToStore C.int, cres *C.nix_string_return) {
+	if externalCoerceFun4CECA53FFunc != nil {
+		self4ceca53f := (unsafe.Pointer)(unsafe.Pointer(cself))
+		ctx4ceca53f := (*NixStringContext)(unsafe.Pointer(cctx))
+		coerceMore4ceca53f := (int32)(ccoerceMore)
+		copyToStore4ceca53f := (int32)(ccopyToStore)
+		res4ceca53f := (*NixStringReturn)(unsafe.Pointer(cres))
+		externalCoerceFun4CECA53FFunc(self4ceca53f, ctx4ceca53f, coerceMore4ceca53f, copyToStore4ceca53f, res4ceca53f)
+		return
+	}
+	panic("callback func has not been set (race?)")
+}
+
+var externalCoerceFun4CECA53FFunc ExternalCoerceFun
+
+func (x ExternalEqualFun) PassRef() (ref *C.go_nix_external_equal_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalEqualFunAF9E7E74Func == nil {
+		externalEqualFunAF9E7E74Func = x
+	}
+	return (*C.go_nix_external_equal_fun)(C.go_nix_external_equal_fun_af9e7e74), nil
+}
+
+func (x ExternalEqualFun) PassValue() (ref C.go_nix_external_equal_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalEqualFunAF9E7E74Func == nil {
+		externalEqualFunAF9E7E74Func = x
+	}
+	return (C.go_nix_external_equal_fun)(C.go_nix_external_equal_fun_af9e7e74), nil
+}
+
+func NewExternalEqualFunRef(ref unsafe.Pointer) *ExternalEqualFun {
+	return (*ExternalEqualFun)(ref)
+}
+
+//export externalEqualFunAF9E7E74
+func externalEqualFunAF9E7E74(cself unsafe.Pointer, cother unsafe.Pointer) C.int {
+	if externalEqualFunAF9E7E74Func != nil {
+		selfaf9e7e74 := (unsafe.Pointer)(unsafe.Pointer(cself))
+		otheraf9e7e74 := (unsafe.Pointer)(unsafe.Pointer(cother))
+		retaf9e7e74 := externalEqualFunAF9E7E74Func(selfaf9e7e74, otheraf9e7e74)
+		ret, _ := (C.int)(retaf9e7e74), cgoAllocsUnknown
+		return ret
+	}
+	panic("callback func has not been set (race?)")
+}
+
+var externalEqualFunAF9E7E74Func ExternalEqualFun
+
+func (x ExternalJsonFun) PassRef() (ref *C.go_nix_external_json_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalJsonFunD703FC66Func == nil {
+		externalJsonFunD703FC66Func = x
+	}
+	return (*C.go_nix_external_json_fun)(C.go_nix_external_json_fun_d703fc66), nil
+}
+
+func (x ExternalJsonFun) PassValue() (ref C.go_nix_external_json_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalJsonFunD703FC66Func == nil {
+		externalJsonFunD703FC66Func = x
+	}
+	return (C.go_nix_external_json_fun)(C.go_nix_external_json_fun_d703fc66), nil
+}
+
+func NewExternalJsonFunRef(ref unsafe.Pointer) *ExternalJsonFun {
+	return (*ExternalJsonFun)(ref)
+}
+
+//export externalJsonFunD703FC66
+func externalJsonFunD703FC66(cself unsafe.Pointer, cstate *C.EvalState, cstrict C._Bool, cctx *C.nix_string_context, ccopyToStore C._Bool, cres *C.nix_string_return) {
+	if externalJsonFunD703FC66Func != nil {
+		selfd703fc66 := (unsafe.Pointer)(unsafe.Pointer(cself))
+		stated703fc66 := (*EvalState)(unsafe.Pointer(cstate))
+		strictd703fc66 := (bool)(cstrict)
+		ctxd703fc66 := (*NixStringContext)(unsafe.Pointer(cctx))
+		copyToStored703fc66 := (bool)(ccopyToStore)
+		resd703fc66 := (*NixStringReturn)(unsafe.Pointer(cres))
+		externalJsonFunD703FC66Func(selfd703fc66, stated703fc66, strictd703fc66, ctxd703fc66, copyToStored703fc66, resd703fc66)
+		return
+	}
+	panic("callback func has not been set (race?)")
+}
+
+var externalJsonFunD703FC66Func ExternalJsonFun
+
+func (x ExternalXmlFun) PassRef() (ref *C.go_nix_external_xml_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalXmlFun7DEA5D0Func == nil {
+		externalXmlFun7DEA5D0Func = x
+	}
+	return (*C.go_nix_external_xml_fun)(C.go_nix_external_xml_fun_7dea5d0), nil
+}
+
+func (x ExternalXmlFun) PassValue() (ref C.go_nix_external_xml_fun, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	if externalXmlFun7DEA5D0Func == nil {
+		externalXmlFun7DEA5D0Func = x
+	}
+	return (C.go_nix_external_xml_fun)(C.go_nix_external_xml_fun_7dea5d0), nil
+}
+
+func NewExternalXmlFunRef(ref unsafe.Pointer) *ExternalXmlFun {
+	return (*ExternalXmlFun)(ref)
+}
+
+//export externalXmlFun7DEA5D0
+func externalXmlFun7DEA5D0(cself unsafe.Pointer, cstate *C.EvalState, cstrict C.int, clocation C.int, cdoc unsafe.Pointer, cctx *C.nix_string_context, cdrvsSeen unsafe.Pointer, cpos C.int) {
+	if externalXmlFun7DEA5D0Func != nil {
+		self7dea5d0 := (unsafe.Pointer)(unsafe.Pointer(cself))
+		state7dea5d0 := (*EvalState)(unsafe.Pointer(cstate))
+		strict7dea5d0 := (int32)(cstrict)
+		location7dea5d0 := (int32)(clocation)
+		doc7dea5d0 := (unsafe.Pointer)(unsafe.Pointer(cdoc))
+		ctx7dea5d0 := (*NixStringContext)(unsafe.Pointer(cctx))
+		drvsSeen7dea5d0 := (unsafe.Pointer)(unsafe.Pointer(cdrvsSeen))
+		pos7dea5d0 := (int32)(cpos)
+		externalXmlFun7DEA5D0Func(self7dea5d0, state7dea5d0, strict7dea5d0, location7dea5d0, doc7dea5d0, ctx7dea5d0, drvsSeen7dea5d0, pos7dea5d0)
+		return
+	}
+	panic("callback func has not been set (race?)")
+}
+
+var externalXmlFun7DEA5D0Func ExternalXmlFun
+
+// allocExternalValueDescMemory allocates memory for type C.go_nix_external_value_desc in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocExternalValueDescMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfExternalValueDescValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfExternalValueDescValue = unsafe.Sizeof([1]C.go_nix_external_value_desc{})
+
+// Ref returns the underlying reference to C object or nil if struct is nil.
+func (x *ExternalValueDesc) Ref() *C.go_nix_external_value_desc {
+	if x == nil {
+		return nil
+	}
+	return x.refaf0e485c
+}
+
+// Free invokes alloc map's free mechanism that cleanups any allocated memory using C free.
+// Does nothing if struct is nil or has no allocation map.
+func (x *ExternalValueDesc) Free() {
+	if x != nil && x.allocsaf0e485c != nil {
+		x.allocsaf0e485c.(*cgoAllocMap).Free()
+		x.refaf0e485c = nil
+	}
+}
+
+// NewExternalValueDescRef creates a new wrapper struct with underlying reference set to the original C object.
+// Returns nil if the provided pointer to C object is nil too.
+func NewExternalValueDescRef(ref unsafe.Pointer) *ExternalValueDesc {
+	if ref == nil {
+		return nil
+	}
+	obj := new(ExternalValueDesc)
+	obj.refaf0e485c = (*C.go_nix_external_value_desc)(unsafe.Pointer(ref))
+	return obj
+}
+
+// PassRef returns the underlying C object, otherwise it will allocate one and set its values
+// from this wrapping struct, counting allocations into an allocation map.
+func (x *ExternalValueDesc) PassRef() (*C.go_nix_external_value_desc, *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	} else if x.refaf0e485c != nil {
+		return x.refaf0e485c, nil
+	}
+	memaf0e485c := allocExternalValueDescMemory(1)
+	refaf0e485c := (*C.go_nix_external_value_desc)(memaf0e485c)
+	allocsaf0e485c := new(cgoAllocMap)
+	allocsaf0e485c.Add(memaf0e485c)
+
+	var cprint_allocs *cgoAllocMap
+	refaf0e485c.print, cprint_allocs = x.Print.PassValue()
+	allocsaf0e485c.Borrow(cprint_allocs)
+
+	var cshow_type_allocs *cgoAllocMap
+	refaf0e485c.show_type, cshow_type_allocs = x.ShowType.PassValue()
+	allocsaf0e485c.Borrow(cshow_type_allocs)
+
+	var ctype_of_allocs *cgoAllocMap
+	refaf0e485c.type_of, ctype_of_allocs = x.TypeOf.PassValue()
+	allocsaf0e485c.Borrow(ctype_of_allocs)
+
+	var ccoerce_to_string_allocs *cgoAllocMap
+	refaf0e485c.coerce_to_string, ccoerce_to_string_allocs = x.CoerceToString.PassValue()
+	allocsaf0e485c.Borrow(ccoerce_to_string_allocs)
+
+	var cequal_allocs *cgoAllocMap
+	refaf0e485c.equal, cequal_allocs = x.Equal.PassValue()
+	allocsaf0e485c.Borrow(cequal_allocs)
+
+	var cprint_value_as_json_allocs *cgoAllocMap
+	refaf0e485c.print_value_as_json, cprint_value_as_json_allocs = x.PrintValueAsJson.PassValue()
+	allocsaf0e485c.Borrow(cprint_value_as_json_allocs)
+
+	var cprint_value_as_xml_allocs *cgoAllocMap
+	refaf0e485c.print_value_as_xml, cprint_value_as_xml_allocs = x.PrintValueAsXml.PassValue()
+	allocsaf0e485c.Borrow(cprint_value_as_xml_allocs)
+
+	x.refaf0e485c = refaf0e485c
+	x.allocsaf0e485c = allocsaf0e485c
+	return refaf0e485c, allocsaf0e485c
+
+}
+
+// PassValue does the same as PassRef except that it will try to dereference the returned pointer.
+func (x ExternalValueDesc) PassValue() (C.go_nix_external_value_desc, *cgoAllocMap) {
+	if x.refaf0e485c != nil {
+		return *x.refaf0e485c, nil
+	}
+	ref, allocs := x.PassRef()
+	return *ref, allocs
+}
+
+// Deref uses the underlying reference to C object and fills the wrapping struct with values.
+// Do not forget to call this method whether you get a struct for C object and want to read its values.
+func (x *ExternalValueDesc) Deref() {
+	if x.refaf0e485c == nil {
+		return
+	}
+	x.Print = *NewExternalPrintFunRef(unsafe.Pointer(&x.refaf0e485c.print))
+	x.ShowType = *NewExternalStringFunRef(unsafe.Pointer(&x.refaf0e485c.show_type))
+	x.TypeOf = *NewExternalStringFunRef(unsafe.Pointer(&x.refaf0e485c.type_of))
+	x.CoerceToString = *NewExternalCoerceFunRef(unsafe.Pointer(&x.refaf0e485c.coerce_to_string))
+	x.Equal = *NewExternalEqualFunRef(unsafe.Pointer(&x.refaf0e485c.equal))
+	x.PrintValueAsJson = *NewExternalJsonFunRef(unsafe.Pointer(&x.refaf0e485c.print_value_as_json))
+	x.PrintValueAsXml = *NewExternalXmlFunRef(unsafe.Pointer(&x.refaf0e485c.print_value_as_xml))
+}
+
+// allocStoreParamMemory allocates memory for type C.go_nix_store_param in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocStoreParamMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStoreParamValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfStoreParamValue = unsafe.Sizeof([1]C.go_nix_store_param{})
 
 // Ref returns the underlying reference to C object or nil if struct is nil.
 func (x *StoreParam) Ref() *C.go_nix_store_param {
@@ -418,15 +1765,15 @@ func (x *StoreParam) Deref() {
 	if x.ref2b71aeb == nil {
 		return
 	}
-	hxfc4425b := (*sliceHeader)(unsafe.Pointer(&x.Key))
-	hxfc4425b.Data = unsafe.Pointer(x.ref2b71aeb.key)
-	hxfc4425b.Cap = 0x7fffffff
-	// hxfc4425b.Len = ? x.Key x.ref2b71aeb.key
-
-	hxf95e7c8 := (*sliceHeader)(unsafe.Pointer(&x.Value))
-	hxf95e7c8.Data = unsafe.Pointer(x.ref2b71aeb.value)
+	hxf95e7c8 := (*sliceHeader)(unsafe.Pointer(&x.Key))
+	hxf95e7c8.Data = unsafe.Pointer(x.ref2b71aeb.key)
 	hxf95e7c8.Cap = 0x7fffffff
-	// hxf95e7c8.Len = ? x.Value x.ref2b71aeb.value
+	// hxf95e7c8.Len = ? x.Key x.ref2b71aeb.key
+
+	hxff2234b := (*sliceHeader)(unsafe.Pointer(&x.Value))
+	hxff2234b.Data = unsafe.Pointer(x.ref2b71aeb.value)
+	hxff2234b.Cap = 0x7fffffff
+	// hxff2234b.Len = ? x.Value x.ref2b71aeb.value
 
 }
 
@@ -441,8 +1788,6 @@ func allocStoreParamsMemory(n int) unsafe.Pointer {
 }
 
 const sizeOfStoreParamsValue = unsafe.Sizeof([1]C.go_nix_store_params{})
-
-const sizeOfPtr = unsafe.Sizeof(&struct{}{})
 
 // unpackSStoreParam transforms a sliced Go data structure into plain C format.
 func unpackSStoreParam(x []StoreParam) (unpacked *C.go_nix_store_param, allocs *cgoAllocMap) {

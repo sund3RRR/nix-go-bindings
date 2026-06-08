@@ -107,12 +107,12 @@ The upstream C API packages are:
   - [x] Closure traversal and copy helpers.
   - [x] Query path by hash part.
   - [x] Derivation lifecycle and JSON export: clone, free, to JSON.
-- [ ] `nix-expr-c`
-  - [ ] `nix_libexpr_init`.
-  - [ ] Evaluation state builder and state lifecycle.
-  - [ ] Expression evaluation and function calls.
-  - [ ] Value allocation, ref-counting, forcing, getters, and initializers.
-  - [ ] Lists, attrsets, primops, external values, realized strings, and GC hooks.
+- [x] `nix-expr-c`
+  - [x] `nix_libexpr_init`.
+  - [x] Evaluation state builder and state lifecycle.
+  - [x] Expression evaluation and function calls.
+  - [x] Value allocation, ref-counting, forcing, getters, and initializers.
+  - [x] Lists, attrsets, primops, external values, realized strings, and GC hooks.
 - [x] `nix-fetchers-c`
   - [x] Fetchers settings lifecycle.
 - [ ] `nix-flake-c`
