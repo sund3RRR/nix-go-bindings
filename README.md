@@ -89,25 +89,24 @@ The upstream C API packages are:
 
 ## Implementation Status
 
-- [ ] `nix-util-c`
+- [x] `nix-util-c`
   - [x] Shared `nix_c_context` and `nix_err` types are imported for store calls.
-  - [ ] Context lifecycle: `nix_c_context_create`, `nix_c_context_free`.
-  - [ ] Library initialization: `nix_libutil_init`.
-  - [ ] Settings/version/verbosity helpers.
-  - [ ] Error helpers: message, name, code, clear, set.
-  - [ ] Generated enum constants for `NIX_OK`, `NIX_ERR_*`, and `NIX_LVL_*`.
+  - [x] Context lifecycle: `CContextCreate`, `CContextFree`.
+  - [x] Library initialization: `LibutilInit`.
+  - [x] Settings/version/verbosity helpers.
+  - [x] Error helpers: message, name, code, clear, set.
+  - [x] Generated enum constants for `NIX_OK`, `NIX_ERR_*`, and `NIX_LVL_*`.
 - [ ] `nix-store-c`
   - [x] Store initialization: `LibstoreInit`, `LibstoreInitNoLoadConfig`.
   - [x] Store lifecycle: `StoreOpen`, `StoreFree`.
   - [x] Store strings: URI, store dir, version, real path.
   - [x] Store path parsing and validity checks.
+  - [x] StorePath lifecycle and helpers: clone, free, name, hash, create from parts.
   - [x] Realization callback wrapper.
   - [x] Derivation JSON import and `AddDerivation`.
   - [x] Closure traversal and copy helpers.
   - [x] Query path by hash part.
-  - [ ] StorePath lifecycle and helpers: clone, free, name, hash, create from parts.
   - [ ] Derivation lifecycle and JSON export: clone, free, to JSON.
-  - [ ] Higher-level ownership-safe Go wrappers.
 - [ ] `nix-expr-c`
   - [ ] `nix_libexpr_init`.
   - [ ] Evaluation state builder and state lifecycle.
