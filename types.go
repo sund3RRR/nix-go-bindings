@@ -17,7 +17,6 @@ package nix
 #include "cgo_helpers.h"
 */
 import "C"
-import "unsafe"
 
 // Store as declared in include/nix_api_store.h:25
 type Store C.Store
@@ -73,23 +72,15 @@ type ExternalValue C.ExternalValue
 // NixRealisedString as declared in nix-go-bindings/nix_go_expr.h:21
 type NixRealisedString C.nix_realised_string
 
-// NixStringReturn as declared in nix-go-bindings/nix_go_expr.h:22
-type NixStringReturn C.nix_string_return
-
-// NixPrinter as declared in nix-go-bindings/nix_go_expr.h:23
-type NixPrinter C.nix_printer
-
-// NixStringContext as declared in nix-go-bindings/nix_go_expr.h:24
-type NixStringContext C.nix_string_context
-
-// StringItem as declared in nix-go-bindings/nix_go_expr.h:43
+// StringItem as declared in nix-go-bindings/nix_go_expr.h:41
 type StringItem struct {
 	Value          []byte
+	Len            uint64
 	ref72036a06    *C.go_nix_string_item
 	allocs72036a06 interface{}
 }
 
-// StringArray as declared in nix-go-bindings/nix_go_expr.h:48
+// StringArray as declared in nix-go-bindings/nix_go_expr.h:46
 type StringArray struct {
 	Items          []StringItem
 	Len            uint64
@@ -97,14 +88,14 @@ type StringArray struct {
 	allocsb20d6eae interface{}
 }
 
-// ValueItem as declared in nix-go-bindings/nix_go_expr.h:52
+// ValueItem as declared in nix-go-bindings/nix_go_expr.h:50
 type ValueItem struct {
 	Value          *NixValue
 	refa57cd5ac    *C.go_nix_value_item
 	allocsa57cd5ac interface{}
 }
 
-// ValueArray as declared in nix-go-bindings/nix_go_expr.h:57
+// ValueArray as declared in nix-go-bindings/nix_go_expr.h:55
 type ValueArray struct {
 	Items          []ValueItem
 	Len            uint64
@@ -112,55 +103,20 @@ type ValueArray struct {
 	allocs84d95be7 interface{}
 }
 
-// PrimopFun type as declared in nix-go-bindings/nix_go_expr.h:59
-type PrimopFun func(userData unsafe.Pointer, context *NixCContext, state *EvalState, args **NixValue, ret *NixValue)
-
-// Finalizer type as declared in nix-go-bindings/nix_go_expr.h:67
-type Finalizer func(obj unsafe.Pointer, cd unsafe.Pointer)
-
-// ExternalPrintFun type as declared in nix-go-bindings/nix_go_expr.h:69
-type ExternalPrintFun func(self unsafe.Pointer, printer *NixPrinter)
-
-// ExternalStringFun type as declared in nix-go-bindings/nix_go_expr.h:70
-type ExternalStringFun func(self unsafe.Pointer, res *NixStringReturn)
-
-// ExternalCoerceFun type as declared in nix-go-bindings/nix_go_expr.h:71
-type ExternalCoerceFun func(self unsafe.Pointer, ctx *NixStringContext, coerceMore int32, copyToStore int32, res *NixStringReturn)
-
-// ExternalEqualFun type as declared in nix-go-bindings/nix_go_expr.h:78
-type ExternalEqualFun func(self unsafe.Pointer, other unsafe.Pointer) int32
-
-// ExternalJsonFun type as declared in nix-go-bindings/nix_go_expr.h:79
-type ExternalJsonFun func(self unsafe.Pointer, state *EvalState, strict bool, ctx *NixStringContext, copyToStore bool, res *NixStringReturn)
-
-// ExternalXmlFun type as declared in nix-go-bindings/nix_go_expr.h:87
-type ExternalXmlFun func(self unsafe.Pointer, state *EvalState, strict int32, location int32, doc unsafe.Pointer, ctx *NixStringContext, drvsSeen unsafe.Pointer, pos int32)
-
-// ExternalValueDesc as declared in nix-go-bindings/nix_go_expr.h:106
-type ExternalValueDesc struct {
-	Print            ExternalPrintFun
-	ShowType         ExternalStringFun
-	TypeOf           ExternalStringFun
-	CoerceToString   ExternalCoerceFun
-	Equal            ExternalEqualFun
-	PrintValueAsJson ExternalJsonFun
-	PrintValueAsXml  ExternalXmlFun
-	refaf0e485c      *C.go_nix_external_value_desc
-	allocsaf0e485c   interface{}
-}
-
 // FlakeReferenceResult as declared in nix-go-bindings/nix_go_flake.h:19
 type FlakeReferenceResult C.go_nix_flake_reference_result
 
-// StoreParam as declared in nix-go-bindings/nix_go_store.h:19
+// StoreParam as declared in nix-go-bindings/nix_go_store.h:21
 type StoreParam struct {
 	Key           []byte
+	KeyLen        uint64
 	Value         []byte
+	ValueLen      uint64
 	ref2b71aeb    *C.go_nix_store_param
 	allocs2b71aeb interface{}
 }
 
-// StoreParams as declared in nix-go-bindings/nix_go_store.h:24
+// StoreParams as declared in nix-go-bindings/nix_go_store.h:26
 type StoreParams struct {
 	Items          []StoreParam
 	Len            uint64
@@ -168,15 +124,15 @@ type StoreParams struct {
 	allocs2cd443e1 interface{}
 }
 
-// StorePathHashPart as declared in nix-go-bindings/nix_go_store.h:28
+// StorePathHashPart as declared in nix-go-bindings/nix_go_store.h:30
 type StorePathHashPart struct {
 	Bytes          [20]byte
 	reff3a80ce6    *C.go_nix_store_path_hash_part
 	allocsf3a80ce6 interface{}
 }
 
-// StoreRealiseCallback type as declared in nix-go-bindings/nix_go_store.h:30
-type StoreRealiseCallback func(userdata unsafe.Pointer, outname string, out *StorePath)
+// StoreRealiseResults as declared in nix-go-bindings/nix_go_store.h:32
+type StoreRealiseResults C.go_nix_store_realise_results
 
-// StorePathCallback type as declared in nix-go-bindings/nix_go_store.h:36
-type StorePathCallback func(context *NixCContext, userdata unsafe.Pointer, storePath *StorePath)
+// StorePathArray as declared in nix-go-bindings/nix_go_store.h:33
+type StorePathArray C.go_nix_store_path_array

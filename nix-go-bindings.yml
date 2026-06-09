@@ -46,8 +46,8 @@ TRANSLATOR:
       - { action: accept, from: "^go_nix_value_item$" }
       - { action: accept, from: "^go_nix_value_array$" }
       - { action: accept, from: "^go_nix_value_type$" }
-      - { action: accept, from: "^go_nix_(primop_fun|finalizer)$" }
-      - { action: accept, from: "^go_nix_external_" }
+      - { action: accept, from: "^go_nix_store_realise_results$" }
+      - { action: accept, from: "^go_nix_store_path_array$" }
       - { action: accept, from: "^nix_c_context$" }
       - { action: accept, from: "^nix_derivation$" }
       - { action: accept, from: "^nix_fetchers_settings$" }
@@ -65,7 +65,6 @@ TRANSLATOR:
       - { action: accept, from: "^PrimOp$" }
       - { action: accept, from: "^ExternalValue$" }
       - { action: accept, from: "^nix_realised_string$" }
-      - { action: accept, from: "^nix_(string_return|printer|string_context)$" }
       - { action: accept, from: "^nix_err$" }
       - { action: accept, from: "^nix_verbosity$" }
       - { action: accept, from: "^NIX_(OK|ERR_|LVL_)" }
@@ -117,6 +116,8 @@ TRANSLATOR:
   MemTips:
     - { target: "^Store$", self: raw }
     - { target: "^StorePath$", self: raw }
+    - { target: "^go_nix_store_realise_results$", self: raw }
+    - { target: "^go_nix_store_path_array$", self: raw }
     - { target: "^nix_c_context$", self: raw }
     - { target: "^nix_derivation$", self: raw }
     - { target: "^nix_fetchers_settings$", self: raw }
@@ -134,9 +135,6 @@ TRANSLATOR:
     - { target: "^PrimOp$", self: raw }
     - { target: "^ExternalValue$", self: raw }
     - { target: "^nix_realised_string$", self: raw }
-    - { target: "^nix_string_return$", self: raw }
-    - { target: "^nix_printer$", self: raw }
-    - { target: "^nix_string_context$", self: raw }
 
   PtrTips:
     function:

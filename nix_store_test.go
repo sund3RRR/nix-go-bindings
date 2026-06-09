@@ -307,3 +307,77 @@ func TestNixStoreCopyPathRejectsNilArguments(t *testing.T) {
 		t.Fatal("ErrMsg after invalid StoreCopyPath returned an empty string")
 	}
 }
+
+func TestNixStoreCallbackBackedAdapters(t *testing.T) {
+	ctx := newTestContext(t)
+	store := newTestStore(t, ctx)
+
+	const rawPath = "/nix/store/00000000000000000000000000000000-demo"
+	path := StoreParsePath(ctx, store, rawPath)
+	if path == nil {
+		t.Fatalf("StoreParsePath returned nil: err=%v msg=%q", ErrCode(ctx), errMsgString(t, ctx))
+	}
+	t.Cleanup(func() {
+		StorePathFree(path)
+	})
+
+	if got := StoreRealiseResultsCount(nil); got != 0 {
+		t.Fatalf("StoreRealiseResultsCount(nil) = %d, want 0", got)
+	}
+	if got := StoreRealiseResultsOutname(nil, 0); got != nil {
+		StringFree(got)
+		t.Fatal("StoreRealiseResultsOutname(nil, 0) returned non-nil")
+	}
+	if got := StoreRealiseResultsPathClone(nil, 0); got != nil {
+		StorePathFree(got)
+		t.Fatal("StoreRealiseResultsPathClone(nil, 0) returned non-nil")
+	}
+	StoreRealiseResultsFree(nil)
+
+	results := StoreRealiseToArray(ctx, store, path)
+	if results != nil {
+		t.Cleanup(func() {
+			StoreRealiseResultsFree(results)
+		})
+		for i := uint64(0); i < StoreRealiseResultsCount(results); i++ {
+			outname := StoreRealiseResultsOutname(results, i)
+			if outname == nil {
+				t.Fatalf("StoreRealiseResultsOutname(%d) returned nil", i)
+			}
+			StringFree(outname)
+
+			clone := StoreRealiseResultsPathClone(results, i)
+			if clone == nil {
+				t.Fatalf("StoreRealiseResultsPathClone(%d) returned nil", i)
+			}
+			StorePathFree(clone)
+		}
+	} else {
+		ClearErr(ctx)
+	}
+
+	if got := StorePathArrayCount(nil); got != 0 {
+		t.Fatalf("StorePathArrayCount(nil) = %d, want 0", got)
+	}
+	if got := StorePathArrayPathClone(nil, 0); got != nil {
+		StorePathFree(got)
+		t.Fatal("StorePathArrayPathClone(nil, 0) returned non-nil")
+	}
+	StorePathArrayFree(nil)
+
+	paths := StoreGetFsClosureArray(ctx, store, path, false, false, false)
+	if paths == nil {
+		ClearErr(ctx)
+		return
+	}
+	t.Cleanup(func() {
+		StorePathArrayFree(paths)
+	})
+	for i := uint64(0); i < StorePathArrayCount(paths); i++ {
+		clone := StorePathArrayPathClone(paths, i)
+		if clone == nil {
+			t.Fatalf("StorePathArrayPathClone(%d) returned nil", i)
+		}
+		StorePathFree(clone)
+	}
+}

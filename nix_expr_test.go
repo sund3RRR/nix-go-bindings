@@ -5,7 +5,6 @@ import (
 	"sort"
 	"strings"
 	"testing"
-	"unsafe"
 )
 
 func newTestExprState(t *testing.T) (*NixCContext, *Store, *EvalState) {
@@ -64,7 +63,7 @@ func evalTestExpr(t *testing.T, ctx *NixCContext, state *EvalState, expr string)
 func exprStringArray(values ...string) StringArray {
 	items := make([]StringItem, len(values))
 	for i, value := range values {
-		items[i] = StringItem{Value: append([]byte(value), 0)}
+		items[i] = StringItem{Value: []byte(value), Len: uint64(len(value))}
 	}
 	return StringArray{Items: items, Len: uint64(len(items))}
 }
@@ -88,6 +87,9 @@ func TestNixExprInitStateBuilderAndStateLifecycle(t *testing.T) {
 	})
 	if got := EvalStateBuilderSetLookupPath(ctx, builder, StringArray{}); got != NixOk {
 		t.Fatalf("EvalStateBuilderSetLookupPath = %v, want %v: %s", got, NixOk, errMsgString(t, ctx))
+	}
+	if got := EvalStateBuilderSetLookupPath(ctx, builder, exprStringArray("nixpkgs=/no-such-path")); got != NixOk {
+		t.Fatalf("EvalStateBuilderSetLookupPath(non-NUL item) = %v, want %v: %s", got, NixOk, errMsgString(t, ctx))
 	}
 
 	state := EvalStateBuild(ctx, builder)
@@ -300,6 +302,24 @@ func TestNixExprInitializersBuildersAndCallMulti(t *testing.T) {
 	}
 }
 
+func TestNixExprValueCallMultiRejectsNilArrayItem(t *testing.T) {
+	ctx, _, state := newTestExprState(t)
+
+	fn := evalTestExpr(t, ctx, state, "x: x")
+	result := allocTestValue(t, ctx, state)
+	args := ValueArray{
+		Items: []ValueItem{{Value: nil}},
+		Len:   1,
+	}
+	if got := ValueCallMulti(ctx, state, fn, args, result); got == NixOk {
+		t.Fatal("ValueCallMulti accepted a nil ValueArray item")
+	}
+	if msg := errMsgString(t, ctx); strings.TrimSpace(msg) == "" {
+		t.Fatal("ErrMsg after nil ValueArray item returned an empty string")
+	}
+	ClearErr(ctx)
+}
+
 func TestNixExprRealisedString(t *testing.T) {
 	ctx, _, state := newTestExprState(t)
 
@@ -336,47 +356,4 @@ func TestNixExprInvalidExpressionSetsContextError(t *testing.T) {
 	if got := ErrCode(ctx); got != NixOk {
 		t.Fatalf("ErrCode after ClearErr = %v, want %v", got, NixOk)
 	}
-}
-
-func TestNixExprExternalValueAndPrimopLifecycle(t *testing.T) {
-	ctx, _, _ := newTestExprState(t)
-
-	desc := ExternalValueDesc{}
-	t.Cleanup(func() {
-		desc.Free()
-	})
-	var content unsafe.Pointer
-	external := CreateExternalValue(ctx, &desc, content)
-	if external == nil {
-		t.Fatalf("CreateExternalValue returned nil: err=%v msg=%q", ErrCode(ctx), errMsgString(t, ctx))
-	}
-	t.Cleanup(func() {
-		if got := GcDecref(ctx, unsafe.Pointer(external)); got != NixOk {
-			t.Fatalf("GcDecref(external) = %v, want %v: %s", got, NixOk, errMsgString(t, ctx))
-		}
-	})
-	if got := GetExternalValueContent(ctx, external); got != content {
-		t.Fatalf("GetExternalValueContent = %v, want %v", got, content)
-	}
-
-	primop := AllocPrimop(
-		ctx,
-		PrimopFun(func(_ unsafe.Pointer, primCtx *NixCContext, _ *EvalState, _ **NixValue, ret *NixValue) {
-			SetErrMsg(primCtx, NixErrUnknown, "unexpected primop invocation")
-			_ = ret
-		}),
-		0,
-		"go-bindings-test-primop",
-		exprStringArray(),
-		"test primop",
-		nil,
-	)
-	if primop == nil {
-		t.Fatalf("AllocPrimop returned nil: err=%v msg=%q", ErrCode(ctx), errMsgString(t, ctx))
-	}
-	t.Cleanup(func() {
-		if got := GcDecref(ctx, unsafe.Pointer(primop)); got != NixOk {
-			t.Fatalf("GcDecref(primop) = %v, want %v: %s", got, NixOk, errMsgString(t, ctx))
-		}
-	})
 }

@@ -22,7 +22,7 @@ import (
 	"unsafe"
 )
 
-// LibexprInit function as declared in nix-go-bindings/nix_go_expr.h:108
+// LibexprInit function as declared in nix-go-bindings/nix_go_expr.h:57
 func LibexprInit(ctx *NixCContext) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	__ret := C.go_nix_libexpr_init(cctx)
@@ -31,7 +31,7 @@ func LibexprInit(ctx *NixCContext) NixErr {
 	return __v
 }
 
-// ExprEvalFromString function as declared in nix-go-bindings/nix_go_expr.h:110
+// ExprEvalFromString function as declared in nix-go-bindings/nix_go_expr.h:59
 func ExprEvalFromString(ctx *NixCContext, state *EvalState, expr string, path string, value *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstate, cstateAllocMap := (*C.EvalState)(unsafe.Pointer(state)), cgoAllocsUnknown
@@ -48,7 +48,7 @@ func ExprEvalFromString(ctx *NixCContext, state *EvalState, expr string, path st
 	return __v
 }
 
-// ValueCall function as declared in nix-go-bindings/nix_go_expr.h:117
+// ValueCall function as declared in nix-go-bindings/nix_go_expr.h:66
 func ValueCall(ctx *NixCContext, state *EvalState, fn *NixValue, arg *NixValue, value *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstate, cstateAllocMap := (*C.EvalState)(unsafe.Pointer(state)), cgoAllocsUnknown
@@ -65,7 +65,7 @@ func ValueCall(ctx *NixCContext, state *EvalState, fn *NixValue, arg *NixValue, 
 	return __v
 }
 
-// ValueCallMulti function as declared in nix-go-bindings/nix_go_expr.h:124
+// ValueCallMulti function as declared in nix-go-bindings/nix_go_expr.h:73
 func ValueCallMulti(ctx *NixCContext, state *EvalState, fn *NixValue, args ValueArray, value *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstate, cstateAllocMap := (*C.EvalState)(unsafe.Pointer(state)), cgoAllocsUnknown
@@ -82,7 +82,7 @@ func ValueCallMulti(ctx *NixCContext, state *EvalState, fn *NixValue, args Value
 	return __v
 }
 
-// ValueForce function as declared in nix-go-bindings/nix_go_expr.h:131
+// ValueForce function as declared in nix-go-bindings/nix_go_expr.h:80
 func ValueForce(ctx *NixCContext, state *EvalState, value *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstate, cstateAllocMap := (*C.EvalState)(unsafe.Pointer(state)), cgoAllocsUnknown
@@ -95,7 +95,7 @@ func ValueForce(ctx *NixCContext, state *EvalState, value *NixValue) NixErr {
 	return __v
 }
 
-// ValueForceDeep function as declared in nix-go-bindings/nix_go_expr.h:132
+// ValueForceDeep function as declared in nix-go-bindings/nix_go_expr.h:81
 func ValueForceDeep(ctx *NixCContext, state *EvalState, value *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstate, cstateAllocMap := (*C.EvalState)(unsafe.Pointer(state)), cgoAllocsUnknown
@@ -108,7 +108,7 @@ func ValueForceDeep(ctx *NixCContext, state *EvalState, value *NixValue) NixErr 
 	return __v
 }
 
-// EvalStateBuilderNew function as declared in nix-go-bindings/nix_go_expr.h:134
+// EvalStateBuilderNew function as declared in nix-go-bindings/nix_go_expr.h:83
 func EvalStateBuilderNew(ctx *NixCContext, store *Store) *NixEvalStateBuilder {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -119,7 +119,7 @@ func EvalStateBuilderNew(ctx *NixCContext, store *Store) *NixEvalStateBuilder {
 	return __v
 }
 
-// EvalStateBuilderLoad function as declared in nix-go-bindings/nix_go_expr.h:135
+// EvalStateBuilderLoad function as declared in nix-go-bindings/nix_go_expr.h:84
 func EvalStateBuilderLoad(ctx *NixCContext, builder *NixEvalStateBuilder) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cbuilder, cbuilderAllocMap := (*C.nix_eval_state_builder)(unsafe.Pointer(builder)), cgoAllocsUnknown
@@ -130,7 +130,7 @@ func EvalStateBuilderLoad(ctx *NixCContext, builder *NixEvalStateBuilder) NixErr
 	return __v
 }
 
-// EvalStateBuilderSetLookupPath function as declared in nix-go-bindings/nix_go_expr.h:136
+// EvalStateBuilderSetLookupPath function as declared in nix-go-bindings/nix_go_expr.h:85
 func EvalStateBuilderSetLookupPath(ctx *NixCContext, builder *NixEvalStateBuilder, lookupPath StringArray) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cbuilder, cbuilderAllocMap := (*C.nix_eval_state_builder)(unsafe.Pointer(builder)), cgoAllocsUnknown
@@ -143,7 +143,7 @@ func EvalStateBuilderSetLookupPath(ctx *NixCContext, builder *NixEvalStateBuilde
 	return __v
 }
 
-// EvalStateBuild function as declared in nix-go-bindings/nix_go_expr.h:141
+// EvalStateBuild function as declared in nix-go-bindings/nix_go_expr.h:90
 func EvalStateBuild(ctx *NixCContext, builder *NixEvalStateBuilder) *EvalState {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cbuilder, cbuilderAllocMap := (*C.nix_eval_state_builder)(unsafe.Pointer(builder)), cgoAllocsUnknown
@@ -154,14 +154,14 @@ func EvalStateBuild(ctx *NixCContext, builder *NixEvalStateBuilder) *EvalState {
 	return __v
 }
 
-// EvalStateBuilderFree function as declared in nix-go-bindings/nix_go_expr.h:142
+// EvalStateBuilderFree function as declared in nix-go-bindings/nix_go_expr.h:91
 func EvalStateBuilderFree(builder *NixEvalStateBuilder) {
 	cbuilder, cbuilderAllocMap := (*C.nix_eval_state_builder)(unsafe.Pointer(builder)), cgoAllocsUnknown
 	C.go_nix_eval_state_builder_free(cbuilder)
 	runtime.KeepAlive(cbuilderAllocMap)
 }
 
-// StateCreate function as declared in nix-go-bindings/nix_go_expr.h:143
+// StateCreate function as declared in nix-go-bindings/nix_go_expr.h:92
 func StateCreate(ctx *NixCContext, lookupPath StringArray, store *Store) *EvalState {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	clookupPath, clookupPathAllocMap := lookupPath.PassValue()
@@ -174,14 +174,14 @@ func StateCreate(ctx *NixCContext, lookupPath StringArray, store *Store) *EvalSt
 	return __v
 }
 
-// StateFree function as declared in nix-go-bindings/nix_go_expr.h:144
+// StateFree function as declared in nix-go-bindings/nix_go_expr.h:93
 func StateFree(state *EvalState) {
 	cstate, cstateAllocMap := (*C.EvalState)(unsafe.Pointer(state)), cgoAllocsUnknown
 	C.go_nix_state_free(cstate)
 	runtime.KeepAlive(cstateAllocMap)
 }
 
-// GcIncref function as declared in nix-go-bindings/nix_go_expr.h:146
+// GcIncref function as declared in nix-go-bindings/nix_go_expr.h:95
 func GcIncref(ctx *NixCContext, object unsafe.Pointer) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cobject, cobjectAllocMap := object, cgoAllocsUnknown
@@ -192,7 +192,7 @@ func GcIncref(ctx *NixCContext, object unsafe.Pointer) NixErr {
 	return __v
 }
 
-// GcDecref function as declared in nix-go-bindings/nix_go_expr.h:147
+// GcDecref function as declared in nix-go-bindings/nix_go_expr.h:96
 func GcDecref(ctx *NixCContext, object unsafe.Pointer) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cobject, cobjectAllocMap := object, cgoAllocsUnknown
@@ -203,71 +203,12 @@ func GcDecref(ctx *NixCContext, object unsafe.Pointer) NixErr {
 	return __v
 }
 
-// GcNow function as declared in nix-go-bindings/nix_go_expr.h:148
+// GcNow function as declared in nix-go-bindings/nix_go_expr.h:97
 func GcNow() {
 	C.go_nix_gc_now()
 }
 
-// GcRegisterFinalizer function as declared in nix-go-bindings/nix_go_expr.h:149
-func GcRegisterFinalizer(obj unsafe.Pointer, cd unsafe.Pointer, finalizer Finalizer) {
-	cobj, cobjAllocMap := obj, cgoAllocsUnknown
-	ccd, ccdAllocMap := cd, cgoAllocsUnknown
-	cfinalizer, cfinalizerAllocMap := finalizer.PassValue()
-	C.go_nix_gc_register_finalizer(cobj, ccd, cfinalizer)
-	runtime.KeepAlive(cfinalizerAllocMap)
-	runtime.KeepAlive(ccdAllocMap)
-	runtime.KeepAlive(cobjAllocMap)
-}
-
-// SetStringReturn function as declared in nix-go-bindings/nix_go_expr.h:151
-func SetStringReturn(str *NixStringReturn, c string) {
-	cstr, cstrAllocMap := (*C.nix_string_return)(unsafe.Pointer(str)), cgoAllocsUnknown
-	cc, ccAllocMap := unpackPCharString(c)
-	C.go_nix_set_string_return(cstr, cc)
-	runtime.KeepAlive(ccAllocMap)
-	runtime.KeepAlive(cstrAllocMap)
-}
-
-// ExternalPrint function as declared in nix-go-bindings/nix_go_expr.h:152
-func ExternalPrint(ctx *NixCContext, printer *NixPrinter, str string) NixErr {
-	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
-	cprinter, cprinterAllocMap := (*C.nix_printer)(unsafe.Pointer(printer)), cgoAllocsUnknown
-	cstr, cstrAllocMap := unpackPCharString(str)
-	__ret := C.go_nix_external_print(cctx, cprinter, cstr)
-	runtime.KeepAlive(cstrAllocMap)
-	runtime.KeepAlive(cprinterAllocMap)
-	runtime.KeepAlive(cctxAllocMap)
-	__v := (NixErr)(__ret)
-	return __v
-}
-
-// ExternalAddStringContext function as declared in nix-go-bindings/nix_go_expr.h:153
-func ExternalAddStringContext(ctx *NixCContext, stringContext *NixStringContext, c string) NixErr {
-	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
-	cstringContext, cstringContextAllocMap := (*C.nix_string_context)(unsafe.Pointer(stringContext)), cgoAllocsUnknown
-	cc, ccAllocMap := unpackPCharString(c)
-	__ret := C.go_nix_external_add_string_context(cctx, cstringContext, cc)
-	runtime.KeepAlive(ccAllocMap)
-	runtime.KeepAlive(cstringContextAllocMap)
-	runtime.KeepAlive(cctxAllocMap)
-	__v := (NixErr)(__ret)
-	return __v
-}
-
-// CreateExternalValue function as declared in nix-go-bindings/nix_go_expr.h:158
-func CreateExternalValue(ctx *NixCContext, desc *ExternalValueDesc, value unsafe.Pointer) *ExternalValue {
-	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
-	cdesc, cdescAllocMap := desc.PassRef()
-	cvalue, cvalueAllocMap := value, cgoAllocsUnknown
-	__ret := C.go_nix_create_external_value(cctx, cdesc, cvalue)
-	runtime.KeepAlive(cvalueAllocMap)
-	runtime.KeepAlive(cdescAllocMap)
-	runtime.KeepAlive(cctxAllocMap)
-	__v := *(**ExternalValue)(unsafe.Pointer(&__ret))
-	return __v
-}
-
-// GetExternalValueContent function as declared in nix-go-bindings/nix_go_expr.h:163
+// GetExternalValueContent function as declared in nix-go-bindings/nix_go_expr.h:98
 func GetExternalValueContent(ctx *NixCContext, external *ExternalValue) unsafe.Pointer {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cexternal, cexternalAllocMap := (*C.ExternalValue)(unsafe.Pointer(external)), cgoAllocsUnknown
@@ -278,39 +219,7 @@ func GetExternalValueContent(ctx *NixCContext, external *ExternalValue) unsafe.P
 	return __v
 }
 
-// AllocPrimop function as declared in nix-go-bindings/nix_go_expr.h:165
-func AllocPrimop(ctx *NixCContext, fun PrimopFun, arity int32, name string, args StringArray, doc string, userData unsafe.Pointer) *PrimOp {
-	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
-	cfun, cfunAllocMap := fun.PassValue()
-	carity, carityAllocMap := (C.int)(arity), cgoAllocsUnknown
-	cname, cnameAllocMap := unpackPCharString(name)
-	cargs, cargsAllocMap := args.PassValue()
-	cdoc, cdocAllocMap := unpackPCharString(doc)
-	cuserData, cuserDataAllocMap := userData, cgoAllocsUnknown
-	__ret := C.go_nix_alloc_primop(cctx, cfun, carity, cname, cargs, cdoc, cuserData)
-	runtime.KeepAlive(cuserDataAllocMap)
-	runtime.KeepAlive(cdocAllocMap)
-	runtime.KeepAlive(cargsAllocMap)
-	runtime.KeepAlive(cnameAllocMap)
-	runtime.KeepAlive(carityAllocMap)
-	runtime.KeepAlive(cfunAllocMap)
-	runtime.KeepAlive(cctxAllocMap)
-	__v := *(**PrimOp)(unsafe.Pointer(&__ret))
-	return __v
-}
-
-// RegisterPrimop function as declared in nix-go-bindings/nix_go_expr.h:174
-func RegisterPrimop(ctx *NixCContext, primOp *PrimOp) NixErr {
-	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
-	cprimOp, cprimOpAllocMap := (*C.PrimOp)(unsafe.Pointer(primOp)), cgoAllocsUnknown
-	__ret := C.go_nix_register_primop(cctx, cprimOp)
-	runtime.KeepAlive(cprimOpAllocMap)
-	runtime.KeepAlive(cctxAllocMap)
-	__v := (NixErr)(__ret)
-	return __v
-}
-
-// AllocValue function as declared in nix-go-bindings/nix_go_expr.h:176
+// AllocValue function as declared in nix-go-bindings/nix_go_expr.h:100
 func AllocValue(ctx *NixCContext, state *EvalState) *NixValue {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstate, cstateAllocMap := (*C.EvalState)(unsafe.Pointer(state)), cgoAllocsUnknown
@@ -321,7 +230,7 @@ func AllocValue(ctx *NixCContext, state *EvalState) *NixValue {
 	return __v
 }
 
-// ValueIncref function as declared in nix-go-bindings/nix_go_expr.h:177
+// ValueIncref function as declared in nix-go-bindings/nix_go_expr.h:101
 func ValueIncref(ctx *NixCContext, value *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -332,7 +241,7 @@ func ValueIncref(ctx *NixCContext, value *NixValue) NixErr {
 	return __v
 }
 
-// ValueDecref function as declared in nix-go-bindings/nix_go_expr.h:178
+// ValueDecref function as declared in nix-go-bindings/nix_go_expr.h:102
 func ValueDecref(ctx *NixCContext, value *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -343,7 +252,7 @@ func ValueDecref(ctx *NixCContext, value *NixValue) NixErr {
 	return __v
 }
 
-// GetType function as declared in nix-go-bindings/nix_go_expr.h:179
+// GetType function as declared in nix-go-bindings/nix_go_expr.h:103
 func GetType(ctx *NixCContext, value *NixValue) ValueType {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -354,7 +263,7 @@ func GetType(ctx *NixCContext, value *NixValue) ValueType {
 	return __v
 }
 
-// GetTypename function as declared in nix-go-bindings/nix_go_expr.h:180
+// GetTypename function as declared in nix-go-bindings/nix_go_expr.h:104
 func GetTypename(ctx *NixCContext, value *NixValue) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -365,7 +274,7 @@ func GetTypename(ctx *NixCContext, value *NixValue) *byte {
 	return __v
 }
 
-// GetBool function as declared in nix-go-bindings/nix_go_expr.h:181
+// GetBool function as declared in nix-go-bindings/nix_go_expr.h:105
 func GetBool(ctx *NixCContext, value *NixValue) bool {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -376,7 +285,7 @@ func GetBool(ctx *NixCContext, value *NixValue) bool {
 	return __v
 }
 
-// GetString function as declared in nix-go-bindings/nix_go_expr.h:182
+// GetString function as declared in nix-go-bindings/nix_go_expr.h:106
 func GetString(ctx *NixCContext, value *NixValue) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -387,7 +296,7 @@ func GetString(ctx *NixCContext, value *NixValue) *byte {
 	return __v
 }
 
-// GetPathString function as declared in nix-go-bindings/nix_go_expr.h:183
+// GetPathString function as declared in nix-go-bindings/nix_go_expr.h:107
 func GetPathString(ctx *NixCContext, value *NixValue) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -398,7 +307,7 @@ func GetPathString(ctx *NixCContext, value *NixValue) *byte {
 	return __v
 }
 
-// GetListSize function as declared in nix-go-bindings/nix_go_expr.h:184
+// GetListSize function as declared in nix-go-bindings/nix_go_expr.h:108
 func GetListSize(ctx *NixCContext, value *NixValue) uint32 {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -409,7 +318,7 @@ func GetListSize(ctx *NixCContext, value *NixValue) uint32 {
 	return __v
 }
 
-// GetAttrsSize function as declared in nix-go-bindings/nix_go_expr.h:185
+// GetAttrsSize function as declared in nix-go-bindings/nix_go_expr.h:109
 func GetAttrsSize(ctx *NixCContext, value *NixValue) uint32 {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -420,7 +329,7 @@ func GetAttrsSize(ctx *NixCContext, value *NixValue) uint32 {
 	return __v
 }
 
-// GetFloat function as declared in nix-go-bindings/nix_go_expr.h:186
+// GetFloat function as declared in nix-go-bindings/nix_go_expr.h:110
 func GetFloat(ctx *NixCContext, value *NixValue) float64 {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -431,7 +340,7 @@ func GetFloat(ctx *NixCContext, value *NixValue) float64 {
 	return __v
 }
 
-// GetInt function as declared in nix-go-bindings/nix_go_expr.h:187
+// GetInt function as declared in nix-go-bindings/nix_go_expr.h:111
 func GetInt(ctx *NixCContext, value *NixValue) int64 {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -442,7 +351,7 @@ func GetInt(ctx *NixCContext, value *NixValue) int64 {
 	return __v
 }
 
-// GetExternal function as declared in nix-go-bindings/nix_go_expr.h:188
+// GetExternal function as declared in nix-go-bindings/nix_go_expr.h:112
 func GetExternal(ctx *NixCContext, value *NixValue) *ExternalValue {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -453,7 +362,7 @@ func GetExternal(ctx *NixCContext, value *NixValue) *ExternalValue {
 	return __v
 }
 
-// GetListByidx function as declared in nix-go-bindings/nix_go_expr.h:189
+// GetListByidx function as declared in nix-go-bindings/nix_go_expr.h:113
 func GetListByidx(ctx *NixCContext, value *NixValue, state *EvalState, ix uint32) *NixValue {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -468,7 +377,7 @@ func GetListByidx(ctx *NixCContext, value *NixValue, state *EvalState, ix uint32
 	return __v
 }
 
-// GetListByidxLazy function as declared in nix-go-bindings/nix_go_expr.h:195
+// GetListByidxLazy function as declared in nix-go-bindings/nix_go_expr.h:119
 func GetListByidxLazy(ctx *NixCContext, value *NixValue, state *EvalState, ix uint32) *NixValue {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -483,7 +392,7 @@ func GetListByidxLazy(ctx *NixCContext, value *NixValue, state *EvalState, ix ui
 	return __v
 }
 
-// GetAttrByname function as declared in nix-go-bindings/nix_go_expr.h:201
+// GetAttrByname function as declared in nix-go-bindings/nix_go_expr.h:125
 func GetAttrByname(ctx *NixCContext, value *NixValue, state *EvalState, name string) *NixValue {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -498,7 +407,7 @@ func GetAttrByname(ctx *NixCContext, value *NixValue, state *EvalState, name str
 	return __v
 }
 
-// GetAttrBynameLazy function as declared in nix-go-bindings/nix_go_expr.h:207
+// GetAttrBynameLazy function as declared in nix-go-bindings/nix_go_expr.h:131
 func GetAttrBynameLazy(ctx *NixCContext, value *NixValue, state *EvalState, name string) *NixValue {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -513,7 +422,7 @@ func GetAttrBynameLazy(ctx *NixCContext, value *NixValue, state *EvalState, name
 	return __v
 }
 
-// HasAttrByname function as declared in nix-go-bindings/nix_go_expr.h:213
+// HasAttrByname function as declared in nix-go-bindings/nix_go_expr.h:137
 func HasAttrByname(ctx *NixCContext, value *NixValue, state *EvalState, name string) bool {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -528,7 +437,7 @@ func HasAttrByname(ctx *NixCContext, value *NixValue, state *EvalState, name str
 	return __v
 }
 
-// GetAttrByidx function as declared in nix-go-bindings/nix_go_expr.h:219
+// GetAttrByidx function as declared in nix-go-bindings/nix_go_expr.h:143
 func GetAttrByidx(ctx *NixCContext, value *NixValue, state *EvalState, i uint32) *NixValue {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -543,7 +452,7 @@ func GetAttrByidx(ctx *NixCContext, value *NixValue, state *EvalState, i uint32)
 	return __v
 }
 
-// GetAttrByidxLazy function as declared in nix-go-bindings/nix_go_expr.h:225
+// GetAttrByidxLazy function as declared in nix-go-bindings/nix_go_expr.h:149
 func GetAttrByidxLazy(ctx *NixCContext, value *NixValue, state *EvalState, i uint32) *NixValue {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -558,7 +467,7 @@ func GetAttrByidxLazy(ctx *NixCContext, value *NixValue, state *EvalState, i uin
 	return __v
 }
 
-// GetAttrNameByidx function as declared in nix-go-bindings/nix_go_expr.h:231
+// GetAttrNameByidx function as declared in nix-go-bindings/nix_go_expr.h:155
 func GetAttrNameByidx(ctx *NixCContext, value *NixValue, state *EvalState, i uint32) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -573,7 +482,7 @@ func GetAttrNameByidx(ctx *NixCContext, value *NixValue, state *EvalState, i uin
 	return __v
 }
 
-// InitBool function as declared in nix-go-bindings/nix_go_expr.h:238
+// InitBool function as declared in nix-go-bindings/nix_go_expr.h:162
 func InitBool(ctx *NixCContext, value *NixValue, b bool) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -586,7 +495,7 @@ func InitBool(ctx *NixCContext, value *NixValue, b bool) NixErr {
 	return __v
 }
 
-// InitString function as declared in nix-go-bindings/nix_go_expr.h:239
+// InitString function as declared in nix-go-bindings/nix_go_expr.h:163
 func InitString(ctx *NixCContext, value *NixValue, str string) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -599,7 +508,7 @@ func InitString(ctx *NixCContext, value *NixValue, str string) NixErr {
 	return __v
 }
 
-// InitPathString function as declared in nix-go-bindings/nix_go_expr.h:240
+// InitPathString function as declared in nix-go-bindings/nix_go_expr.h:164
 func InitPathString(ctx *NixCContext, state *EvalState, value *NixValue, str string) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstate, cstateAllocMap := (*C.EvalState)(unsafe.Pointer(state)), cgoAllocsUnknown
@@ -614,7 +523,7 @@ func InitPathString(ctx *NixCContext, state *EvalState, value *NixValue, str str
 	return __v
 }
 
-// InitFloat function as declared in nix-go-bindings/nix_go_expr.h:241
+// InitFloat function as declared in nix-go-bindings/nix_go_expr.h:165
 func InitFloat(ctx *NixCContext, value *NixValue, d float64) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -627,7 +536,7 @@ func InitFloat(ctx *NixCContext, value *NixValue, d float64) NixErr {
 	return __v
 }
 
-// InitInt function as declared in nix-go-bindings/nix_go_expr.h:242
+// InitInt function as declared in nix-go-bindings/nix_go_expr.h:166
 func InitInt(ctx *NixCContext, value *NixValue, i int64) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -640,7 +549,7 @@ func InitInt(ctx *NixCContext, value *NixValue, i int64) NixErr {
 	return __v
 }
 
-// InitNull function as declared in nix-go-bindings/nix_go_expr.h:243
+// InitNull function as declared in nix-go-bindings/nix_go_expr.h:167
 func InitNull(ctx *NixCContext, value *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -651,7 +560,7 @@ func InitNull(ctx *NixCContext, value *NixValue) NixErr {
 	return __v
 }
 
-// InitApply function as declared in nix-go-bindings/nix_go_expr.h:244
+// InitApply function as declared in nix-go-bindings/nix_go_expr.h:168
 func InitApply(ctx *NixCContext, value *NixValue, fn *NixValue, arg *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -666,33 +575,7 @@ func InitApply(ctx *NixCContext, value *NixValue, fn *NixValue, arg *NixValue) N
 	return __v
 }
 
-// InitExternal function as declared in nix-go-bindings/nix_go_expr.h:245
-func InitExternal(ctx *NixCContext, value *NixValue, external *ExternalValue) NixErr {
-	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
-	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
-	cexternal, cexternalAllocMap := (*C.ExternalValue)(unsafe.Pointer(external)), cgoAllocsUnknown
-	__ret := C.go_nix_init_external(cctx, cvalue, cexternal)
-	runtime.KeepAlive(cexternalAllocMap)
-	runtime.KeepAlive(cvalueAllocMap)
-	runtime.KeepAlive(cctxAllocMap)
-	__v := (NixErr)(__ret)
-	return __v
-}
-
-// InitPrimop function as declared in nix-go-bindings/nix_go_expr.h:246
-func InitPrimop(ctx *NixCContext, value *NixValue, primOp *PrimOp) NixErr {
-	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
-	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
-	cprimOp, cprimOpAllocMap := (*C.PrimOp)(unsafe.Pointer(primOp)), cgoAllocsUnknown
-	__ret := C.go_nix_init_primop(cctx, cvalue, cprimOp)
-	runtime.KeepAlive(cprimOpAllocMap)
-	runtime.KeepAlive(cvalueAllocMap)
-	runtime.KeepAlive(cctxAllocMap)
-	__v := (NixErr)(__ret)
-	return __v
-}
-
-// CopyValue function as declared in nix-go-bindings/nix_go_expr.h:247
+// CopyValue function as declared in nix-go-bindings/nix_go_expr.h:169
 func CopyValue(ctx *NixCContext, value *NixValue, source *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -705,7 +588,7 @@ func CopyValue(ctx *NixCContext, value *NixValue, source *NixValue) NixErr {
 	return __v
 }
 
-// MakeListBuilder function as declared in nix-go-bindings/nix_go_expr.h:249
+// MakeListBuilder function as declared in nix-go-bindings/nix_go_expr.h:171
 func MakeListBuilder(ctx *NixCContext, state *EvalState, capacity uint64) *ListBuilder {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstate, cstateAllocMap := (*C.EvalState)(unsafe.Pointer(state)), cgoAllocsUnknown
@@ -718,7 +601,7 @@ func MakeListBuilder(ctx *NixCContext, state *EvalState, capacity uint64) *ListB
 	return __v
 }
 
-// ListBuilderInsert function as declared in nix-go-bindings/nix_go_expr.h:250
+// ListBuilderInsert function as declared in nix-go-bindings/nix_go_expr.h:172
 func ListBuilderInsert(ctx *NixCContext, listBuilder *ListBuilder, index uint32, value *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	clistBuilder, clistBuilderAllocMap := (*C.ListBuilder)(unsafe.Pointer(listBuilder)), cgoAllocsUnknown
@@ -733,7 +616,7 @@ func ListBuilderInsert(ctx *NixCContext, listBuilder *ListBuilder, index uint32,
 	return __v
 }
 
-// MakeList function as declared in nix-go-bindings/nix_go_expr.h:256
+// MakeList function as declared in nix-go-bindings/nix_go_expr.h:178
 func MakeList(ctx *NixCContext, listBuilder *ListBuilder, value *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	clistBuilder, clistBuilderAllocMap := (*C.ListBuilder)(unsafe.Pointer(listBuilder)), cgoAllocsUnknown
@@ -746,14 +629,14 @@ func MakeList(ctx *NixCContext, listBuilder *ListBuilder, value *NixValue) NixEr
 	return __v
 }
 
-// ListBuilderFree function as declared in nix-go-bindings/nix_go_expr.h:257
+// ListBuilderFree function as declared in nix-go-bindings/nix_go_expr.h:179
 func ListBuilderFree(listBuilder *ListBuilder) {
 	clistBuilder, clistBuilderAllocMap := (*C.ListBuilder)(unsafe.Pointer(listBuilder)), cgoAllocsUnknown
 	C.go_nix_list_builder_free(clistBuilder)
 	runtime.KeepAlive(clistBuilderAllocMap)
 }
 
-// MakeBindingsBuilder function as declared in nix-go-bindings/nix_go_expr.h:259
+// MakeBindingsBuilder function as declared in nix-go-bindings/nix_go_expr.h:181
 func MakeBindingsBuilder(ctx *NixCContext, state *EvalState, capacity uint64) *BindingsBuilder {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstate, cstateAllocMap := (*C.EvalState)(unsafe.Pointer(state)), cgoAllocsUnknown
@@ -766,7 +649,7 @@ func MakeBindingsBuilder(ctx *NixCContext, state *EvalState, capacity uint64) *B
 	return __v
 }
 
-// BindingsBuilderInsert function as declared in nix-go-bindings/nix_go_expr.h:260
+// BindingsBuilderInsert function as declared in nix-go-bindings/nix_go_expr.h:182
 func BindingsBuilderInsert(ctx *NixCContext, builder *BindingsBuilder, name string, value *NixValue) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cbuilder, cbuilderAllocMap := (*C.BindingsBuilder)(unsafe.Pointer(builder)), cgoAllocsUnknown
@@ -781,7 +664,7 @@ func BindingsBuilderInsert(ctx *NixCContext, builder *BindingsBuilder, name stri
 	return __v
 }
 
-// MakeAttrs function as declared in nix-go-bindings/nix_go_expr.h:266
+// MakeAttrs function as declared in nix-go-bindings/nix_go_expr.h:188
 func MakeAttrs(ctx *NixCContext, value *NixValue, builder *BindingsBuilder) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cvalue, cvalueAllocMap := (*C.nix_value)(unsafe.Pointer(value)), cgoAllocsUnknown
@@ -794,14 +677,14 @@ func MakeAttrs(ctx *NixCContext, value *NixValue, builder *BindingsBuilder) NixE
 	return __v
 }
 
-// BindingsBuilderFree function as declared in nix-go-bindings/nix_go_expr.h:267
+// BindingsBuilderFree function as declared in nix-go-bindings/nix_go_expr.h:189
 func BindingsBuilderFree(builder *BindingsBuilder) {
 	cbuilder, cbuilderAllocMap := (*C.BindingsBuilder)(unsafe.Pointer(builder)), cgoAllocsUnknown
 	C.go_nix_bindings_builder_free(cbuilder)
 	runtime.KeepAlive(cbuilderAllocMap)
 }
 
-// StringRealise function as declared in nix-go-bindings/nix_go_expr.h:269
+// StringRealise function as declared in nix-go-bindings/nix_go_expr.h:191
 func StringRealise(ctx *NixCContext, state *EvalState, value *NixValue, isIfd bool) *NixRealisedString {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstate, cstateAllocMap := (*C.EvalState)(unsafe.Pointer(state)), cgoAllocsUnknown
@@ -816,7 +699,7 @@ func StringRealise(ctx *NixCContext, state *EvalState, value *NixValue, isIfd bo
 	return __v
 }
 
-// RealisedStringGetBuffer function as declared in nix-go-bindings/nix_go_expr.h:275
+// RealisedStringGetBuffer function as declared in nix-go-bindings/nix_go_expr.h:197
 func RealisedStringGetBuffer(realisedString *NixRealisedString) *byte {
 	crealisedString, crealisedStringAllocMap := (*C.nix_realised_string)(unsafe.Pointer(realisedString)), cgoAllocsUnknown
 	__ret := C.go_nix_realised_string_get_buffer(crealisedString)
@@ -825,7 +708,7 @@ func RealisedStringGetBuffer(realisedString *NixRealisedString) *byte {
 	return __v
 }
 
-// RealisedStringGetBufferSize function as declared in nix-go-bindings/nix_go_expr.h:276
+// RealisedStringGetBufferSize function as declared in nix-go-bindings/nix_go_expr.h:198
 func RealisedStringGetBufferSize(realisedString *NixRealisedString) uint64 {
 	crealisedString, crealisedStringAllocMap := (*C.nix_realised_string)(unsafe.Pointer(realisedString)), cgoAllocsUnknown
 	__ret := C.go_nix_realised_string_get_buffer_size(crealisedString)
@@ -834,7 +717,7 @@ func RealisedStringGetBufferSize(realisedString *NixRealisedString) uint64 {
 	return __v
 }
 
-// RealisedStringGetStorePathCount function as declared in nix-go-bindings/nix_go_expr.h:277
+// RealisedStringGetStorePathCount function as declared in nix-go-bindings/nix_go_expr.h:199
 func RealisedStringGetStorePathCount(realisedString *NixRealisedString) uint64 {
 	crealisedString, crealisedStringAllocMap := (*C.nix_realised_string)(unsafe.Pointer(realisedString)), cgoAllocsUnknown
 	__ret := C.go_nix_realised_string_get_store_path_count(crealisedString)
@@ -843,7 +726,7 @@ func RealisedStringGetStorePathCount(realisedString *NixRealisedString) uint64 {
 	return __v
 }
 
-// RealisedStringGetStorePath function as declared in nix-go-bindings/nix_go_expr.h:278
+// RealisedStringGetStorePath function as declared in nix-go-bindings/nix_go_expr.h:200
 func RealisedStringGetStorePath(realisedString *NixRealisedString, index uint64) *StorePath {
 	crealisedString, crealisedStringAllocMap := (*C.nix_realised_string)(unsafe.Pointer(realisedString)), cgoAllocsUnknown
 	cindex, cindexAllocMap := (C.size_t)(index), cgoAllocsUnknown
@@ -854,7 +737,7 @@ func RealisedStringGetStorePath(realisedString *NixRealisedString, index uint64)
 	return __v
 }
 
-// RealisedStringFree function as declared in nix-go-bindings/nix_go_expr.h:279
+// RealisedStringFree function as declared in nix-go-bindings/nix_go_expr.h:201
 func RealisedStringFree(realisedString *NixRealisedString) {
 	crealisedString, crealisedStringAllocMap := (*C.nix_realised_string)(unsafe.Pointer(realisedString)), cgoAllocsUnknown
 	C.go_nix_realised_string_free(crealisedString)
@@ -1117,7 +1000,7 @@ func SetLogFormat(ctx *NixCContext, format string) NixErr {
 	return __v
 }
 
-// LibstoreInit function as declared in nix-go-bindings/nix_go_store.h:42
+// LibstoreInit function as declared in nix-go-bindings/nix_go_store.h:35
 func LibstoreInit(ctx *NixCContext) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	__ret := C.go_nix_libstore_init(cctx)
@@ -1126,7 +1009,7 @@ func LibstoreInit(ctx *NixCContext) NixErr {
 	return __v
 }
 
-// LibstoreInitNoLoadConfig function as declared in nix-go-bindings/nix_go_store.h:43
+// LibstoreInitNoLoadConfig function as declared in nix-go-bindings/nix_go_store.h:36
 func LibstoreInitNoLoadConfig(ctx *NixCContext) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	__ret := C.go_nix_libstore_init_no_load_config(cctx)
@@ -1135,7 +1018,7 @@ func LibstoreInitNoLoadConfig(ctx *NixCContext) NixErr {
 	return __v
 }
 
-// StoreOpen function as declared in nix-go-bindings/nix_go_store.h:45
+// StoreOpen function as declared in nix-go-bindings/nix_go_store.h:38
 func StoreOpen(ctx *NixCContext, uri string, params StoreParams) *Store {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	curi, curiAllocMap := unpackPCharString(uri)
@@ -1148,14 +1031,14 @@ func StoreOpen(ctx *NixCContext, uri string, params StoreParams) *Store {
 	return __v
 }
 
-// StoreFree function as declared in nix-go-bindings/nix_go_store.h:51
+// StoreFree function as declared in nix-go-bindings/nix_go_store.h:44
 func StoreFree(store *Store) {
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
 	C.go_nix_store_free(cstore)
 	runtime.KeepAlive(cstoreAllocMap)
 }
 
-// StoreGetUri function as declared in nix-go-bindings/nix_go_store.h:53
+// StoreGetUri function as declared in nix-go-bindings/nix_go_store.h:46
 func StoreGetUri(ctx *NixCContext, store *Store) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -1166,7 +1049,7 @@ func StoreGetUri(ctx *NixCContext, store *Store) *byte {
 	return __v
 }
 
-// StoreGetStoredir function as declared in nix-go-bindings/nix_go_store.h:54
+// StoreGetStoredir function as declared in nix-go-bindings/nix_go_store.h:47
 func StoreGetStoredir(ctx *NixCContext, store *Store) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -1177,7 +1060,7 @@ func StoreGetStoredir(ctx *NixCContext, store *Store) *byte {
 	return __v
 }
 
-// StoreGetVersion function as declared in nix-go-bindings/nix_go_store.h:55
+// StoreGetVersion function as declared in nix-go-bindings/nix_go_store.h:48
 func StoreGetVersion(ctx *NixCContext, store *Store) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -1188,7 +1071,7 @@ func StoreGetVersion(ctx *NixCContext, store *Store) *byte {
 	return __v
 }
 
-// StoreRealPath function as declared in nix-go-bindings/nix_go_store.h:56
+// StoreRealPath function as declared in nix-go-bindings/nix_go_store.h:49
 func StoreRealPath(ctx *NixCContext, store *Store, path *StorePath) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -1201,7 +1084,7 @@ func StoreRealPath(ctx *NixCContext, store *Store, path *StorePath) *byte {
 	return __v
 }
 
-// StoreParsePath function as declared in nix-go-bindings/nix_go_store.h:58
+// StoreParsePath function as declared in nix-go-bindings/nix_go_store.h:51
 func StoreParsePath(ctx *NixCContext, store *Store, path string) *StorePath {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -1214,7 +1097,7 @@ func StoreParsePath(ctx *NixCContext, store *Store, path string) *StorePath {
 	return __v
 }
 
-// StorePathClone function as declared in nix-go-bindings/nix_go_store.h:60
+// StorePathClone function as declared in nix-go-bindings/nix_go_store.h:53
 func StorePathClone(path *StorePath) *StorePath {
 	cpath, cpathAllocMap := (*C.StorePath)(unsafe.Pointer(path)), cgoAllocsUnknown
 	__ret := C.go_nix_store_path_clone(cpath)
@@ -1223,14 +1106,14 @@ func StorePathClone(path *StorePath) *StorePath {
 	return __v
 }
 
-// StorePathFree function as declared in nix-go-bindings/nix_go_store.h:61
+// StorePathFree function as declared in nix-go-bindings/nix_go_store.h:54
 func StorePathFree(path *StorePath) {
 	cpath, cpathAllocMap := (*C.StorePath)(unsafe.Pointer(path)), cgoAllocsUnknown
 	C.go_nix_store_path_free(cpath)
 	runtime.KeepAlive(cpathAllocMap)
 }
 
-// StorePathName function as declared in nix-go-bindings/nix_go_store.h:62
+// StorePathName function as declared in nix-go-bindings/nix_go_store.h:55
 func StorePathName(path *StorePath) *byte {
 	cpath, cpathAllocMap := (*C.StorePath)(unsafe.Pointer(path)), cgoAllocsUnknown
 	__ret := C.go_nix_store_path_name(cpath)
@@ -1239,7 +1122,7 @@ func StorePathName(path *StorePath) *byte {
 	return __v
 }
 
-// StorePathHash function as declared in nix-go-bindings/nix_go_store.h:63
+// StorePathHash function as declared in nix-go-bindings/nix_go_store.h:56
 func StorePathHash(ctx *NixCContext, path *StorePath, hash *StorePathHashPart) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cpath, cpathAllocMap := (*C.StorePath)(unsafe.Pointer(path)), cgoAllocsUnknown
@@ -1252,7 +1135,7 @@ func StorePathHash(ctx *NixCContext, path *StorePath, hash *StorePathHashPart) N
 	return __v
 }
 
-// StoreCreateFromParts function as declared in nix-go-bindings/nix_go_store.h:68
+// StoreCreateFromParts function as declared in nix-go-bindings/nix_go_store.h:61
 func StoreCreateFromParts(ctx *NixCContext, hash *StorePathHashPart, name string, nameLen uint64) *StorePath {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	chash, chashAllocMap := hash.PassRef()
@@ -1267,7 +1150,7 @@ func StoreCreateFromParts(ctx *NixCContext, hash *StorePathHashPart, name string
 	return __v
 }
 
-// StoreIsValidPath function as declared in nix-go-bindings/nix_go_store.h:75
+// StoreIsValidPath function as declared in nix-go-bindings/nix_go_store.h:68
 func StoreIsValidPath(ctx *NixCContext, store *Store, path *StorePath) bool {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -1280,24 +1163,58 @@ func StoreIsValidPath(ctx *NixCContext, store *Store, path *StorePath) bool {
 	return __v
 }
 
-// StoreRealise function as declared in nix-go-bindings/nix_go_store.h:81
-func StoreRealise(ctx *NixCContext, store *Store, path *StorePath, userdata unsafe.Pointer, callback StoreRealiseCallback) NixErr {
+// StoreRealiseToArray function as declared in nix-go-bindings/nix_go_store.h:74
+func StoreRealiseToArray(ctx *NixCContext, store *Store, path *StorePath) *StoreRealiseResults {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
 	cpath, cpathAllocMap := (*C.StorePath)(unsafe.Pointer(path)), cgoAllocsUnknown
-	cuserdata, cuserdataAllocMap := userdata, cgoAllocsUnknown
-	ccallback, ccallbackAllocMap := callback.PassValue()
-	__ret := C.go_nix_store_realise(cctx, cstore, cpath, cuserdata, ccallback)
-	runtime.KeepAlive(ccallbackAllocMap)
-	runtime.KeepAlive(cuserdataAllocMap)
+	__ret := C.go_nix_store_realise_to_array(cctx, cstore, cpath)
 	runtime.KeepAlive(cpathAllocMap)
 	runtime.KeepAlive(cstoreAllocMap)
 	runtime.KeepAlive(cctxAllocMap)
-	__v := (NixErr)(__ret)
+	__v := *(**StoreRealiseResults)(unsafe.Pointer(&__ret))
 	return __v
 }
 
-// DerivationFromJson function as declared in nix-go-bindings/nix_go_store.h:89
+// StoreRealiseResultsCount function as declared in nix-go-bindings/nix_go_store.h:79
+func StoreRealiseResultsCount(results *StoreRealiseResults) uint64 {
+	cresults, cresultsAllocMap := (*C.go_nix_store_realise_results)(unsafe.Pointer(results)), cgoAllocsUnknown
+	__ret := C.go_nix_store_realise_results_count(cresults)
+	runtime.KeepAlive(cresultsAllocMap)
+	__v := (uint64)(__ret)
+	return __v
+}
+
+// StoreRealiseResultsOutname function as declared in nix-go-bindings/nix_go_store.h:80
+func StoreRealiseResultsOutname(results *StoreRealiseResults, index uint64) *byte {
+	cresults, cresultsAllocMap := (*C.go_nix_store_realise_results)(unsafe.Pointer(results)), cgoAllocsUnknown
+	cindex, cindexAllocMap := (C.size_t)(index), cgoAllocsUnknown
+	__ret := C.go_nix_store_realise_results_outname(cresults, cindex)
+	runtime.KeepAlive(cindexAllocMap)
+	runtime.KeepAlive(cresultsAllocMap)
+	__v := *(**byte)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// StoreRealiseResultsPathClone function as declared in nix-go-bindings/nix_go_store.h:84
+func StoreRealiseResultsPathClone(results *StoreRealiseResults, index uint64) *StorePath {
+	cresults, cresultsAllocMap := (*C.go_nix_store_realise_results)(unsafe.Pointer(results)), cgoAllocsUnknown
+	cindex, cindexAllocMap := (C.size_t)(index), cgoAllocsUnknown
+	__ret := C.go_nix_store_realise_results_path_clone(cresults, cindex)
+	runtime.KeepAlive(cindexAllocMap)
+	runtime.KeepAlive(cresultsAllocMap)
+	__v := *(**StorePath)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// StoreRealiseResultsFree function as declared in nix-go-bindings/nix_go_store.h:88
+func StoreRealiseResultsFree(results *StoreRealiseResults) {
+	cresults, cresultsAllocMap := (*C.go_nix_store_realise_results)(unsafe.Pointer(results)), cgoAllocsUnknown
+	C.go_nix_store_realise_results_free(cresults)
+	runtime.KeepAlive(cresultsAllocMap)
+}
+
+// DerivationFromJson function as declared in nix-go-bindings/nix_go_store.h:90
 func DerivationFromJson(ctx *NixCContext, store *Store, json string) *NixDerivation {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -1310,7 +1227,7 @@ func DerivationFromJson(ctx *NixCContext, store *Store, json string) *NixDerivat
 	return __v
 }
 
-// DerivationClone function as declared in nix-go-bindings/nix_go_store.h:95
+// DerivationClone function as declared in nix-go-bindings/nix_go_store.h:96
 func DerivationClone(derivation *NixDerivation) *NixDerivation {
 	cderivation, cderivationAllocMap := (*C.nix_derivation)(unsafe.Pointer(derivation)), cgoAllocsUnknown
 	__ret := C.go_nix_derivation_clone(cderivation)
@@ -1319,14 +1236,14 @@ func DerivationClone(derivation *NixDerivation) *NixDerivation {
 	return __v
 }
 
-// DerivationFree function as declared in nix-go-bindings/nix_go_store.h:96
+// DerivationFree function as declared in nix-go-bindings/nix_go_store.h:97
 func DerivationFree(derivation *NixDerivation) {
 	cderivation, cderivationAllocMap := (*C.nix_derivation)(unsafe.Pointer(derivation)), cgoAllocsUnknown
 	C.go_nix_derivation_free(cderivation)
 	runtime.KeepAlive(cderivationAllocMap)
 }
 
-// DerivationToJson function as declared in nix-go-bindings/nix_go_store.h:97
+// DerivationToJson function as declared in nix-go-bindings/nix_go_store.h:98
 func DerivationToJson(ctx *NixCContext, derivation *NixDerivation) *byte {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cderivation, cderivationAllocMap := (*C.nix_derivation)(unsafe.Pointer(derivation)), cgoAllocsUnknown
@@ -1337,7 +1254,7 @@ func DerivationToJson(ctx *NixCContext, derivation *NixDerivation) *byte {
 	return __v
 }
 
-// AddDerivation function as declared in nix-go-bindings/nix_go_store.h:99
+// AddDerivation function as declared in nix-go-bindings/nix_go_store.h:100
 func AddDerivation(ctx *NixCContext, store *Store, derivation *NixDerivation) *StorePath {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -1350,7 +1267,7 @@ func AddDerivation(ctx *NixCContext, store *Store, derivation *NixDerivation) *S
 	return __v
 }
 
-// StoreCopyClosure function as declared in nix-go-bindings/nix_go_store.h:105
+// StoreCopyClosure function as declared in nix-go-bindings/nix_go_store.h:106
 func StoreCopyClosure(ctx *NixCContext, srcStore *Store, dstStore *Store, path *StorePath) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	csrcStore, csrcStoreAllocMap := (*C.Store)(unsafe.Pointer(srcStore)), cgoAllocsUnknown
@@ -1365,30 +1282,53 @@ func StoreCopyClosure(ctx *NixCContext, srcStore *Store, dstStore *Store, path *
 	return __v
 }
 
-// StoreGetFsClosure function as declared in nix-go-bindings/nix_go_store.h:112
-func StoreGetFsClosure(ctx *NixCContext, store *Store, storePath *StorePath, flipDirection bool, includeOutputs bool, includeDerivers bool, userdata unsafe.Pointer, callback StorePathCallback) NixErr {
+// StoreGetFsClosureArray function as declared in nix-go-bindings/nix_go_store.h:113
+func StoreGetFsClosureArray(ctx *NixCContext, store *Store, storePath *StorePath, flipDirection bool, includeOutputs bool, includeDerivers bool) *StorePathArray {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
 	cstorePath, cstorePathAllocMap := (*C.StorePath)(unsafe.Pointer(storePath)), cgoAllocsUnknown
 	cflipDirection, cflipDirectionAllocMap := (C._Bool)(flipDirection), cgoAllocsUnknown
 	cincludeOutputs, cincludeOutputsAllocMap := (C._Bool)(includeOutputs), cgoAllocsUnknown
 	cincludeDerivers, cincludeDeriversAllocMap := (C._Bool)(includeDerivers), cgoAllocsUnknown
-	cuserdata, cuserdataAllocMap := userdata, cgoAllocsUnknown
-	ccallback, ccallbackAllocMap := callback.PassValue()
-	__ret := C.go_nix_store_get_fs_closure(cctx, cstore, cstorePath, cflipDirection, cincludeOutputs, cincludeDerivers, cuserdata, ccallback)
-	runtime.KeepAlive(ccallbackAllocMap)
-	runtime.KeepAlive(cuserdataAllocMap)
+	__ret := C.go_nix_store_get_fs_closure_array(cctx, cstore, cstorePath, cflipDirection, cincludeOutputs, cincludeDerivers)
 	runtime.KeepAlive(cincludeDeriversAllocMap)
 	runtime.KeepAlive(cincludeOutputsAllocMap)
 	runtime.KeepAlive(cflipDirectionAllocMap)
 	runtime.KeepAlive(cstorePathAllocMap)
 	runtime.KeepAlive(cstoreAllocMap)
 	runtime.KeepAlive(cctxAllocMap)
-	__v := (NixErr)(__ret)
+	__v := *(**StorePathArray)(unsafe.Pointer(&__ret))
 	return __v
 }
 
-// StoreDrvFromStorePath function as declared in nix-go-bindings/nix_go_store.h:123
+// StorePathArrayCount function as declared in nix-go-bindings/nix_go_store.h:121
+func StorePathArrayCount(paths *StorePathArray) uint64 {
+	cpaths, cpathsAllocMap := (*C.go_nix_store_path_array)(unsafe.Pointer(paths)), cgoAllocsUnknown
+	__ret := C.go_nix_store_path_array_count(cpaths)
+	runtime.KeepAlive(cpathsAllocMap)
+	__v := (uint64)(__ret)
+	return __v
+}
+
+// StorePathArrayPathClone function as declared in nix-go-bindings/nix_go_store.h:122
+func StorePathArrayPathClone(paths *StorePathArray, index uint64) *StorePath {
+	cpaths, cpathsAllocMap := (*C.go_nix_store_path_array)(unsafe.Pointer(paths)), cgoAllocsUnknown
+	cindex, cindexAllocMap := (C.size_t)(index), cgoAllocsUnknown
+	__ret := C.go_nix_store_path_array_path_clone(cpaths, cindex)
+	runtime.KeepAlive(cindexAllocMap)
+	runtime.KeepAlive(cpathsAllocMap)
+	__v := *(**StorePath)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// StorePathArrayFree function as declared in nix-go-bindings/nix_go_store.h:126
+func StorePathArrayFree(paths *StorePathArray) {
+	cpaths, cpathsAllocMap := (*C.go_nix_store_path_array)(unsafe.Pointer(paths)), cgoAllocsUnknown
+	C.go_nix_store_path_array_free(cpaths)
+	runtime.KeepAlive(cpathsAllocMap)
+}
+
+// StoreDrvFromStorePath function as declared in nix-go-bindings/nix_go_store.h:128
 func StoreDrvFromStorePath(ctx *NixCContext, store *Store, path *StorePath) *NixDerivation {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -1401,7 +1341,7 @@ func StoreDrvFromStorePath(ctx *NixCContext, store *Store, path *StorePath) *Nix
 	return __v
 }
 
-// StoreQueryPathFromHashPart function as declared in nix-go-bindings/nix_go_store.h:129
+// StoreQueryPathFromHashPart function as declared in nix-go-bindings/nix_go_store.h:134
 func StoreQueryPathFromHashPart(ctx *NixCContext, store *Store, hash string) *StorePath {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
@@ -1414,7 +1354,7 @@ func StoreQueryPathFromHashPart(ctx *NixCContext, store *Store, hash string) *St
 	return __v
 }
 
-// StoreCopyPath function as declared in nix-go-bindings/nix_go_store.h:135
+// StoreCopyPath function as declared in nix-go-bindings/nix_go_store.h:140
 func StoreCopyPath(ctx *NixCContext, srcStore *Store, dstStore *Store, path *StorePath, repair bool, checkSigs bool) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	csrcStore, csrcStoreAllocMap := (*C.Store)(unsafe.Pointer(srcStore)), cgoAllocsUnknown

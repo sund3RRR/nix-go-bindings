@@ -14,33 +14,3 @@
 
 #define __CGOGEN 1
 
-// go_nix_primop_fun_dadd0fa9 is a proxy for callback go_nix_primop_fun.
-void go_nix_primop_fun_dadd0fa9(void* user_data, nix_c_context* context, EvalState* state, nix_value** args, nix_value* ret);
-
-// go_nix_finalizer_1fcdc1fe is a proxy for callback go_nix_finalizer.
-void go_nix_finalizer_1fcdc1fe(void* obj, void* cd);
-
-// go_nix_external_print_fun_c6fee685 is a proxy for callback go_nix_external_print_fun.
-void go_nix_external_print_fun_c6fee685(void* self, nix_printer* printer);
-
-// go_nix_external_string_fun_902e48c3 is a proxy for callback go_nix_external_string_fun.
-void go_nix_external_string_fun_902e48c3(void* self, nix_string_return* res);
-
-// go_nix_external_coerce_fun_4ceca53f is a proxy for callback go_nix_external_coerce_fun.
-void go_nix_external_coerce_fun_4ceca53f(void* self, nix_string_context* ctx, int coerce_more, int copy_to_store, nix_string_return* res);
-
-// go_nix_external_equal_fun_af9e7e74 is a proxy for callback go_nix_external_equal_fun.
-int go_nix_external_equal_fun_af9e7e74(void* self, void* other);
-
-// go_nix_external_json_fun_d703fc66 is a proxy for callback go_nix_external_json_fun.
-void go_nix_external_json_fun_d703fc66(void* self, EvalState* state, _Bool strict, nix_string_context* ctx, _Bool copy_to_store, nix_string_return* res);
-
-// go_nix_external_xml_fun_7dea5d0 is a proxy for callback go_nix_external_xml_fun.
-void go_nix_external_xml_fun_7dea5d0(void* self, EvalState* state, int strict, int location, void* doc, nix_string_context* ctx, void* drvs_seen, int pos);
-
-// go_nix_store_realise_callback_8324f29f is a proxy for callback go_nix_store_realise_callback.
-void go_nix_store_realise_callback_8324f29f(void* userdata, char* outname, StorePath* out);
-
-// go_nix_store_path_callback_d85f7e1 is a proxy for callback go_nix_store_path_callback.
-void go_nix_store_path_callback_d85f7e1(nix_c_context* context, void* userdata, StorePath* store_path);
-

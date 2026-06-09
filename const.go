@@ -46,10 +46,10 @@ const (
 	NixLvlVomit     NixVerbosity = 7
 )
 
-// ValueType as declared in nix-go-bindings/nix_go_expr.h:39
+// ValueType as declared in nix-go-bindings/nix_go_expr.h:36
 type ValueType int32
 
-// ValueType enumeration from nix-go-bindings/nix_go_expr.h:39
+// ValueType enumeration from nix-go-bindings/nix_go_expr.h:36
 const (
 	NixTypeThunk    ValueType = iota
 	NixTypeInt      ValueType = 1

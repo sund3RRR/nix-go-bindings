@@ -7,10 +7,6 @@ import (
 	"testing"
 )
 
-func nulTerminated(s string) []byte {
-	return append([]byte(s), 0)
-}
-
 func chmodTreeWritable(t *testing.T, root string) {
 	t.Helper()
 
@@ -57,9 +53,9 @@ func newTestLocalStore(t *testing.T, ctx *NixCContext) (*Store, string) {
 	logDir := filepath.Join(root, "log")
 	params := StoreParams{
 		Items: []StoreParam{
-			{Key: nulTerminated("store"), Value: nulTerminated(storeDir)},
-			{Key: nulTerminated("state"), Value: nulTerminated(stateDir)},
-			{Key: nulTerminated("log"), Value: nulTerminated(logDir)},
+			{Key: []byte("store"), KeyLen: 5, Value: []byte(storeDir), ValueLen: uint64(len(storeDir))},
+			{Key: []byte("state"), KeyLen: 5, Value: []byte(stateDir), ValueLen: uint64(len(stateDir))},
+			{Key: []byte("log"), KeyLen: 3, Value: []byte(logDir), ValueLen: uint64(len(logDir))},
 		},
 		Len: 3,
 	}

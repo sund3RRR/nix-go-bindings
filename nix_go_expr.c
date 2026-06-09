@@ -3,18 +3,32 @@
 #include "nix_api_external.h"
 #include "nix_go_expr.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
 typedef struct go_nix_expr_string_capture {
     char *value;
+    int failed;
 } go_nix_expr_string_capture;
 
-static char *go_nix_expr_copy_string(const char *s, size_t n)
+static nix_err go_nix_expr_set_error(nix_c_context *ctx, const char *msg)
+{
+    if (ctx != NULL) {
+        nix_set_err_msg(ctx, NIX_ERR_UNKNOWN, msg);
+    }
+    return NIX_ERR_UNKNOWN;
+}
+
+static char *go_nix_expr_copy_bytes(const char *s, size_t n)
 {
     char *out = NULL;
 
-    if (s == NULL) {
+    if (n == SIZE_MAX) {
+        return NULL;
+    }
+
+    if (s == NULL && n != 0) {
         return NULL;
     }
 
@@ -23,57 +37,115 @@ static char *go_nix_expr_copy_string(const char *s, size_t n)
         return NULL;
     }
 
-    memcpy(out, s, n);
+    if (n != 0) {
+        memcpy(out, s, n);
+    }
     out[n] = '\0';
     return out;
+}
+
+static char *go_nix_expr_copy_string(const char *s, size_t n)
+{
+    if (s == NULL) {
+        return NULL;
+    }
+
+    return go_nix_expr_copy_bytes(s, n);
 }
 
 static void go_nix_expr_capture_string(const char *s, unsigned int n, void *userdata)
 {
     go_nix_expr_string_capture *capture = (go_nix_expr_string_capture *)userdata;
     capture->value = go_nix_expr_copy_string(s, (size_t)n);
+    if (capture->value == NULL) {
+        capture->failed = 1;
+    }
 }
 
-static const char **go_nix_string_array_pack(go_nix_string_array array)
+static nix_err go_nix_string_array_pack(
+    nix_c_context *ctx,
+    go_nix_string_array array,
+    const char ***packed
+)
 {
     const char **out = NULL;
 
+    *packed = NULL;
+
+    if (array.len == 0) {
+        return NIX_OK;
+    }
+
+    if (array.items == NULL) {
+        return go_nix_expr_set_error(ctx, "string array has non-zero length but no items");
+    }
+
     out = (const char **)calloc(array.len + 1, sizeof(char *));
     if (out == NULL) {
-        return NULL;
+        return go_nix_expr_set_error(ctx, "failed to allocate string array");
     }
 
     for (size_t i = 0; i < array.len; i++) {
-        out[i] = array.items[i].value;
+        out[i] = go_nix_expr_copy_bytes(array.items[i].value, array.items[i].len);
+        if (out[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free((void *)out[j]);
+            }
+            free((void *)out);
+            return go_nix_expr_set_error(ctx, "failed to allocate string array item");
+        }
     }
     out[array.len] = NULL;
 
-    return out;
+    *packed = out;
+    return NIX_OK;
 }
 
 static void go_nix_string_array_free(const char **array)
 {
+    if (array == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; array[i] != NULL; i++) {
+        free((void *)array[i]);
+    }
     free((void *)array);
 }
 
-static nix_value **go_nix_value_array_pack(go_nix_value_array array)
+static nix_err go_nix_value_array_pack(
+    nix_c_context *ctx,
+    go_nix_value_array array,
+    nix_value ***packed
+)
 {
     nix_value **out = NULL;
 
+    *packed = NULL;
+
     if (array.len == 0) {
-        return NULL;
+        return NIX_OK;
+    }
+
+    if (array.items == NULL) {
+        return go_nix_expr_set_error(ctx, "value array has non-zero length but no items");
     }
 
     out = (nix_value **)calloc(array.len, sizeof(nix_value *));
     if (out == NULL) {
-        return NULL;
+        return go_nix_expr_set_error(ctx, "failed to allocate value array");
     }
 
     for (size_t i = 0; i < array.len; i++) {
+        if (array.items[i].value == NULL) {
+            free(out);
+            return go_nix_expr_set_error(ctx, "value array item is null");
+        }
         out[i] = array.items[i].value;
     }
 
-    return out;
+    *packed = out;
+    return NIX_OK;
 }
 
 static void go_nix_value_array_free(nix_value **array)
@@ -116,8 +188,13 @@ nix_err go_nix_value_call_multi(
     nix_value *value
 )
 {
-    nix_value **packed = go_nix_value_array_pack(args);
-    nix_err err = nix_value_call_multi(ctx, state, fn, args.len, packed, value);
+    nix_value **packed = NULL;
+    nix_err err = go_nix_value_array_pack(ctx, args, &packed);
+    if (err != NIX_OK) {
+        return err;
+    }
+
+    err = nix_value_call_multi(ctx, state, fn, args.len, packed, value);
     go_nix_value_array_free(packed);
     return err;
 }
@@ -148,8 +225,13 @@ nix_err go_nix_eval_state_builder_set_lookup_path(
     go_nix_string_array lookup_path
 )
 {
-    const char **packed = go_nix_string_array_pack(lookup_path);
-    nix_err err = nix_eval_state_builder_set_lookup_path(ctx, builder, packed);
+    const char **packed = NULL;
+    nix_err err = go_nix_string_array_pack(ctx, lookup_path, &packed);
+    if (err != NIX_OK) {
+        return err;
+    }
+
+    err = nix_eval_state_builder_set_lookup_path(ctx, builder, packed);
     go_nix_string_array_free(packed);
     return err;
 }
@@ -166,7 +248,12 @@ void go_nix_eval_state_builder_free(nix_eval_state_builder *builder)
 
 EvalState *go_nix_state_create(nix_c_context *ctx, go_nix_string_array lookup_path, Store *store)
 {
-    const char **packed = go_nix_string_array_pack(lookup_path);
+    const char **packed = NULL;
+    nix_err err = go_nix_string_array_pack(ctx, lookup_path, &packed);
+    if (err != NIX_OK) {
+        return NULL;
+    }
+
     EvalState *state = nix_state_create(ctx, packed, store);
     go_nix_string_array_free(packed);
     return state;
@@ -192,63 +279,9 @@ void go_nix_gc_now(void)
     nix_gc_now();
 }
 
-void go_nix_gc_register_finalizer(void *obj, void *cd, go_nix_finalizer finalizer)
-{
-    nix_gc_register_finalizer(obj, cd, finalizer);
-}
-
-void go_nix_set_string_return(nix_string_return *str, const char *c)
-{
-    nix_set_string_return(str, c);
-}
-
-nix_err go_nix_external_print(nix_c_context *ctx, nix_printer *printer, const char *str)
-{
-    return nix_external_print(ctx, printer, str);
-}
-
-nix_err go_nix_external_add_string_context(
-    nix_c_context *ctx,
-    nix_string_context *string_context,
-    const char *c
-)
-{
-    return nix_external_add_string_context(ctx, string_context, c);
-}
-
-ExternalValue *go_nix_create_external_value(
-    nix_c_context *ctx,
-    go_nix_external_value_desc *desc,
-    void *value
-)
-{
-    return nix_create_external_value(ctx, (NixCExternalValueDesc *)desc, value);
-}
-
 void *go_nix_get_external_value_content(nix_c_context *ctx, ExternalValue *external)
 {
     return nix_get_external_value_content(ctx, external);
-}
-
-PrimOp *go_nix_alloc_primop(
-    nix_c_context *ctx,
-    go_nix_primop_fun fun,
-    int arity,
-    const char *name,
-    go_nix_string_array args,
-    const char *doc,
-    void *user_data
-)
-{
-    const char **packed_args = go_nix_string_array_pack(args);
-    PrimOp *prim_op = nix_alloc_primop(ctx, (PrimOpFun)fun, arity, name, packed_args, doc, user_data);
-    go_nix_string_array_free(packed_args);
-    return prim_op;
-}
-
-nix_err go_nix_register_primop(nix_c_context *ctx, PrimOp *prim_op)
-{
-    return nix_register_primop(ctx, prim_op);
 }
 
 nix_value *go_nix_alloc_value(nix_c_context *ctx, EvalState *state)
@@ -281,6 +314,9 @@ char *go_nix_get_typename(nix_c_context *ctx, const nix_value *value)
 
     copy = go_nix_expr_copy_string(type_name, strlen(type_name));
     free((void *)type_name);
+    if (copy == NULL) {
+        go_nix_expr_set_error(ctx, "failed to allocate type name");
+    }
     return copy;
 }
 
@@ -298,6 +334,10 @@ char *go_nix_get_string(nix_c_context *ctx, const nix_value *value)
         free(capture.value);
         return NULL;
     }
+    if (capture.failed) {
+        go_nix_expr_set_error(ctx, "failed to allocate value string");
+        return NULL;
+    }
 
     return capture.value;
 }
@@ -309,7 +349,11 @@ char *go_nix_get_path_string(nix_c_context *ctx, const nix_value *value)
         return NULL;
     }
 
-    return go_nix_expr_copy_string(path, strlen(path));
+    char *copy = go_nix_expr_copy_string(path, strlen(path));
+    if (copy == NULL) {
+        go_nix_expr_set_error(ctx, "failed to allocate path string");
+    }
+    return copy;
 }
 
 unsigned int go_nix_get_list_size(nix_c_context *ctx, const nix_value *value)
@@ -421,7 +465,11 @@ char *go_nix_get_attr_name_byidx(
         return NULL;
     }
 
-    return go_nix_expr_copy_string(name, strlen(name));
+    char *copy = go_nix_expr_copy_string(name, strlen(name));
+    if (copy == NULL) {
+        go_nix_expr_set_error(ctx, "failed to allocate attribute name");
+    }
+    return copy;
 }
 
 nix_err go_nix_init_bool(nix_c_context *ctx, nix_value *value, bool b)
@@ -457,16 +505,6 @@ nix_err go_nix_init_null(nix_c_context *ctx, nix_value *value)
 nix_err go_nix_init_apply(nix_c_context *ctx, nix_value *value, nix_value *fn, nix_value *arg)
 {
     return nix_init_apply(ctx, value, fn, arg);
-}
-
-nix_err go_nix_init_external(nix_c_context *ctx, nix_value *value, ExternalValue *external)
-{
-    return nix_init_external(ctx, value, external);
-}
-
-nix_err go_nix_init_primop(nix_c_context *ctx, nix_value *value, PrimOp *prim_op)
-{
-    return nix_init_primop(ctx, value, prim_op);
 }
 
 nix_err go_nix_copy_value(nix_c_context *ctx, nix_value *value, const nix_value *source)
@@ -553,7 +591,12 @@ size_t go_nix_realised_string_get_store_path_count(nix_realised_string *realised
 
 StorePath *go_nix_realised_string_get_store_path(nix_realised_string *realised_string, size_t index)
 {
-    return (StorePath *)nix_realised_string_get_store_path(realised_string, index);
+    const StorePath *path = nix_realised_string_get_store_path(realised_string, index);
+    if (path == NULL) {
+        return NULL;
+    }
+
+    return nix_store_path_clone(path);
 }
 
 void go_nix_realised_string_free(nix_realised_string *realised_string)

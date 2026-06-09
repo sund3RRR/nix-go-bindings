@@ -5,6 +5,7 @@
 
 typedef struct go_nix_string_capture {
     char *value;
+    int failed;
 } go_nix_string_capture;
 
 static char *go_nix_copy_string(const char *s, unsigned int n)
@@ -24,6 +25,9 @@ void go_nix_capture_string(const char *s, unsigned int n, void *userdata)
     go_nix_string_capture *capture = (go_nix_string_capture *)userdata;
 
     capture->value = go_nix_copy_string(s, n);
+    if (capture->value == NULL) {
+        capture->failed = 1;
+    }
 }
 
 nix_c_context *go_nix_c_context_create(void)
@@ -48,6 +52,10 @@ char *go_nix_setting_get(nix_c_context *ctx, const char *key)
     nix_err err = nix_setting_get(ctx, key, go_nix_capture_string, &capture);
     if (err != NIX_OK) {
         free(capture.value);
+        return NULL;
+    }
+    if (capture.failed) {
+        nix_set_err_msg(ctx, NIX_ERR_UNKNOWN, "failed to allocate setting value");
         return NULL;
     }
 
@@ -89,6 +97,10 @@ char *go_nix_err_info_msg(nix_c_context *ctx, const nix_c_context *read_ctx)
         free(capture.value);
         return NULL;
     }
+    if (capture.failed) {
+        nix_set_err_msg(ctx, NIX_ERR_UNKNOWN, "failed to allocate error info message");
+        return NULL;
+    }
 
     return capture.value;
 }
@@ -100,6 +112,10 @@ char *go_nix_err_name(nix_c_context *ctx, const nix_c_context *read_ctx)
     nix_err err = nix_err_name(ctx, read_ctx, go_nix_capture_string, &capture);
     if (err != NIX_OK) {
         free(capture.value);
+        return NULL;
+    }
+    if (capture.failed) {
+        nix_set_err_msg(ctx, NIX_ERR_UNKNOWN, "failed to allocate error name");
         return NULL;
     }
 
