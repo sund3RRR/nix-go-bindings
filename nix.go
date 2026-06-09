@@ -6,12 +6,13 @@
 package nix
 
 /*
-#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c
+#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c nix-main-c
 #include "nix_go_util.h"
 #include "nix_go_store.h"
 #include "nix_go_fetchers.h"
 #include "nix_go_expr.h"
 #include "nix_go_flake.h"
+#include "nix_go_main.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
@@ -1093,6 +1094,26 @@ func LockedFlakeGetOutputAttrs(ctx *NixCContext, settings *NixFlakeSettings, eva
 	runtime.KeepAlive(csettingsAllocMap)
 	runtime.KeepAlive(cctxAllocMap)
 	__v := *(**NixValue)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// InitPlugins function as declared in nix-go-bindings/nix_go_main.h:11
+func InitPlugins(ctx *NixCContext) NixErr {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	__ret := C.go_nix_init_plugins(cctx)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := (NixErr)(__ret)
+	return __v
+}
+
+// SetLogFormat function as declared in nix-go-bindings/nix_go_main.h:12
+func SetLogFormat(ctx *NixCContext, format string) NixErr {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	cformat, cformatAllocMap := unpackPCharString(format)
+	__ret := C.go_nix_set_log_format(cctx, cformat)
+	runtime.KeepAlive(cformatAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := (NixErr)(__ret)
 	return __v
 }
 

@@ -120,6 +120,6 @@ The upstream C API packages are:
   - [x] Reference parse flags and reference parsing.
   - [x] Lock flags, input overrides, lock operation, locked flake lifecycle.
   - [x] Locked flake output attribute lookup.
-- [ ] `nix-main-c`
-  - [ ] Plugin initialization.
-  - [ ] Log format configuration.
+- [x] `nix-main-c`
+  - [x] Plugin initialization.
+  - [x] Log format configuration.
