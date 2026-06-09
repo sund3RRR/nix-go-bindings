@@ -66,9 +66,25 @@ Current bindings are intentionally close to the C layer. Strings returned by the
 shim are C-owned `*byte` values and must be released with `StringFree`.
 Store handles should be released with `StoreFree`.
 
-Some generated helper methods call `C.free` on opaque Nix objects. Prefer the
-API-specific free functions exposed by this package when they exist; missing
-free wrappers are tracked below.
+### Known limitations
+
+- Go-facing callback APIs are intentionally not generated. This excludes custom
+  primop callbacks, external value callback descriptors, arbitrary GC
+  finalizers, and raw store callbacks. Store realisation and closure traversal
+  are exposed through callback-free shim result handles instead.
+- Some generated helper methods call `C.free` on opaque Nix objects. Do not use
+  those raw `.Free()` helpers for Nix-owned opaque values; use the
+  API-specific free functions such as `StoreFree`, `StorePathFree`,
+  `DerivationFree`, and the package-specific result free functions.
+- Generated array structs contain both `Items` and `Len`. `Len` must match the
+  number of Go items supplied. The C shim can reject null pointers paired with a
+  non-zero length, but it cannot recover the original Go slice length from C.
+- Nix GC and value reference counts remain caller-managed. Pair values returned
+  by allocation/getter APIs with the upstream refcount functions documented by
+  the generated binding names and Nix C API ownership rules.
+- The generator copies newly generated files into the repository. When removing
+  generated symbols, verify the resulting diff so stale generated files that are
+  no longer emitted are removed from version control.
 
 ## Upstream C API Surface
 
@@ -102,9 +118,9 @@ The upstream C API packages are:
   - [x] Store strings: URI, store dir, version, real path.
   - [x] Store path parsing and validity checks.
   - [x] StorePath lifecycle and helpers: clone, free, name, hash, create from parts.
-  - [x] Realization callback wrapper.
+  - [x] Realization result adapter.
   - [x] Derivation JSON import and `AddDerivation`.
-  - [x] Closure traversal and copy helpers.
+  - [x] Closure traversal result adapter and copy helpers.
   - [x] Query path by hash part.
   - [x] Derivation lifecycle and JSON export: clone, free, to JSON.
 - [x] `nix-expr-c`
@@ -112,7 +128,8 @@ The upstream C API packages are:
   - [x] Evaluation state builder and state lifecycle.
   - [x] Expression evaluation and function calls.
   - [x] Value allocation, ref-counting, forcing, getters, and initializers.
-  - [x] Lists, attrsets, primops, external values, realized strings, and GC hooks.
+  - [x] Lists, attrsets, external value inspection, realized strings, and GC refcount helpers.
+  - [ ] Go-facing primop callbacks, external value callback descriptors, and arbitrary GC finalizers.
 - [x] `nix-fetchers-c`
   - [x] Fetchers settings lifecycle.
 - [x] `nix-flake-c`
