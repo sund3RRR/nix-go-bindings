@@ -6,11 +6,12 @@
 package nix
 
 /*
-#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c
+#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c
 #include "nix_go_util.h"
 #include "nix_go_store.h"
 #include "nix_go_fetchers.h"
 #include "nix_go_expr.h"
+#include "nix_go_flake.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
@@ -254,6 +255,236 @@ func (x *NixFetchersSettings) PassRef() *C.nix_fetchers_settings {
 		x = (*NixFetchersSettings)(allocNixFetchersSettingsMemory(1))
 	}
 	return (*C.nix_fetchers_settings)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixFlakeSettings) Ref() *C.nix_flake_settings {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_flake_settings)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixFlakeSettings) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixFlakeSettingsRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixFlakeSettingsRef(ref unsafe.Pointer) *NixFlakeSettings {
+	return (*NixFlakeSettings)(ref)
+}
+
+// NewNixFlakeSettings allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixFlakeSettings() *NixFlakeSettings {
+	return (*NixFlakeSettings)(allocNixFlakeSettingsMemory(1))
+}
+
+// allocNixFlakeSettingsMemory allocates memory for type C.nix_flake_settings in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixFlakeSettingsMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixFlakeSettingsValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixFlakeSettingsValue = unsafe.Sizeof([1]C.nix_flake_settings{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixFlakeSettings) PassRef() *C.nix_flake_settings {
+	if x == nil {
+		x = (*NixFlakeSettings)(allocNixFlakeSettingsMemory(1))
+	}
+	return (*C.nix_flake_settings)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixFlakeReferenceParseFlags) Ref() *C.nix_flake_reference_parse_flags {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_flake_reference_parse_flags)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixFlakeReferenceParseFlags) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixFlakeReferenceParseFlagsRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixFlakeReferenceParseFlagsRef(ref unsafe.Pointer) *NixFlakeReferenceParseFlags {
+	return (*NixFlakeReferenceParseFlags)(ref)
+}
+
+// NewNixFlakeReferenceParseFlags allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixFlakeReferenceParseFlags() *NixFlakeReferenceParseFlags {
+	return (*NixFlakeReferenceParseFlags)(allocNixFlakeReferenceParseFlagsMemory(1))
+}
+
+// allocNixFlakeReferenceParseFlagsMemory allocates memory for type C.nix_flake_reference_parse_flags in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixFlakeReferenceParseFlagsMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixFlakeReferenceParseFlagsValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixFlakeReferenceParseFlagsValue = unsafe.Sizeof([1]C.nix_flake_reference_parse_flags{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixFlakeReferenceParseFlags) PassRef() *C.nix_flake_reference_parse_flags {
+	if x == nil {
+		x = (*NixFlakeReferenceParseFlags)(allocNixFlakeReferenceParseFlagsMemory(1))
+	}
+	return (*C.nix_flake_reference_parse_flags)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixFlakeReference) Ref() *C.nix_flake_reference {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_flake_reference)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixFlakeReference) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixFlakeReferenceRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixFlakeReferenceRef(ref unsafe.Pointer) *NixFlakeReference {
+	return (*NixFlakeReference)(ref)
+}
+
+// NewNixFlakeReference allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixFlakeReference() *NixFlakeReference {
+	return (*NixFlakeReference)(allocNixFlakeReferenceMemory(1))
+}
+
+// allocNixFlakeReferenceMemory allocates memory for type C.nix_flake_reference in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixFlakeReferenceMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixFlakeReferenceValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixFlakeReferenceValue = unsafe.Sizeof([1]C.nix_flake_reference{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixFlakeReference) PassRef() *C.nix_flake_reference {
+	if x == nil {
+		x = (*NixFlakeReference)(allocNixFlakeReferenceMemory(1))
+	}
+	return (*C.nix_flake_reference)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixFlakeLockFlags) Ref() *C.nix_flake_lock_flags {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_flake_lock_flags)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixFlakeLockFlags) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixFlakeLockFlagsRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixFlakeLockFlagsRef(ref unsafe.Pointer) *NixFlakeLockFlags {
+	return (*NixFlakeLockFlags)(ref)
+}
+
+// NewNixFlakeLockFlags allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixFlakeLockFlags() *NixFlakeLockFlags {
+	return (*NixFlakeLockFlags)(allocNixFlakeLockFlagsMemory(1))
+}
+
+// allocNixFlakeLockFlagsMemory allocates memory for type C.nix_flake_lock_flags in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixFlakeLockFlagsMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixFlakeLockFlagsValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixFlakeLockFlagsValue = unsafe.Sizeof([1]C.nix_flake_lock_flags{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixFlakeLockFlags) PassRef() *C.nix_flake_lock_flags {
+	if x == nil {
+		x = (*NixFlakeLockFlags)(allocNixFlakeLockFlagsMemory(1))
+	}
+	return (*C.nix_flake_lock_flags)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixLockedFlake) Ref() *C.nix_locked_flake {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_locked_flake)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixLockedFlake) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixLockedFlakeRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixLockedFlakeRef(ref unsafe.Pointer) *NixLockedFlake {
+	return (*NixLockedFlake)(ref)
+}
+
+// NewNixLockedFlake allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixLockedFlake() *NixLockedFlake {
+	return (*NixLockedFlake)(allocNixLockedFlakeMemory(1))
+}
+
+// allocNixLockedFlakeMemory allocates memory for type C.nix_locked_flake in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixLockedFlakeMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixLockedFlakeValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixLockedFlakeValue = unsafe.Sizeof([1]C.nix_locked_flake{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixLockedFlake) PassRef() *C.nix_locked_flake {
+	if x == nil {
+		x = (*NixLockedFlake)(allocNixLockedFlakeMemory(1))
+	}
+	return (*C.nix_locked_flake)(unsafe.Pointer(x))
 }
 
 // Ref returns a reference to C object as it is.
@@ -1681,6 +1912,52 @@ func (x *ExternalValueDesc) Deref() {
 	x.Equal = *NewExternalEqualFunRef(unsafe.Pointer(&x.refaf0e485c.equal))
 	x.PrintValueAsJson = *NewExternalJsonFunRef(unsafe.Pointer(&x.refaf0e485c.print_value_as_json))
 	x.PrintValueAsXml = *NewExternalXmlFunRef(unsafe.Pointer(&x.refaf0e485c.print_value_as_xml))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *FlakeReferenceResult) Ref() *C.go_nix_flake_reference_result {
+	if x == nil {
+		return nil
+	}
+	return (*C.go_nix_flake_reference_result)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *FlakeReferenceResult) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewFlakeReferenceResultRef converts the C object reference into a raw struct reference without wrapping.
+func NewFlakeReferenceResultRef(ref unsafe.Pointer) *FlakeReferenceResult {
+	return (*FlakeReferenceResult)(ref)
+}
+
+// NewFlakeReferenceResult allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewFlakeReferenceResult() *FlakeReferenceResult {
+	return (*FlakeReferenceResult)(allocFlakeReferenceResultMemory(1))
+}
+
+// allocFlakeReferenceResultMemory allocates memory for type C.go_nix_flake_reference_result in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocFlakeReferenceResultMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfFlakeReferenceResultValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfFlakeReferenceResultValue = unsafe.Sizeof([1]C.go_nix_flake_reference_result{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *FlakeReferenceResult) PassRef() *C.go_nix_flake_reference_result {
+	if x == nil {
+		x = (*FlakeReferenceResult)(allocFlakeReferenceResultMemory(1))
+	}
+	return (*C.go_nix_flake_reference_result)(unsafe.Pointer(x))
 }
 
 // allocStoreParamMemory allocates memory for type C.go_nix_store_param in C.

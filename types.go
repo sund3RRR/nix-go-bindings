@@ -6,11 +6,12 @@
 package nix
 
 /*
-#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c
+#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c
 #include "nix_go_util.h"
 #include "nix_go_store.h"
 #include "nix_go_fetchers.h"
 #include "nix_go_expr.h"
+#include "nix_go_flake.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
@@ -29,16 +30,31 @@ type StorePath C.StorePath
 // NixFetchersSettings as declared in include/nix_api_fetchers.h:22
 type NixFetchersSettings C.nix_fetchers_settings
 
+// NixFlakeSettings as declared in include/nix_api_flake.h:27
+type NixFlakeSettings C.nix_flake_settings
+
+// NixFlakeReferenceParseFlags as declared in include/nix_api_flake.h:34
+type NixFlakeReferenceParseFlags C.nix_flake_reference_parse_flags
+
+// NixFlakeReference as declared in include/nix_api_flake.h:44
+type NixFlakeReference C.nix_flake_reference
+
+// NixFlakeLockFlags as declared in include/nix_api_flake.h:52
+type NixFlakeLockFlags C.nix_flake_lock_flags
+
+// NixLockedFlake as declared in include/nix_api_flake.h:60
+type NixLockedFlake C.nix_locked_flake
+
 // NixCContext as declared in include/nix_api_util.h:160
 type NixCContext C.nix_c_context
 
-// NixEvalStateBuilder as declared in nix-go-bindings/nix_go_expr.h:14
+// NixEvalStateBuilder as declared in include/nix_api_expr.h:39
 type NixEvalStateBuilder C.nix_eval_state_builder
 
-// EvalState as declared in nix-go-bindings/nix_go_expr.h:15
+// EvalState as declared in include/nix_api_expr.h:49
 type EvalState C.EvalState
 
-// NixValue as declared in nix-go-bindings/nix_go_expr.h:16
+// NixValue as declared in include/nix_api_expr.h:69
 type NixValue C.nix_value
 
 // BindingsBuilder as declared in nix-go-bindings/nix_go_expr.h:17
@@ -131,6 +147,9 @@ type ExternalValueDesc struct {
 	refaf0e485c      *C.go_nix_external_value_desc
 	allocsaf0e485c   interface{}
 }
+
+// FlakeReferenceResult as declared in nix-go-bindings/nix_go_flake.h:19
+type FlakeReferenceResult C.go_nix_flake_reference_result
 
 // StoreParam as declared in nix-go-bindings/nix_go_store.h:19
 type StoreParam struct {

@@ -7,11 +7,13 @@ GENERATOR:
     - nix_go_store.h
     - nix_go_fetchers.h
     - nix_go_expr.h
+    - nix_go_flake.h
   PkgConfigOpts:
     - nix-util-c
     - nix-store-c
     - nix-fetchers-c
     - nix-expr-c
+    - nix-flake-c
 
 PARSER:
   Defines:
@@ -23,6 +25,7 @@ PARSER:
     - nix_go_store.h
     - nix_go_fetchers.h
     - nix_go_expr.h
+    - nix_go_flake.h
 
 TRANSLATOR:
   ConstRules:
@@ -45,6 +48,12 @@ TRANSLATOR:
       - { action: accept, from: "^nix_c_context$" }
       - { action: accept, from: "^nix_derivation$" }
       - { action: accept, from: "^nix_fetchers_settings$" }
+      - { action: accept, from: "^nix_flake_settings$" }
+      - { action: accept, from: "^nix_flake_reference_parse_flags$" }
+      - { action: accept, from: "^nix_flake_reference$" }
+      - { action: accept, from: "^nix_flake_lock_flags$" }
+      - { action: accept, from: "^nix_locked_flake$" }
+      - { action: accept, from: "^go_nix_flake_reference_result$" }
       - { action: accept, from: "^nix_eval_state_builder$" }
       - { action: accept, from: "^EvalState$" }
       - { action: accept, from: "^nix_value$" }
@@ -108,6 +117,12 @@ TRANSLATOR:
     - { target: "^nix_c_context$", self: raw }
     - { target: "^nix_derivation$", self: raw }
     - { target: "^nix_fetchers_settings$", self: raw }
+    - { target: "^nix_flake_settings$", self: raw }
+    - { target: "^nix_flake_reference_parse_flags$", self: raw }
+    - { target: "^nix_flake_reference$", self: raw }
+    - { target: "^nix_flake_lock_flags$", self: raw }
+    - { target: "^nix_locked_flake$", self: raw }
+    - { target: "^go_nix_flake_reference_result$", self: raw }
     - { target: "^nix_eval_state_builder$", self: raw }
     - { target: "^EvalState$", self: raw }
     - { target: "^nix_value$", self: raw }

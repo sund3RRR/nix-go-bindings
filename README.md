@@ -115,11 +115,11 @@ The upstream C API packages are:
   - [x] Lists, attrsets, primops, external values, realized strings, and GC hooks.
 - [x] `nix-fetchers-c`
   - [x] Fetchers settings lifecycle.
-- [ ] `nix-flake-c`
-  - [ ] Flake settings lifecycle and eval-state integration.
-  - [ ] Reference parse flags and reference parsing.
-  - [ ] Lock flags, input overrides, lock operation, locked flake lifecycle.
-  - [ ] Locked flake output attribute lookup.
+- [x] `nix-flake-c`
+  - [x] Flake settings lifecycle and eval-state integration.
+  - [x] Reference parse flags and reference parsing.
+  - [x] Lock flags, input overrides, lock operation, locked flake lifecycle.
+  - [x] Locked flake output attribute lookup.
 - [ ] `nix-main-c`
   - [ ] Plugin initialization.
   - [ ] Log format configuration.

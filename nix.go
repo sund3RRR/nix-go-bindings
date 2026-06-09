@@ -6,11 +6,12 @@
 package nix
 
 /*
-#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c
+#cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c
 #include "nix_go_util.h"
 #include "nix_go_store.h"
 #include "nix_go_fetchers.h"
 #include "nix_go_expr.h"
+#include "nix_go_flake.h"
 #include <stdlib.h>
 #include "cgo_helpers.h"
 */
@@ -873,6 +874,226 @@ func FetchersSettingsFree(settings *NixFetchersSettings) {
 	csettings, csettingsAllocMap := (*C.nix_fetchers_settings)(unsafe.Pointer(settings)), cgoAllocsUnknown
 	C.go_nix_fetchers_settings_free(csettings)
 	runtime.KeepAlive(csettingsAllocMap)
+}
+
+// FlakeSettingsNew function as declared in nix-go-bindings/nix_go_flake.h:21
+func FlakeSettingsNew(ctx *NixCContext) *NixFlakeSettings {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	__ret := C.go_nix_flake_settings_new(cctx)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := *(**NixFlakeSettings)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// FlakeSettingsFree function as declared in nix-go-bindings/nix_go_flake.h:22
+func FlakeSettingsFree(settings *NixFlakeSettings) {
+	csettings, csettingsAllocMap := (*C.nix_flake_settings)(unsafe.Pointer(settings)), cgoAllocsUnknown
+	C.go_nix_flake_settings_free(csettings)
+	runtime.KeepAlive(csettingsAllocMap)
+}
+
+// FlakeSettingsAddToEvalStateBuilder function as declared in nix-go-bindings/nix_go_flake.h:23
+func FlakeSettingsAddToEvalStateBuilder(ctx *NixCContext, settings *NixFlakeSettings, builder *NixEvalStateBuilder) NixErr {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	csettings, csettingsAllocMap := (*C.nix_flake_settings)(unsafe.Pointer(settings)), cgoAllocsUnknown
+	cbuilder, cbuilderAllocMap := (*C.nix_eval_state_builder)(unsafe.Pointer(builder)), cgoAllocsUnknown
+	__ret := C.go_nix_flake_settings_add_to_eval_state_builder(cctx, csettings, cbuilder)
+	runtime.KeepAlive(cbuilderAllocMap)
+	runtime.KeepAlive(csettingsAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := (NixErr)(__ret)
+	return __v
+}
+
+// FlakeReferenceParseFlagsNew function as declared in nix-go-bindings/nix_go_flake.h:29
+func FlakeReferenceParseFlagsNew(ctx *NixCContext, settings *NixFlakeSettings) *NixFlakeReferenceParseFlags {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	csettings, csettingsAllocMap := (*C.nix_flake_settings)(unsafe.Pointer(settings)), cgoAllocsUnknown
+	__ret := C.go_nix_flake_reference_parse_flags_new(cctx, csettings)
+	runtime.KeepAlive(csettingsAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := *(**NixFlakeReferenceParseFlags)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// FlakeReferenceParseFlagsFree function as declared in nix-go-bindings/nix_go_flake.h:33
+func FlakeReferenceParseFlagsFree(flags *NixFlakeReferenceParseFlags) {
+	cflags, cflagsAllocMap := (*C.nix_flake_reference_parse_flags)(unsafe.Pointer(flags)), cgoAllocsUnknown
+	C.go_nix_flake_reference_parse_flags_free(cflags)
+	runtime.KeepAlive(cflagsAllocMap)
+}
+
+// FlakeReferenceParseFlagsSetBaseDirectory function as declared in nix-go-bindings/nix_go_flake.h:34
+func FlakeReferenceParseFlagsSetBaseDirectory(ctx *NixCContext, flags *NixFlakeReferenceParseFlags, baseDirectory string, baseDirectoryLen uint64) NixErr {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	cflags, cflagsAllocMap := (*C.nix_flake_reference_parse_flags)(unsafe.Pointer(flags)), cgoAllocsUnknown
+	cbaseDirectory, cbaseDirectoryAllocMap := unpackPCharString(baseDirectory)
+	cbaseDirectoryLen, cbaseDirectoryLenAllocMap := (C.size_t)(baseDirectoryLen), cgoAllocsUnknown
+	__ret := C.go_nix_flake_reference_parse_flags_set_base_directory(cctx, cflags, cbaseDirectory, cbaseDirectoryLen)
+	runtime.KeepAlive(cbaseDirectoryLenAllocMap)
+	runtime.KeepAlive(cbaseDirectoryAllocMap)
+	runtime.KeepAlive(cflagsAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := (NixErr)(__ret)
+	return __v
+}
+
+// FlakeReferenceAndFragmentFromString function as declared in nix-go-bindings/nix_go_flake.h:41
+func FlakeReferenceAndFragmentFromString(ctx *NixCContext, fetchSettings *NixFetchersSettings, flakeSettings *NixFlakeSettings, parseFlags *NixFlakeReferenceParseFlags, str string, strLen uint64) *FlakeReferenceResult {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	cfetchSettings, cfetchSettingsAllocMap := (*C.nix_fetchers_settings)(unsafe.Pointer(fetchSettings)), cgoAllocsUnknown
+	cflakeSettings, cflakeSettingsAllocMap := (*C.nix_flake_settings)(unsafe.Pointer(flakeSettings)), cgoAllocsUnknown
+	cparseFlags, cparseFlagsAllocMap := (*C.nix_flake_reference_parse_flags)(unsafe.Pointer(parseFlags)), cgoAllocsUnknown
+	cstr, cstrAllocMap := unpackPCharString(str)
+	cstrLen, cstrLenAllocMap := (C.size_t)(strLen), cgoAllocsUnknown
+	__ret := C.go_nix_flake_reference_and_fragment_from_string(cctx, cfetchSettings, cflakeSettings, cparseFlags, cstr, cstrLen)
+	runtime.KeepAlive(cstrLenAllocMap)
+	runtime.KeepAlive(cstrAllocMap)
+	runtime.KeepAlive(cparseFlagsAllocMap)
+	runtime.KeepAlive(cflakeSettingsAllocMap)
+	runtime.KeepAlive(cfetchSettingsAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := *(**FlakeReferenceResult)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// FlakeReferenceResultTakeReference function as declared in nix-go-bindings/nix_go_flake.h:49
+func FlakeReferenceResultTakeReference(result *FlakeReferenceResult) *NixFlakeReference {
+	cresult, cresultAllocMap := (*C.go_nix_flake_reference_result)(unsafe.Pointer(result)), cgoAllocsUnknown
+	__ret := C.go_nix_flake_reference_result_take_reference(cresult)
+	runtime.KeepAlive(cresultAllocMap)
+	__v := *(**NixFlakeReference)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// FlakeReferenceResultTakeFragment function as declared in nix-go-bindings/nix_go_flake.h:52
+func FlakeReferenceResultTakeFragment(result *FlakeReferenceResult) *byte {
+	cresult, cresultAllocMap := (*C.go_nix_flake_reference_result)(unsafe.Pointer(result)), cgoAllocsUnknown
+	__ret := C.go_nix_flake_reference_result_take_fragment(cresult)
+	runtime.KeepAlive(cresultAllocMap)
+	__v := *(**byte)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// FlakeReferenceResultFree function as declared in nix-go-bindings/nix_go_flake.h:53
+func FlakeReferenceResultFree(result *FlakeReferenceResult) {
+	cresult, cresultAllocMap := (*C.go_nix_flake_reference_result)(unsafe.Pointer(result)), cgoAllocsUnknown
+	C.go_nix_flake_reference_result_free(cresult)
+	runtime.KeepAlive(cresultAllocMap)
+}
+
+// FlakeReferenceFree function as declared in nix-go-bindings/nix_go_flake.h:54
+func FlakeReferenceFree(reference *NixFlakeReference) {
+	creference, creferenceAllocMap := (*C.nix_flake_reference)(unsafe.Pointer(reference)), cgoAllocsUnknown
+	C.go_nix_flake_reference_free(creference)
+	runtime.KeepAlive(creferenceAllocMap)
+}
+
+// FlakeLockFlagsNew function as declared in nix-go-bindings/nix_go_flake.h:56
+func FlakeLockFlagsNew(ctx *NixCContext, settings *NixFlakeSettings) *NixFlakeLockFlags {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	csettings, csettingsAllocMap := (*C.nix_flake_settings)(unsafe.Pointer(settings)), cgoAllocsUnknown
+	__ret := C.go_nix_flake_lock_flags_new(cctx, csettings)
+	runtime.KeepAlive(csettingsAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := *(**NixFlakeLockFlags)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// FlakeLockFlagsFree function as declared in nix-go-bindings/nix_go_flake.h:60
+func FlakeLockFlagsFree(flags *NixFlakeLockFlags) {
+	cflags, cflagsAllocMap := (*C.nix_flake_lock_flags)(unsafe.Pointer(flags)), cgoAllocsUnknown
+	C.go_nix_flake_lock_flags_free(cflags)
+	runtime.KeepAlive(cflagsAllocMap)
+}
+
+// FlakeLockFlagsSetModeCheck function as declared in nix-go-bindings/nix_go_flake.h:61
+func FlakeLockFlagsSetModeCheck(ctx *NixCContext, flags *NixFlakeLockFlags) NixErr {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	cflags, cflagsAllocMap := (*C.nix_flake_lock_flags)(unsafe.Pointer(flags)), cgoAllocsUnknown
+	__ret := C.go_nix_flake_lock_flags_set_mode_check(cctx, cflags)
+	runtime.KeepAlive(cflagsAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := (NixErr)(__ret)
+	return __v
+}
+
+// FlakeLockFlagsSetModeVirtual function as declared in nix-go-bindings/nix_go_flake.h:65
+func FlakeLockFlagsSetModeVirtual(ctx *NixCContext, flags *NixFlakeLockFlags) NixErr {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	cflags, cflagsAllocMap := (*C.nix_flake_lock_flags)(unsafe.Pointer(flags)), cgoAllocsUnknown
+	__ret := C.go_nix_flake_lock_flags_set_mode_virtual(cctx, cflags)
+	runtime.KeepAlive(cflagsAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := (NixErr)(__ret)
+	return __v
+}
+
+// FlakeLockFlagsSetModeWriteAsNeeded function as declared in nix-go-bindings/nix_go_flake.h:69
+func FlakeLockFlagsSetModeWriteAsNeeded(ctx *NixCContext, flags *NixFlakeLockFlags) NixErr {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	cflags, cflagsAllocMap := (*C.nix_flake_lock_flags)(unsafe.Pointer(flags)), cgoAllocsUnknown
+	__ret := C.go_nix_flake_lock_flags_set_mode_write_as_needed(cctx, cflags)
+	runtime.KeepAlive(cflagsAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := (NixErr)(__ret)
+	return __v
+}
+
+// FlakeLockFlagsAddInputOverride function as declared in nix-go-bindings/nix_go_flake.h:73
+func FlakeLockFlagsAddInputOverride(ctx *NixCContext, flags *NixFlakeLockFlags, inputPath string, flakeReference *NixFlakeReference) NixErr {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	cflags, cflagsAllocMap := (*C.nix_flake_lock_flags)(unsafe.Pointer(flags)), cgoAllocsUnknown
+	cinputPath, cinputPathAllocMap := unpackPCharString(inputPath)
+	cflakeReference, cflakeReferenceAllocMap := (*C.nix_flake_reference)(unsafe.Pointer(flakeReference)), cgoAllocsUnknown
+	__ret := C.go_nix_flake_lock_flags_add_input_override(cctx, cflags, cinputPath, cflakeReference)
+	runtime.KeepAlive(cflakeReferenceAllocMap)
+	runtime.KeepAlive(cinputPathAllocMap)
+	runtime.KeepAlive(cflagsAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := (NixErr)(__ret)
+	return __v
+}
+
+// FlakeLock function as declared in nix-go-bindings/nix_go_flake.h:80
+func FlakeLock(ctx *NixCContext, fetchSettings *NixFetchersSettings, flakeSettings *NixFlakeSettings, evalState *EvalState, flags *NixFlakeLockFlags, flakeReference *NixFlakeReference) *NixLockedFlake {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	cfetchSettings, cfetchSettingsAllocMap := (*C.nix_fetchers_settings)(unsafe.Pointer(fetchSettings)), cgoAllocsUnknown
+	cflakeSettings, cflakeSettingsAllocMap := (*C.nix_flake_settings)(unsafe.Pointer(flakeSettings)), cgoAllocsUnknown
+	cevalState, cevalStateAllocMap := (*C.EvalState)(unsafe.Pointer(evalState)), cgoAllocsUnknown
+	cflags, cflagsAllocMap := (*C.nix_flake_lock_flags)(unsafe.Pointer(flags)), cgoAllocsUnknown
+	cflakeReference, cflakeReferenceAllocMap := (*C.nix_flake_reference)(unsafe.Pointer(flakeReference)), cgoAllocsUnknown
+	__ret := C.go_nix_flake_lock(cctx, cfetchSettings, cflakeSettings, cevalState, cflags, cflakeReference)
+	runtime.KeepAlive(cflakeReferenceAllocMap)
+	runtime.KeepAlive(cflagsAllocMap)
+	runtime.KeepAlive(cevalStateAllocMap)
+	runtime.KeepAlive(cflakeSettingsAllocMap)
+	runtime.KeepAlive(cfetchSettingsAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := *(**NixLockedFlake)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// LockedFlakeFree function as declared in nix-go-bindings/nix_go_flake.h:88
+func LockedFlakeFree(lockedFlake *NixLockedFlake) {
+	clockedFlake, clockedFlakeAllocMap := (*C.nix_locked_flake)(unsafe.Pointer(lockedFlake)), cgoAllocsUnknown
+	C.go_nix_locked_flake_free(clockedFlake)
+	runtime.KeepAlive(clockedFlakeAllocMap)
+}
+
+// LockedFlakeGetOutputAttrs function as declared in nix-go-bindings/nix_go_flake.h:89
+func LockedFlakeGetOutputAttrs(ctx *NixCContext, settings *NixFlakeSettings, evalState *EvalState, lockedFlake *NixLockedFlake) *NixValue {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	csettings, csettingsAllocMap := (*C.nix_flake_settings)(unsafe.Pointer(settings)), cgoAllocsUnknown
+	cevalState, cevalStateAllocMap := (*C.EvalState)(unsafe.Pointer(evalState)), cgoAllocsUnknown
+	clockedFlake, clockedFlakeAllocMap := (*C.nix_locked_flake)(unsafe.Pointer(lockedFlake)), cgoAllocsUnknown
+	__ret := C.go_nix_locked_flake_get_output_attrs(cctx, csettings, cevalState, clockedFlake)
+	runtime.KeepAlive(clockedFlakeAllocMap)
+	runtime.KeepAlive(cevalStateAllocMap)
+	runtime.KeepAlive(csettingsAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := *(**NixValue)(unsafe.Pointer(&__ret))
+	return __v
 }
 
 // LibstoreInit function as declared in nix-go-bindings/nix_go_store.h:42
