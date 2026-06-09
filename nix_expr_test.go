@@ -345,7 +345,7 @@ func TestNixExprExternalValueAndPrimopLifecycle(t *testing.T) {
 	t.Cleanup(func() {
 		desc.Free()
 	})
-	content := unsafe.Pointer(uintptr(0x1234))
+	var content unsafe.Pointer
 	external := CreateExternalValue(ctx, &desc, content)
 	if external == nil {
 		t.Fatalf("CreateExternalValue returned nil: err=%v msg=%q", ErrCode(ctx), errMsgString(t, ctx))
