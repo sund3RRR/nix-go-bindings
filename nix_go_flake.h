@@ -86,6 +86,16 @@ nix_locked_flake *go_nix_flake_lock(
     nix_flake_reference *flake_reference
 );
 void go_nix_locked_flake_free(nix_locked_flake *locked_flake);
+char *go_nix_locked_flake_get_lock_json(
+    nix_c_context *ctx,
+    nix_locked_flake *locked_flake
+);
+char *go_nix_locked_flake_get_fingerprint(
+    nix_c_context *ctx,
+    Store *store,
+    nix_fetchers_settings *fetch_settings,
+    nix_locked_flake *locked_flake
+);
 nix_value *go_nix_locked_flake_get_output_attrs(
     nix_c_context *ctx,
     nix_flake_settings *settings,

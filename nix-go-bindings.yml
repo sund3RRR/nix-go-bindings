@@ -16,6 +16,11 @@ GENERATOR:
     - nix-expr-c
     - nix-flake-c
     - nix-main-c
+  FlagGroups:
+    - { name: CXXFLAGS, flags: ["-std=c++23"] }
+    - { name: LDFLAGS, flags: ["-lnixflake", "-lnixutil"] }
+    - { name: LDFLAGS, traits: ["darwin"], flags: ["-lc++"] }
+    - { name: LDFLAGS, traits: ["linux"], flags: ["-lstdc++"] }
 
 PARSER:
   Defines:

@@ -7,6 +7,10 @@ package nix
 
 /*
 #cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c nix-main-c
+#cgo CXXFLAGS: -std=c++23
+#cgo LDFLAGS: -lnixflake -lnixutil
+#cgo darwin LDFLAGS: -lc++
+#cgo linux LDFLAGS: -lstdc++
 #include "nix_go_util.h"
 #include "nix_go_store.h"
 #include "nix_go_fetchers.h"

@@ -4,10 +4,10 @@ Experimental Go bindings for the [Nix](https://github.com/NixOS/nix) C API.
 
 The Nix project is implemented in C++, and its public C API packages are thin C
 facades over those C++ libraries. This repository turns that C API into Go via
-[c-for-go](https://github.com/xlab/c-for-go). A small C shim lives in
-`nix_go_store.h` and `nix_go_store.c` to translate awkward C API shapes, such as
-callback-returned strings and `const char ***` store parameters, into signatures
-that c-for-go can generate more cleanly.
+[c-for-go](https://github.com/xlab/c-for-go). Small C shims translate awkward C
+API shapes into signatures that c-for-go can generate cleanly. A narrow C++
+flake shim also exposes lock-file serialization and locked-flake fingerprints,
+which are available upstream in C++ but not in the public Nix C API.
 
 This is currently a low-level binding package, not an idiomatic Go client.
 
@@ -25,10 +25,12 @@ build projects using these bindings.
 
 ## How It Fits Together
 
-- `flake.nix` provides the development shell, Nix C API libraries, pkg-config
-  paths, Go, c-for-go, and the binding generation app.
+- `flake.nix` provides the development shell, Nix C API libraries, the Nix
+  flake C++ library, pkg-config paths, Go, c-for-go, and the binding generation
+  app.
 - `nix-go-bindings.yml` is the c-for-go configuration.
-- `nix_go_store.h` and `nix_go_store.c` are the local C shim layer.
+- `nix_go_*.h`, `nix_go_*.c`, and `nix_go_flake_cpp.cc` are the local shim
+  layer.
 - `nix.go`, `types.go`, `const.go`, `cgo_helpers.*`, and `doc.go` are generated.
 
 ## Contribution
@@ -137,6 +139,7 @@ The upstream C API packages are:
   - [x] Reference parse flags and reference parsing.
   - [x] Lock flags, input overrides, lock operation, locked flake lifecycle.
   - [x] Locked flake output attribute lookup.
+  - [x] C++ adapters for lock JSON and locked-flake fingerprints.
 - [x] `nix-main-c`
   - [x] Plugin initialization.
   - [x] Log format configuration.

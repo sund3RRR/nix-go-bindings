@@ -7,6 +7,10 @@ package nix
 
 /*
 #cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c nix-main-c
+#cgo CXXFLAGS: -std=c++23
+#cgo LDFLAGS: -lnixflake -lnixutil
+#cgo darwin LDFLAGS: -lc++
+#cgo linux LDFLAGS: -lstdc++
 #include "nix_go_util.h"
 #include "nix_go_store.h"
 #include "nix_go_fetchers.h"
@@ -965,7 +969,33 @@ func LockedFlakeFree(lockedFlake *NixLockedFlake) {
 	runtime.KeepAlive(clockedFlakeAllocMap)
 }
 
-// LockedFlakeGetOutputAttrs function as declared in nix-go-bindings/nix_go_flake.h:89
+// LockedFlakeGetLockJson function as declared in nix-go-bindings/nix_go_flake.h:89
+func LockedFlakeGetLockJson(ctx *NixCContext, lockedFlake *NixLockedFlake) *byte {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	clockedFlake, clockedFlakeAllocMap := (*C.nix_locked_flake)(unsafe.Pointer(lockedFlake)), cgoAllocsUnknown
+	__ret := C.go_nix_locked_flake_get_lock_json(cctx, clockedFlake)
+	runtime.KeepAlive(clockedFlakeAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := *(**byte)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// LockedFlakeGetFingerprint function as declared in nix-go-bindings/nix_go_flake.h:93
+func LockedFlakeGetFingerprint(ctx *NixCContext, store *Store, fetchSettings *NixFetchersSettings, lockedFlake *NixLockedFlake) *byte {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	cstore, cstoreAllocMap := (*C.Store)(unsafe.Pointer(store)), cgoAllocsUnknown
+	cfetchSettings, cfetchSettingsAllocMap := (*C.nix_fetchers_settings)(unsafe.Pointer(fetchSettings)), cgoAllocsUnknown
+	clockedFlake, clockedFlakeAllocMap := (*C.nix_locked_flake)(unsafe.Pointer(lockedFlake)), cgoAllocsUnknown
+	__ret := C.go_nix_locked_flake_get_fingerprint(cctx, cstore, cfetchSettings, clockedFlake)
+	runtime.KeepAlive(clockedFlakeAllocMap)
+	runtime.KeepAlive(cfetchSettingsAllocMap)
+	runtime.KeepAlive(cstoreAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := *(**byte)(unsafe.Pointer(&__ret))
+	return __v
+}
+
+// LockedFlakeGetOutputAttrs function as declared in nix-go-bindings/nix_go_flake.h:99
 func LockedFlakeGetOutputAttrs(ctx *NixCContext, settings *NixFlakeSettings, evalState *EvalState, lockedFlake *NixLockedFlake) *NixValue {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
 	csettings, csettingsAllocMap := (*C.nix_flake_settings)(unsafe.Pointer(settings)), cgoAllocsUnknown

@@ -30,7 +30,13 @@
             nix-main-c
           ];
 
-          pkgConfigPath = lib.makeSearchPath "lib/pkgconfig" (map lib.getDev nixCLibs);
+          nixCppLibs = with pkgs.nixVersions.latest.libs; [
+            nix-flake
+          ];
+
+          nixLibs = nixCLibs ++ nixCppLibs;
+
+          pkgConfigPath = lib.makeSearchPath "lib/pkgconfig" (map lib.getDev nixLibs);
 
           generateGoBindingsTool =
             pkgs.writeShellApplication {
@@ -97,6 +103,11 @@
                   exit 1
                 fi
 
+                if [ ! -f nix_go_flake_cpp.cc ]; then
+                  echo "missing nix_go_flake_cpp.cc in repository root" >&2
+                  exit 1
+                fi
+
                 if [ ! -f nix_go_main.h ]; then
                   echo "missing nix_go_main.h in repository root" >&2
                   exit 1
@@ -123,6 +134,8 @@
           inherit
             pkgs
             nixCLibs
+            nixCppLibs
+            nixLibs
             pkgConfigPath
             generateGoBindingsTool
             ;
@@ -163,7 +176,7 @@
               env.pkgs.go
               env.pkgs.c-for-go
               env.pkgs.pkg-config
-            ] ++ env.nixCLibs;
+            ] ++ env.nixLibs;
 
             shellHook = ''
               export CGO_ENABLED=1

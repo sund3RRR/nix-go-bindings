@@ -7,6 +7,10 @@ package nix
 
 /*
 #cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c nix-main-c
+#cgo CXXFLAGS: -std=c++23
+#cgo LDFLAGS: -lnixflake -lnixutil
+#cgo darwin LDFLAGS: -lc++
+#cgo linux LDFLAGS: -lstdc++
 #include "nix_go_util.h"
 #include "nix_go_store.h"
 #include "nix_go_fetchers.h"
@@ -18,17 +22,17 @@ package nix
 */
 import "C"
 
-// Store as declared in include/nix_api_store.h:25
-type Store C.Store
-
-// NixDerivation as declared in nix_api_store/derivation.h:21
-type NixDerivation C.nix_derivation
-
-// StorePath as declared in nix_api_store/store_path.h:24
-type StorePath C.StorePath
-
 // NixFetchersSettings as declared in include/nix_api_fetchers.h:22
 type NixFetchersSettings C.nix_fetchers_settings
+
+// NixEvalStateBuilder as declared in include/nix_api_expr.h:39
+type NixEvalStateBuilder C.nix_eval_state_builder
+
+// EvalState as declared in include/nix_api_expr.h:49
+type EvalState C.EvalState
+
+// NixValue as declared in include/nix_api_expr.h:69
+type NixValue C.nix_value
 
 // NixFlakeSettings as declared in include/nix_api_flake.h:27
 type NixFlakeSettings C.nix_flake_settings
@@ -45,17 +49,17 @@ type NixFlakeLockFlags C.nix_flake_lock_flags
 // NixLockedFlake as declared in include/nix_api_flake.h:60
 type NixLockedFlake C.nix_locked_flake
 
+// Store as declared in include/nix_api_store.h:25
+type Store C.Store
+
+// NixDerivation as declared in nix_api_store/derivation.h:21
+type NixDerivation C.nix_derivation
+
+// StorePath as declared in nix_api_store/store_path.h:24
+type StorePath C.StorePath
+
 // NixCContext as declared in include/nix_api_util.h:160
 type NixCContext C.nix_c_context
-
-// NixEvalStateBuilder as declared in include/nix_api_expr.h:39
-type NixEvalStateBuilder C.nix_eval_state_builder
-
-// EvalState as declared in include/nix_api_expr.h:49
-type EvalState C.EvalState
-
-// NixValue as declared in include/nix_api_expr.h:69
-type NixValue C.nix_value
 
 // BindingsBuilder as declared in nix-go-bindings/nix_go_expr.h:17
 type BindingsBuilder C.BindingsBuilder

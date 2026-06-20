@@ -3,6 +3,7 @@ package nix
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -242,6 +243,39 @@ func lockedFlakeHello(t *testing.T, ctx *NixCContext, settings *NixFlakeSettings
 	return ownedCString(t, GetString(ctx, hello))
 }
 
+func lockedFlakeFingerprint(
+	t *testing.T,
+	ctx *NixCContext,
+	store *Store,
+	fetchSettings *NixFetchersSettings,
+	lockedFlake *NixLockedFlake,
+) string {
+	t.Helper()
+
+	raw := LockedFlakeGetFingerprint(ctx, store, fetchSettings, lockedFlake)
+	if raw == nil {
+		if got := ErrCode(ctx); got != NixOk {
+			t.Fatalf("LockedFlakeGetFingerprint returned nil: err=%v msg=%q", got, errMsgString(t, ctx))
+		}
+		t.Fatal("LockedFlakeGetFingerprint returned no fingerprint")
+	}
+
+	fingerprint := ownedCString(t, raw)
+	if got := ErrCode(ctx); got != NixOk {
+		t.Fatalf("ErrCode after LockedFlakeGetFingerprint = %v, want %v", got, NixOk)
+	}
+	if len(fingerprint) != 64 {
+		t.Fatalf("LockedFlakeGetFingerprint length = %d, want 64: %q", len(fingerprint), fingerprint)
+	}
+	for _, c := range []byte(fingerprint) {
+		if !('0' <= c && c <= '9') && !('a' <= c && c <= 'f') {
+			t.Fatalf("LockedFlakeGetFingerprint = %q, want lowercase base16", fingerprint)
+		}
+	}
+
+	return fingerprint
+}
+
 func TestNixFlakeSettingsAddToEvalStateBuilderAddsGetFlake(t *testing.T) {
 	ctx := newTestContext(t)
 	if got := LibutilInit(ctx); got != NixOk {
@@ -336,9 +370,12 @@ func TestNixFlakeReferenceParsing(t *testing.T) {
 }
 
 func TestNixFlakeLockAndOutputAttrs(t *testing.T) {
-	ctx, _, fetchSettings, flakeSettings, state := newTestFlakeState(t)
+	ctx, store, fetchSettings, flakeSettings, state := newTestFlakeState(t)
 
-	root := t.TempDir()
+	root, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatalf("EvalSymlinks(flake root): %v", err)
+	}
 	writeTestFlake(t, filepath.Join(root, "b"), `
 {
   outputs = { ... }: {
@@ -428,6 +465,34 @@ func TestNixFlakeLockAndOutputAttrs(t *testing.T) {
 	if got := lockedFlakeHello(t, ctx, flakeSettings, state, lockedFlake); got != "BOB" {
 		t.Fatalf("write-as-needed lock hello = %q, want BOB", got)
 	}
+
+	if got := SetErrMsg(ctx, NixErrUnknown, "stale lock JSON error"); got != NixErrUnknown {
+		t.Fatalf("SetErrMsg before LockedFlakeGetLockJson = %v, want %v", got, NixErrUnknown)
+	}
+	lockJSONRaw := LockedFlakeGetLockJson(ctx, lockedFlake)
+	if lockJSONRaw == nil {
+		t.Fatalf("LockedFlakeGetLockJson returned nil: err=%v msg=%q", ErrCode(ctx), errMsgString(t, ctx))
+	}
+	lockJSON := ownedCString(t, lockJSONRaw)
+	if got := ErrCode(ctx); got != NixOk {
+		t.Fatalf("ErrCode after LockedFlakeGetLockJson = %v, want %v", got, NixOk)
+	}
+
+	writtenLockJSON, err := os.ReadFile(filepath.Join(root, "a", "flake.lock"))
+	if err != nil {
+		t.Fatalf("ReadFile(written flake.lock): %v", err)
+	}
+	if got, want := mustParseJSON(t, lockJSON), mustParseJSON(t, string(writtenLockJSON)); !reflect.DeepEqual(got, want) {
+		t.Fatalf("LockedFlakeGetLockJson = %#v, want written flake.lock %#v", got, want)
+	}
+
+	if got := SetErrMsg(ctx, NixErrUnknown, "stale fingerprint error"); got != NixErrUnknown {
+		t.Fatalf("SetErrMsg before LockedFlakeGetFingerprint = %v, want %v", got, NixErrUnknown)
+	}
+	writtenFingerprint := lockedFlakeFingerprint(t, ctx, store, fetchSettings, lockedFlake)
+	if got := lockedFlakeFingerprint(t, ctx, store, fetchSettings, lockedFlake); got != writtenFingerprint {
+		t.Fatalf("repeated fingerprint = %q, want %q", got, writtenFingerprint)
+	}
 	LockedFlakeFree(lockedFlake)
 
 	if _, err := os.Stat(filepath.Join(root, "a", "flake.lock")); err != nil {
@@ -459,6 +524,9 @@ func TestNixFlakeLockAndOutputAttrs(t *testing.T) {
 	}
 	if got := lockedFlakeHello(t, ctx, flakeSettings, state, lockedFlake); got != "Claire" {
 		t.Fatalf("override lock hello = %q, want Claire", got)
+	}
+	if got := lockedFlakeFingerprint(t, ctx, store, fetchSettings, lockedFlake); got == writtenFingerprint {
+		t.Fatalf("override fingerprint = %q, want different from original lock", got)
 	}
 	LockedFlakeFree(lockedFlake)
 }

@@ -7,6 +7,10 @@ package nix
 
 /*
 #cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c nix-main-c
+#cgo CXXFLAGS: -std=c++23
+#cgo LDFLAGS: -lnixflake -lnixutil
+#cgo darwin LDFLAGS: -lc++
+#cgo linux LDFLAGS: -lstdc++
 #include "nix_go_util.h"
 #include "nix_go_store.h"
 #include "nix_go_fetchers.h"
@@ -25,42 +29,42 @@ import (
 )
 
 // Ref returns a reference to C object as it is.
-func (x *Store) Ref() *C.Store {
+func (x *NixFetchersSettings) Ref() *C.nix_fetchers_settings {
 	if x == nil {
 		return nil
 	}
-	return (*C.Store)(unsafe.Pointer(x))
+	return (*C.nix_fetchers_settings)(unsafe.Pointer(x))
 }
 
 // Free cleanups the referenced memory using C free.
-func (x *Store) Free() {
+func (x *NixFetchersSettings) Free() {
 	if x != nil {
 		C.free(unsafe.Pointer(x))
 	}
 }
 
-// NewStoreRef converts the C object reference into a raw struct reference without wrapping.
-func NewStoreRef(ref unsafe.Pointer) *Store {
-	return (*Store)(ref)
+// NewNixFetchersSettingsRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixFetchersSettingsRef(ref unsafe.Pointer) *NixFetchersSettings {
+	return (*NixFetchersSettings)(ref)
 }
 
-// NewStore allocates a new C object of this type and converts the reference into
+// NewNixFetchersSettings allocates a new C object of this type and converts the reference into
 // a raw struct reference without wrapping.
-func NewStore() *Store {
-	return (*Store)(allocStoreMemory(1))
+func NewNixFetchersSettings() *NixFetchersSettings {
+	return (*NixFetchersSettings)(allocNixFetchersSettingsMemory(1))
 }
 
-// allocStoreMemory allocates memory for type C.Store in C.
+// allocNixFetchersSettingsMemory allocates memory for type C.nix_fetchers_settings in C.
 // The caller is responsible for freeing the this memory via C.free.
-func allocStoreMemory(n int) unsafe.Pointer {
-	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStoreValue))
+func allocNixFetchersSettingsMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixFetchersSettingsValue))
 	if mem == nil {
 		panic(fmt.Sprintln("memory alloc error: ", err))
 	}
 	return mem
 }
 
-const sizeOfStoreValue = unsafe.Sizeof([1]C.Store{})
+const sizeOfNixFetchersSettingsValue = unsafe.Sizeof([1]C.nix_fetchers_settings{})
 
 // cgoAllocMap stores pointers to C allocated memory for future reference.
 type cgoAllocMap struct {
@@ -113,149 +117,149 @@ func (a *cgoAllocMap) Free() {
 }
 
 // PassRef returns a reference to C object as it is or allocates a new C object of this type.
-func (x *Store) PassRef() *C.Store {
-	if x == nil {
-		x = (*Store)(allocStoreMemory(1))
-	}
-	return (*C.Store)(unsafe.Pointer(x))
-}
-
-// Ref returns a reference to C object as it is.
-func (x *NixDerivation) Ref() *C.nix_derivation {
-	if x == nil {
-		return nil
-	}
-	return (*C.nix_derivation)(unsafe.Pointer(x))
-}
-
-// Free cleanups the referenced memory using C free.
-func (x *NixDerivation) Free() {
-	if x != nil {
-		C.free(unsafe.Pointer(x))
-	}
-}
-
-// NewNixDerivationRef converts the C object reference into a raw struct reference without wrapping.
-func NewNixDerivationRef(ref unsafe.Pointer) *NixDerivation {
-	return (*NixDerivation)(ref)
-}
-
-// NewNixDerivation allocates a new C object of this type and converts the reference into
-// a raw struct reference without wrapping.
-func NewNixDerivation() *NixDerivation {
-	return (*NixDerivation)(allocNixDerivationMemory(1))
-}
-
-// allocNixDerivationMemory allocates memory for type C.nix_derivation in C.
-// The caller is responsible for freeing the this memory via C.free.
-func allocNixDerivationMemory(n int) unsafe.Pointer {
-	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixDerivationValue))
-	if mem == nil {
-		panic(fmt.Sprintln("memory alloc error: ", err))
-	}
-	return mem
-}
-
-const sizeOfNixDerivationValue = unsafe.Sizeof([1]C.nix_derivation{})
-
-// PassRef returns a reference to C object as it is or allocates a new C object of this type.
-func (x *NixDerivation) PassRef() *C.nix_derivation {
-	if x == nil {
-		x = (*NixDerivation)(allocNixDerivationMemory(1))
-	}
-	return (*C.nix_derivation)(unsafe.Pointer(x))
-}
-
-// Ref returns a reference to C object as it is.
-func (x *StorePath) Ref() *C.StorePath {
-	if x == nil {
-		return nil
-	}
-	return (*C.StorePath)(unsafe.Pointer(x))
-}
-
-// Free cleanups the referenced memory using C free.
-func (x *StorePath) Free() {
-	if x != nil {
-		C.free(unsafe.Pointer(x))
-	}
-}
-
-// NewStorePathRef converts the C object reference into a raw struct reference without wrapping.
-func NewStorePathRef(ref unsafe.Pointer) *StorePath {
-	return (*StorePath)(ref)
-}
-
-// NewStorePath allocates a new C object of this type and converts the reference into
-// a raw struct reference without wrapping.
-func NewStorePath() *StorePath {
-	return (*StorePath)(allocStorePathMemory(1))
-}
-
-// allocStorePathMemory allocates memory for type C.StorePath in C.
-// The caller is responsible for freeing the this memory via C.free.
-func allocStorePathMemory(n int) unsafe.Pointer {
-	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStorePathValue))
-	if mem == nil {
-		panic(fmt.Sprintln("memory alloc error: ", err))
-	}
-	return mem
-}
-
-const sizeOfStorePathValue = unsafe.Sizeof([1]C.StorePath{})
-
-// PassRef returns a reference to C object as it is or allocates a new C object of this type.
-func (x *StorePath) PassRef() *C.StorePath {
-	if x == nil {
-		x = (*StorePath)(allocStorePathMemory(1))
-	}
-	return (*C.StorePath)(unsafe.Pointer(x))
-}
-
-// Ref returns a reference to C object as it is.
-func (x *NixFetchersSettings) Ref() *C.nix_fetchers_settings {
-	if x == nil {
-		return nil
-	}
-	return (*C.nix_fetchers_settings)(unsafe.Pointer(x))
-}
-
-// Free cleanups the referenced memory using C free.
-func (x *NixFetchersSettings) Free() {
-	if x != nil {
-		C.free(unsafe.Pointer(x))
-	}
-}
-
-// NewNixFetchersSettingsRef converts the C object reference into a raw struct reference without wrapping.
-func NewNixFetchersSettingsRef(ref unsafe.Pointer) *NixFetchersSettings {
-	return (*NixFetchersSettings)(ref)
-}
-
-// NewNixFetchersSettings allocates a new C object of this type and converts the reference into
-// a raw struct reference without wrapping.
-func NewNixFetchersSettings() *NixFetchersSettings {
-	return (*NixFetchersSettings)(allocNixFetchersSettingsMemory(1))
-}
-
-// allocNixFetchersSettingsMemory allocates memory for type C.nix_fetchers_settings in C.
-// The caller is responsible for freeing the this memory via C.free.
-func allocNixFetchersSettingsMemory(n int) unsafe.Pointer {
-	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixFetchersSettingsValue))
-	if mem == nil {
-		panic(fmt.Sprintln("memory alloc error: ", err))
-	}
-	return mem
-}
-
-const sizeOfNixFetchersSettingsValue = unsafe.Sizeof([1]C.nix_fetchers_settings{})
-
-// PassRef returns a reference to C object as it is or allocates a new C object of this type.
 func (x *NixFetchersSettings) PassRef() *C.nix_fetchers_settings {
 	if x == nil {
 		x = (*NixFetchersSettings)(allocNixFetchersSettingsMemory(1))
 	}
 	return (*C.nix_fetchers_settings)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixEvalStateBuilder) Ref() *C.nix_eval_state_builder {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_eval_state_builder)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixEvalStateBuilder) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixEvalStateBuilderRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixEvalStateBuilderRef(ref unsafe.Pointer) *NixEvalStateBuilder {
+	return (*NixEvalStateBuilder)(ref)
+}
+
+// NewNixEvalStateBuilder allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixEvalStateBuilder() *NixEvalStateBuilder {
+	return (*NixEvalStateBuilder)(allocNixEvalStateBuilderMemory(1))
+}
+
+// allocNixEvalStateBuilderMemory allocates memory for type C.nix_eval_state_builder in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixEvalStateBuilderMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixEvalStateBuilderValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixEvalStateBuilderValue = unsafe.Sizeof([1]C.nix_eval_state_builder{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixEvalStateBuilder) PassRef() *C.nix_eval_state_builder {
+	if x == nil {
+		x = (*NixEvalStateBuilder)(allocNixEvalStateBuilderMemory(1))
+	}
+	return (*C.nix_eval_state_builder)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *EvalState) Ref() *C.EvalState {
+	if x == nil {
+		return nil
+	}
+	return (*C.EvalState)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *EvalState) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewEvalStateRef converts the C object reference into a raw struct reference without wrapping.
+func NewEvalStateRef(ref unsafe.Pointer) *EvalState {
+	return (*EvalState)(ref)
+}
+
+// NewEvalState allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewEvalState() *EvalState {
+	return (*EvalState)(allocEvalStateMemory(1))
+}
+
+// allocEvalStateMemory allocates memory for type C.EvalState in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocEvalStateMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfEvalStateValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfEvalStateValue = unsafe.Sizeof([1]C.EvalState{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *EvalState) PassRef() *C.EvalState {
+	if x == nil {
+		x = (*EvalState)(allocEvalStateMemory(1))
+	}
+	return (*C.EvalState)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixValue) Ref() *C.nix_value {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_value)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixValue) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixValueRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixValueRef(ref unsafe.Pointer) *NixValue {
+	return (*NixValue)(ref)
+}
+
+// NewNixValue allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixValue() *NixValue {
+	return (*NixValue)(allocNixValueMemory(1))
+}
+
+// allocNixValueMemory allocates memory for type C.nix_value in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixValueMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixValueValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixValueValue = unsafe.Sizeof([1]C.nix_value{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixValue) PassRef() *C.nix_value {
+	if x == nil {
+		x = (*NixValue)(allocNixValueMemory(1))
+	}
+	return (*C.nix_value)(unsafe.Pointer(x))
 }
 
 // Ref returns a reference to C object as it is.
@@ -489,6 +493,144 @@ func (x *NixLockedFlake) PassRef() *C.nix_locked_flake {
 }
 
 // Ref returns a reference to C object as it is.
+func (x *Store) Ref() *C.Store {
+	if x == nil {
+		return nil
+	}
+	return (*C.Store)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *Store) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewStoreRef converts the C object reference into a raw struct reference without wrapping.
+func NewStoreRef(ref unsafe.Pointer) *Store {
+	return (*Store)(ref)
+}
+
+// NewStore allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewStore() *Store {
+	return (*Store)(allocStoreMemory(1))
+}
+
+// allocStoreMemory allocates memory for type C.Store in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocStoreMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStoreValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfStoreValue = unsafe.Sizeof([1]C.Store{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *Store) PassRef() *C.Store {
+	if x == nil {
+		x = (*Store)(allocStoreMemory(1))
+	}
+	return (*C.Store)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *NixDerivation) Ref() *C.nix_derivation {
+	if x == nil {
+		return nil
+	}
+	return (*C.nix_derivation)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *NixDerivation) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewNixDerivationRef converts the C object reference into a raw struct reference without wrapping.
+func NewNixDerivationRef(ref unsafe.Pointer) *NixDerivation {
+	return (*NixDerivation)(ref)
+}
+
+// NewNixDerivation allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewNixDerivation() *NixDerivation {
+	return (*NixDerivation)(allocNixDerivationMemory(1))
+}
+
+// allocNixDerivationMemory allocates memory for type C.nix_derivation in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocNixDerivationMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixDerivationValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfNixDerivationValue = unsafe.Sizeof([1]C.nix_derivation{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *NixDerivation) PassRef() *C.nix_derivation {
+	if x == nil {
+		x = (*NixDerivation)(allocNixDerivationMemory(1))
+	}
+	return (*C.nix_derivation)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *StorePath) Ref() *C.StorePath {
+	if x == nil {
+		return nil
+	}
+	return (*C.StorePath)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *StorePath) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewStorePathRef converts the C object reference into a raw struct reference without wrapping.
+func NewStorePathRef(ref unsafe.Pointer) *StorePath {
+	return (*StorePath)(ref)
+}
+
+// NewStorePath allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewStorePath() *StorePath {
+	return (*StorePath)(allocStorePathMemory(1))
+}
+
+// allocStorePathMemory allocates memory for type C.StorePath in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocStorePathMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStorePathValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfStorePathValue = unsafe.Sizeof([1]C.StorePath{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *StorePath) PassRef() *C.StorePath {
+	if x == nil {
+		x = (*StorePath)(allocStorePathMemory(1))
+	}
+	return (*C.StorePath)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
 func (x *NixCContext) Ref() *C.nix_c_context {
 	if x == nil {
 		return nil
@@ -532,144 +674,6 @@ func (x *NixCContext) PassRef() *C.nix_c_context {
 		x = (*NixCContext)(allocNixCContextMemory(1))
 	}
 	return (*C.nix_c_context)(unsafe.Pointer(x))
-}
-
-// Ref returns a reference to C object as it is.
-func (x *NixEvalStateBuilder) Ref() *C.nix_eval_state_builder {
-	if x == nil {
-		return nil
-	}
-	return (*C.nix_eval_state_builder)(unsafe.Pointer(x))
-}
-
-// Free cleanups the referenced memory using C free.
-func (x *NixEvalStateBuilder) Free() {
-	if x != nil {
-		C.free(unsafe.Pointer(x))
-	}
-}
-
-// NewNixEvalStateBuilderRef converts the C object reference into a raw struct reference without wrapping.
-func NewNixEvalStateBuilderRef(ref unsafe.Pointer) *NixEvalStateBuilder {
-	return (*NixEvalStateBuilder)(ref)
-}
-
-// NewNixEvalStateBuilder allocates a new C object of this type and converts the reference into
-// a raw struct reference without wrapping.
-func NewNixEvalStateBuilder() *NixEvalStateBuilder {
-	return (*NixEvalStateBuilder)(allocNixEvalStateBuilderMemory(1))
-}
-
-// allocNixEvalStateBuilderMemory allocates memory for type C.nix_eval_state_builder in C.
-// The caller is responsible for freeing the this memory via C.free.
-func allocNixEvalStateBuilderMemory(n int) unsafe.Pointer {
-	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixEvalStateBuilderValue))
-	if mem == nil {
-		panic(fmt.Sprintln("memory alloc error: ", err))
-	}
-	return mem
-}
-
-const sizeOfNixEvalStateBuilderValue = unsafe.Sizeof([1]C.nix_eval_state_builder{})
-
-// PassRef returns a reference to C object as it is or allocates a new C object of this type.
-func (x *NixEvalStateBuilder) PassRef() *C.nix_eval_state_builder {
-	if x == nil {
-		x = (*NixEvalStateBuilder)(allocNixEvalStateBuilderMemory(1))
-	}
-	return (*C.nix_eval_state_builder)(unsafe.Pointer(x))
-}
-
-// Ref returns a reference to C object as it is.
-func (x *EvalState) Ref() *C.EvalState {
-	if x == nil {
-		return nil
-	}
-	return (*C.EvalState)(unsafe.Pointer(x))
-}
-
-// Free cleanups the referenced memory using C free.
-func (x *EvalState) Free() {
-	if x != nil {
-		C.free(unsafe.Pointer(x))
-	}
-}
-
-// NewEvalStateRef converts the C object reference into a raw struct reference without wrapping.
-func NewEvalStateRef(ref unsafe.Pointer) *EvalState {
-	return (*EvalState)(ref)
-}
-
-// NewEvalState allocates a new C object of this type and converts the reference into
-// a raw struct reference without wrapping.
-func NewEvalState() *EvalState {
-	return (*EvalState)(allocEvalStateMemory(1))
-}
-
-// allocEvalStateMemory allocates memory for type C.EvalState in C.
-// The caller is responsible for freeing the this memory via C.free.
-func allocEvalStateMemory(n int) unsafe.Pointer {
-	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfEvalStateValue))
-	if mem == nil {
-		panic(fmt.Sprintln("memory alloc error: ", err))
-	}
-	return mem
-}
-
-const sizeOfEvalStateValue = unsafe.Sizeof([1]C.EvalState{})
-
-// PassRef returns a reference to C object as it is or allocates a new C object of this type.
-func (x *EvalState) PassRef() *C.EvalState {
-	if x == nil {
-		x = (*EvalState)(allocEvalStateMemory(1))
-	}
-	return (*C.EvalState)(unsafe.Pointer(x))
-}
-
-// Ref returns a reference to C object as it is.
-func (x *NixValue) Ref() *C.nix_value {
-	if x == nil {
-		return nil
-	}
-	return (*C.nix_value)(unsafe.Pointer(x))
-}
-
-// Free cleanups the referenced memory using C free.
-func (x *NixValue) Free() {
-	if x != nil {
-		C.free(unsafe.Pointer(x))
-	}
-}
-
-// NewNixValueRef converts the C object reference into a raw struct reference without wrapping.
-func NewNixValueRef(ref unsafe.Pointer) *NixValue {
-	return (*NixValue)(ref)
-}
-
-// NewNixValue allocates a new C object of this type and converts the reference into
-// a raw struct reference without wrapping.
-func NewNixValue() *NixValue {
-	return (*NixValue)(allocNixValueMemory(1))
-}
-
-// allocNixValueMemory allocates memory for type C.nix_value in C.
-// The caller is responsible for freeing the this memory via C.free.
-func allocNixValueMemory(n int) unsafe.Pointer {
-	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfNixValueValue))
-	if mem == nil {
-		panic(fmt.Sprintln("memory alloc error: ", err))
-	}
-	return mem
-}
-
-const sizeOfNixValueValue = unsafe.Sizeof([1]C.nix_value{})
-
-// PassRef returns a reference to C object as it is or allocates a new C object of this type.
-func (x *NixValue) PassRef() *C.nix_value {
-	if x == nil {
-		x = (*NixValue)(allocNixValueMemory(1))
-	}
-	return (*C.nix_value)(unsafe.Pointer(x))
 }
 
 // Ref returns a reference to C object as it is.
