@@ -67,6 +67,14 @@ Current bindings are intentionally close to the C layer. Strings returned by the
 shim are C-owned `*byte` values and must be released with `StringFree`.
 Store handles should be released with `StoreFree`.
 
+`LogSinkInstall` adds a process-global logger that copies Nix events to either
+an append-only file or an existing Unix socket as newline-delimited
+`internal-json` records without the `@nix ` prefix. The sink remains installed
+for the lifetime of the process, and additional calls add additional sinks.
+Initialize Nix, call `SetLogFormat` if needed, install sinks, and then run Nix
+operations. Calling `SetLogFormat` after installation replaces the
+process-global logger and discards all installed sinks.
+
 GC root discovery and collection return opaque `StoreRoots` and
 `StoreGCResults` handles. Release them with their matching free functions;
 strings and cloned store paths returned by their accessors remain separately
@@ -109,7 +117,8 @@ The upstream C API packages are:
 - [`nix-flake-c`](https://github.com/NixOS/nix/tree/master/src/libflake-c):
   flake settings, references, lock flags, locking, and output lookup.
 - [`nix-main-c`](https://github.com/NixOS/nix/tree/master/src/libmain-c):
-  plugin initialization and log format.
+  plugin initialization, log format, and the local process-lifetime JSON log
+  sink adapter.
 
 ## Implementation Status
 
@@ -150,3 +159,4 @@ The upstream C API packages are:
 - [x] `nix-main-c`
   - [x] Plugin initialization.
   - [x] Log format configuration.
+  - [x] Process-lifetime unprefixed internal-JSON file and Unix-socket log sinks.
