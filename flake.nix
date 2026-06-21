@@ -63,61 +63,6 @@
                   exit 1
                 fi
 
-                if [ ! -f nix_go_store.h ]; then
-                  echo "missing nix_go_store.h in repository root" >&2
-                  exit 1
-                fi
-
-                if [ ! -f nix_go_store.c ]; then
-                  echo "missing nix_go_store.c in repository root" >&2
-                  exit 1
-                fi
-
-                if [ ! -f nix_go_fetchers.h ]; then
-                  echo "missing nix_go_fetchers.h in repository root" >&2
-                  exit 1
-                fi
-
-                if [ ! -f nix_go_fetchers.c ]; then
-                  echo "missing nix_go_fetchers.c in repository root" >&2
-                  exit 1
-                fi
-
-                if [ ! -f nix_go_expr.h ]; then
-                  echo "missing nix_go_expr.h in repository root" >&2
-                  exit 1
-                fi
-
-                if [ ! -f nix_go_expr.c ]; then
-                  echo "missing nix_go_expr.c in repository root" >&2
-                  exit 1
-                fi
-
-                if [ ! -f nix_go_flake.h ]; then
-                  echo "missing nix_go_flake.h in repository root" >&2
-                  exit 1
-                fi
-
-                if [ ! -f nix_go_flake.c ]; then
-                  echo "missing nix_go_flake.c in repository root" >&2
-                  exit 1
-                fi
-
-                if [ ! -f nix_go_flake_cpp.cc ]; then
-                  echo "missing nix_go_flake_cpp.cc in repository root" >&2
-                  exit 1
-                fi
-
-                if [ ! -f nix_go_main.h ]; then
-                  echo "missing nix_go_main.h in repository root" >&2
-                  exit 1
-                fi
-
-                if [ ! -f nix_go_main.c ]; then
-                  echo "missing nix_go_main.c in repository root" >&2
-                  exit 1
-                fi
-
                 tmp="$(mktemp -d)"
                 trap 'rm -rf "$tmp"' EXIT HUP INT TERM
 
@@ -176,6 +121,7 @@
               env.pkgs.go
               env.pkgs.c-for-go
               env.pkgs.pkg-config
+              env.pkgs.golangci-lint
             ] ++ env.nixLibs;
 
             shellHook = ''
