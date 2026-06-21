@@ -5,9 +5,9 @@ Experimental Go bindings for the [Nix](https://github.com/NixOS/nix) C API.
 The Nix project is implemented in C++, and its public C API packages are thin C
 facades over those C++ libraries. This repository turns that C API into Go via
 [c-for-go](https://github.com/xlab/c-for-go). Small C shims translate awkward C
-API shapes into signatures that c-for-go can generate cleanly. A narrow C++
-flake shim also exposes lock-file serialization and locked-flake fingerprints,
-which are available upstream in C++ but not in the public Nix C API.
+API shapes into signatures that c-for-go can generate cleanly. Narrow C++
+store and flake shims also expose selected upstream operations that are not in
+the public Nix C API.
 
 This is currently a low-level binding package, not an idiomatic Go client.
 
@@ -29,8 +29,7 @@ build projects using these bindings.
   flake C++ library, pkg-config paths, Go, c-for-go, and the binding generation
   app.
 - `nix-go-bindings.yml` is the c-for-go configuration.
-- `nix_go_*.h`, `nix_go_*.c`, and `nix_go_flake_cpp.cc` are the local shim
-  layer.
+- `nix_go_*.h`, `nix_go_*.c`, and `nix_go_*_cpp.cc` are the local shim layer.
 - `nix.go`, `types.go`, `const.go`, `cgo_helpers.*`, and `doc.go` are generated.
 
 ## Contribution
@@ -68,6 +67,12 @@ Current bindings are intentionally close to the C layer. Strings returned by the
 shim are C-owned `*byte` values and must be released with `StringFree`.
 Store handles should be released with `StoreFree`.
 
+GC root discovery and collection return opaque `StoreRoots` and
+`StoreGCResults` handles. Release them with their matching free functions;
+strings and cloned store paths returned by their accessors remain separately
+owned. `StoreGCOptions.IgnoreLiveness` preserves upstream's dangerous behavior,
+and `MaxFreed` should be `^uint64(0)` when no limit is wanted.
+
 ### Known limitations
 
 - Go-facing callback APIs are intentionally not generated. This excludes custom
@@ -81,9 +86,10 @@ Store handles should be released with `StoreFree`.
 - Generated array structs contain both `Items` and `Len`. `Len` must match the
   number of Go items supplied. The C shim can reject null pointers paired with a
   non-zero length, but it cannot recover the original Go slice length from C.
-- Nix GC and value reference counts remain caller-managed. Pair values returned
-  by allocation/getter APIs with the upstream refcount functions documented by
-  the generated binding names and Nix C API ownership rules.
+- Nix expression GC and value reference counts remain caller-managed. Pair
+  values returned by allocation/getter APIs with the upstream refcount
+  functions documented by the generated binding names and Nix C API ownership
+  rules.
 - The generator copies newly generated files into the repository. When removing
   generated symbols, verify the resulting diff so stale generated files that are
   no longer emitted are removed from version control.
@@ -123,6 +129,7 @@ The upstream C API packages are:
   - [x] Realization result adapter.
   - [x] Derivation JSON import and `AddDerivation`.
   - [x] Closure traversal result adapter and copy helpers.
+  - [x] Temporary and permanent GC roots, root discovery, and garbage collection.
   - [x] Query path by hash part.
   - [x] Derivation lifecycle and JSON export: clone, free, to JSON.
 - [x] `nix-expr-c`

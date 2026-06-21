@@ -8,7 +8,7 @@ package nix
 /*
 #cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c nix-main-c
 #cgo CXXFLAGS: -std=c++23
-#cgo LDFLAGS: -lnixflake -lnixutil
+#cgo LDFLAGS: -lnixflake -lnixstore -lnixutil
 #cgo darwin LDFLAGS: -lc++
 #cgo linux LDFLAGS: -lstdc++
 #include "nix_go_util.h"
@@ -110,7 +110,7 @@ type ValueArray struct {
 // FlakeReferenceResult as declared in nix-go-bindings/nix_go_flake.h:19
 type FlakeReferenceResult C.go_nix_flake_reference_result
 
-// StoreParam as declared in nix-go-bindings/nix_go_store.h:21
+// StoreParam as declared in nix-go-bindings/nix_go_store.h:22
 type StoreParam struct {
 	Key           []byte
 	KeyLen        uint64
@@ -120,7 +120,7 @@ type StoreParam struct {
 	allocs2b71aeb interface{}
 }
 
-// StoreParams as declared in nix-go-bindings/nix_go_store.h:26
+// StoreParams as declared in nix-go-bindings/nix_go_store.h:27
 type StoreParams struct {
 	Items          []StoreParam
 	Len            uint64
@@ -128,15 +128,46 @@ type StoreParams struct {
 	allocs2cd443e1 interface{}
 }
 
-// StorePathHashPart as declared in nix-go-bindings/nix_go_store.h:30
+// StorePathHashPart as declared in nix-go-bindings/nix_go_store.h:31
 type StorePathHashPart struct {
 	Bytes          [20]byte
 	reff3a80ce6    *C.go_nix_store_path_hash_part
 	allocsf3a80ce6 interface{}
 }
 
-// StoreRealiseResults as declared in nix-go-bindings/nix_go_store.h:32
+// StoreRealiseResults as declared in nix-go-bindings/nix_go_store.h:33
 type StoreRealiseResults C.go_nix_store_realise_results
 
-// StorePathArray as declared in nix-go-bindings/nix_go_store.h:33
+// StorePathArray as declared in nix-go-bindings/nix_go_store.h:34
 type StorePathArray C.go_nix_store_path_array
+
+// StoreRoots as declared in nix-go-bindings/nix_go_store.h:35
+type StoreRoots C.go_nix_store_roots
+
+// StoreGCResults as declared in nix-go-bindings/nix_go_store.h:36
+type StoreGCResults C.go_nix_store_gc_results
+
+// StorePathItem as declared in nix-go-bindings/nix_go_store.h:47
+type StorePathItem struct {
+	Path           *StorePath
+	refd56013c6    *C.go_nix_store_path_item
+	allocsd56013c6 interface{}
+}
+
+// StorePathList as declared in nix-go-bindings/nix_go_store.h:52
+type StorePathList struct {
+	Items          []StorePathItem
+	Len            uint64
+	ref8eb3cec0    *C.go_nix_store_path_list
+	allocs8eb3cec0 interface{}
+}
+
+// StoreGCOptions as declared in nix-go-bindings/nix_go_store.h:59
+type StoreGCOptions struct {
+	Action         StoreGCAction
+	IgnoreLiveness bool
+	PathsToDelete  StorePathList
+	MaxFreed       uint64
+	ref9a08783     *C.go_nix_store_gc_options
+	allocs9a08783  interface{}
+}

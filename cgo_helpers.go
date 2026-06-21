@@ -8,7 +8,7 @@ package nix
 /*
 #cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c nix-main-c
 #cgo CXXFLAGS: -std=c++23
-#cgo LDFLAGS: -lnixflake -lnixutil
+#cgo LDFLAGS: -lnixflake -lnixstore -lnixutil
 #cgo darwin LDFLAGS: -lc++
 #cgo linux LDFLAGS: -lstdc++
 #include "nix_go_util.h"
@@ -1807,6 +1807,399 @@ func (x *StorePathArray) PassRef() *C.go_nix_store_path_array {
 		x = (*StorePathArray)(allocStorePathArrayMemory(1))
 	}
 	return (*C.go_nix_store_path_array)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *StoreRoots) Ref() *C.go_nix_store_roots {
+	if x == nil {
+		return nil
+	}
+	return (*C.go_nix_store_roots)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *StoreRoots) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewStoreRootsRef converts the C object reference into a raw struct reference without wrapping.
+func NewStoreRootsRef(ref unsafe.Pointer) *StoreRoots {
+	return (*StoreRoots)(ref)
+}
+
+// NewStoreRoots allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewStoreRoots() *StoreRoots {
+	return (*StoreRoots)(allocStoreRootsMemory(1))
+}
+
+// allocStoreRootsMemory allocates memory for type C.go_nix_store_roots in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocStoreRootsMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStoreRootsValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfStoreRootsValue = unsafe.Sizeof([1]C.go_nix_store_roots{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *StoreRoots) PassRef() *C.go_nix_store_roots {
+	if x == nil {
+		x = (*StoreRoots)(allocStoreRootsMemory(1))
+	}
+	return (*C.go_nix_store_roots)(unsafe.Pointer(x))
+}
+
+// Ref returns a reference to C object as it is.
+func (x *StoreGCResults) Ref() *C.go_nix_store_gc_results {
+	if x == nil {
+		return nil
+	}
+	return (*C.go_nix_store_gc_results)(unsafe.Pointer(x))
+}
+
+// Free cleanups the referenced memory using C free.
+func (x *StoreGCResults) Free() {
+	if x != nil {
+		C.free(unsafe.Pointer(x))
+	}
+}
+
+// NewStoreGCResultsRef converts the C object reference into a raw struct reference without wrapping.
+func NewStoreGCResultsRef(ref unsafe.Pointer) *StoreGCResults {
+	return (*StoreGCResults)(ref)
+}
+
+// NewStoreGCResults allocates a new C object of this type and converts the reference into
+// a raw struct reference without wrapping.
+func NewStoreGCResults() *StoreGCResults {
+	return (*StoreGCResults)(allocStoreGCResultsMemory(1))
+}
+
+// allocStoreGCResultsMemory allocates memory for type C.go_nix_store_gc_results in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocStoreGCResultsMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStoreGCResultsValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfStoreGCResultsValue = unsafe.Sizeof([1]C.go_nix_store_gc_results{})
+
+// PassRef returns a reference to C object as it is or allocates a new C object of this type.
+func (x *StoreGCResults) PassRef() *C.go_nix_store_gc_results {
+	if x == nil {
+		x = (*StoreGCResults)(allocStoreGCResultsMemory(1))
+	}
+	return (*C.go_nix_store_gc_results)(unsafe.Pointer(x))
+}
+
+// allocStorePathItemMemory allocates memory for type C.go_nix_store_path_item in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocStorePathItemMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStorePathItemValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfStorePathItemValue = unsafe.Sizeof([1]C.go_nix_store_path_item{})
+
+// Ref returns the underlying reference to C object or nil if struct is nil.
+func (x *StorePathItem) Ref() *C.go_nix_store_path_item {
+	if x == nil {
+		return nil
+	}
+	return x.refd56013c6
+}
+
+// Free invokes alloc map's free mechanism that cleanups any allocated memory using C free.
+// Does nothing if struct is nil or has no allocation map.
+func (x *StorePathItem) Free() {
+	if x != nil && x.allocsd56013c6 != nil {
+		x.allocsd56013c6.(*cgoAllocMap).Free()
+		x.refd56013c6 = nil
+	}
+}
+
+// NewStorePathItemRef creates a new wrapper struct with underlying reference set to the original C object.
+// Returns nil if the provided pointer to C object is nil too.
+func NewStorePathItemRef(ref unsafe.Pointer) *StorePathItem {
+	if ref == nil {
+		return nil
+	}
+	obj := new(StorePathItem)
+	obj.refd56013c6 = (*C.go_nix_store_path_item)(unsafe.Pointer(ref))
+	return obj
+}
+
+// PassRef returns the underlying C object, otherwise it will allocate one and set its values
+// from this wrapping struct, counting allocations into an allocation map.
+func (x *StorePathItem) PassRef() (*C.go_nix_store_path_item, *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	} else if x.refd56013c6 != nil {
+		return x.refd56013c6, nil
+	}
+	memd56013c6 := allocStorePathItemMemory(1)
+	refd56013c6 := (*C.go_nix_store_path_item)(memd56013c6)
+	allocsd56013c6 := new(cgoAllocMap)
+	allocsd56013c6.Add(memd56013c6)
+
+	var cpath_allocs *cgoAllocMap
+	refd56013c6.path, cpath_allocs = *(**C.StorePath)(unsafe.Pointer(&x.Path)), cgoAllocsUnknown
+	allocsd56013c6.Borrow(cpath_allocs)
+
+	x.refd56013c6 = refd56013c6
+	x.allocsd56013c6 = allocsd56013c6
+	return refd56013c6, allocsd56013c6
+
+}
+
+// PassValue does the same as PassRef except that it will try to dereference the returned pointer.
+func (x StorePathItem) PassValue() (C.go_nix_store_path_item, *cgoAllocMap) {
+	if x.refd56013c6 != nil {
+		return *x.refd56013c6, nil
+	}
+	ref, allocs := x.PassRef()
+	return *ref, allocs
+}
+
+// Deref uses the underlying reference to C object and fills the wrapping struct with values.
+// Do not forget to call this method whether you get a struct for C object and want to read its values.
+func (x *StorePathItem) Deref() {
+	if x.refd56013c6 == nil {
+		return
+	}
+	x.Path = (*StorePath)(unsafe.Pointer(x.refd56013c6.path))
+}
+
+// allocStorePathListMemory allocates memory for type C.go_nix_store_path_list in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocStorePathListMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStorePathListValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfStorePathListValue = unsafe.Sizeof([1]C.go_nix_store_path_list{})
+
+// unpackSStorePathItem transforms a sliced Go data structure into plain C format.
+func unpackSStorePathItem(x []StorePathItem) (unpacked *C.go_nix_store_path_item, allocs *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	}
+	allocs = new(cgoAllocMap)
+	defer runtime.SetFinalizer(allocs, func(a *cgoAllocMap) {
+		go a.Free()
+	})
+
+	len0 := len(x)
+	mem0 := allocStorePathItemMemory(len0)
+	allocs.Add(mem0)
+	h0 := &sliceHeader{
+		Data: mem0,
+		Cap:  len0,
+		Len:  len0,
+	}
+	v0 := *(*[]C.go_nix_store_path_item)(unsafe.Pointer(h0))
+	for i0 := range x {
+		allocs0 := new(cgoAllocMap)
+		v0[i0], allocs0 = x[i0].PassValue()
+		allocs.Borrow(allocs0)
+	}
+	h := (*sliceHeader)(unsafe.Pointer(&v0))
+	unpacked = (*C.go_nix_store_path_item)(h.Data)
+	return
+}
+
+// packSStorePathItem reads sliced Go data structure out from plain C format.
+func packSStorePathItem(v []StorePathItem, ptr0 *C.go_nix_store_path_item) {
+	const m = 0x7fffffff
+	for i0 := range v {
+		ptr1 := (*(*[m / sizeOfStorePathItemValue]C.go_nix_store_path_item)(unsafe.Pointer(ptr0)))[i0]
+		v[i0] = *NewStorePathItemRef(unsafe.Pointer(&ptr1))
+	}
+}
+
+// Ref returns the underlying reference to C object or nil if struct is nil.
+func (x *StorePathList) Ref() *C.go_nix_store_path_list {
+	if x == nil {
+		return nil
+	}
+	return x.ref8eb3cec0
+}
+
+// Free invokes alloc map's free mechanism that cleanups any allocated memory using C free.
+// Does nothing if struct is nil or has no allocation map.
+func (x *StorePathList) Free() {
+	if x != nil && x.allocs8eb3cec0 != nil {
+		x.allocs8eb3cec0.(*cgoAllocMap).Free()
+		x.ref8eb3cec0 = nil
+	}
+}
+
+// NewStorePathListRef creates a new wrapper struct with underlying reference set to the original C object.
+// Returns nil if the provided pointer to C object is nil too.
+func NewStorePathListRef(ref unsafe.Pointer) *StorePathList {
+	if ref == nil {
+		return nil
+	}
+	obj := new(StorePathList)
+	obj.ref8eb3cec0 = (*C.go_nix_store_path_list)(unsafe.Pointer(ref))
+	return obj
+}
+
+// PassRef returns the underlying C object, otherwise it will allocate one and set its values
+// from this wrapping struct, counting allocations into an allocation map.
+func (x *StorePathList) PassRef() (*C.go_nix_store_path_list, *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	} else if x.ref8eb3cec0 != nil {
+		return x.ref8eb3cec0, nil
+	}
+	mem8eb3cec0 := allocStorePathListMemory(1)
+	ref8eb3cec0 := (*C.go_nix_store_path_list)(mem8eb3cec0)
+	allocs8eb3cec0 := new(cgoAllocMap)
+	allocs8eb3cec0.Add(mem8eb3cec0)
+
+	var citems_allocs *cgoAllocMap
+	ref8eb3cec0.items, citems_allocs = unpackSStorePathItem(x.Items)
+	allocs8eb3cec0.Borrow(citems_allocs)
+
+	var clen_allocs *cgoAllocMap
+	ref8eb3cec0.len, clen_allocs = (C.size_t)(x.Len), cgoAllocsUnknown
+	allocs8eb3cec0.Borrow(clen_allocs)
+
+	x.ref8eb3cec0 = ref8eb3cec0
+	x.allocs8eb3cec0 = allocs8eb3cec0
+	return ref8eb3cec0, allocs8eb3cec0
+
+}
+
+// PassValue does the same as PassRef except that it will try to dereference the returned pointer.
+func (x StorePathList) PassValue() (C.go_nix_store_path_list, *cgoAllocMap) {
+	if x.ref8eb3cec0 != nil {
+		return *x.ref8eb3cec0, nil
+	}
+	ref, allocs := x.PassRef()
+	return *ref, allocs
+}
+
+// Deref uses the underlying reference to C object and fills the wrapping struct with values.
+// Do not forget to call this method whether you get a struct for C object and want to read its values.
+func (x *StorePathList) Deref() {
+	if x.ref8eb3cec0 == nil {
+		return
+	}
+	packSStorePathItem(x.Items, x.ref8eb3cec0.items)
+	x.Len = (uint64)(x.ref8eb3cec0.len)
+}
+
+// allocStoreGCOptionsMemory allocates memory for type C.go_nix_store_gc_options in C.
+// The caller is responsible for freeing the this memory via C.free.
+func allocStoreGCOptionsMemory(n int) unsafe.Pointer {
+	mem, err := C.calloc(C.size_t(n), (C.size_t)(sizeOfStoreGCOptionsValue))
+	if mem == nil {
+		panic(fmt.Sprintln("memory alloc error: ", err))
+	}
+	return mem
+}
+
+const sizeOfStoreGCOptionsValue = unsafe.Sizeof([1]C.go_nix_store_gc_options{})
+
+// Ref returns the underlying reference to C object or nil if struct is nil.
+func (x *StoreGCOptions) Ref() *C.go_nix_store_gc_options {
+	if x == nil {
+		return nil
+	}
+	return x.ref9a08783
+}
+
+// Free invokes alloc map's free mechanism that cleanups any allocated memory using C free.
+// Does nothing if struct is nil or has no allocation map.
+func (x *StoreGCOptions) Free() {
+	if x != nil && x.allocs9a08783 != nil {
+		x.allocs9a08783.(*cgoAllocMap).Free()
+		x.ref9a08783 = nil
+	}
+}
+
+// NewStoreGCOptionsRef creates a new wrapper struct with underlying reference set to the original C object.
+// Returns nil if the provided pointer to C object is nil too.
+func NewStoreGCOptionsRef(ref unsafe.Pointer) *StoreGCOptions {
+	if ref == nil {
+		return nil
+	}
+	obj := new(StoreGCOptions)
+	obj.ref9a08783 = (*C.go_nix_store_gc_options)(unsafe.Pointer(ref))
+	return obj
+}
+
+// PassRef returns the underlying C object, otherwise it will allocate one and set its values
+// from this wrapping struct, counting allocations into an allocation map.
+func (x *StoreGCOptions) PassRef() (*C.go_nix_store_gc_options, *cgoAllocMap) {
+	if x == nil {
+		return nil, nil
+	} else if x.ref9a08783 != nil {
+		return x.ref9a08783, nil
+	}
+	mem9a08783 := allocStoreGCOptionsMemory(1)
+	ref9a08783 := (*C.go_nix_store_gc_options)(mem9a08783)
+	allocs9a08783 := new(cgoAllocMap)
+	allocs9a08783.Add(mem9a08783)
+
+	var caction_allocs *cgoAllocMap
+	ref9a08783.action, caction_allocs = (C.go_nix_store_gc_action)(x.Action), cgoAllocsUnknown
+	allocs9a08783.Borrow(caction_allocs)
+
+	var cignore_liveness_allocs *cgoAllocMap
+	ref9a08783.ignore_liveness, cignore_liveness_allocs = (C._Bool)(x.IgnoreLiveness), cgoAllocsUnknown
+	allocs9a08783.Borrow(cignore_liveness_allocs)
+
+	var cpaths_to_delete_allocs *cgoAllocMap
+	ref9a08783.paths_to_delete, cpaths_to_delete_allocs = x.PathsToDelete.PassValue()
+	allocs9a08783.Borrow(cpaths_to_delete_allocs)
+
+	var cmax_freed_allocs *cgoAllocMap
+	ref9a08783.max_freed, cmax_freed_allocs = (C.uint64_t)(x.MaxFreed), cgoAllocsUnknown
+	allocs9a08783.Borrow(cmax_freed_allocs)
+
+	x.ref9a08783 = ref9a08783
+	x.allocs9a08783 = allocs9a08783
+	return ref9a08783, allocs9a08783
+
+}
+
+// PassValue does the same as PassRef except that it will try to dereference the returned pointer.
+func (x StoreGCOptions) PassValue() (C.go_nix_store_gc_options, *cgoAllocMap) {
+	if x.ref9a08783 != nil {
+		return *x.ref9a08783, nil
+	}
+	ref, allocs := x.PassRef()
+	return *ref, allocs
+}
+
+// Deref uses the underlying reference to C object and fills the wrapping struct with values.
+// Do not forget to call this method whether you get a struct for C object and want to read its values.
+func (x *StoreGCOptions) Deref() {
+	if x.ref9a08783 == nil {
+		return
+	}
+	x.Action = (StoreGCAction)(x.ref9a08783.action)
+	x.IgnoreLiveness = (bool)(x.ref9a08783.ignore_liveness)
+	x.PathsToDelete = *NewStorePathListRef(unsafe.Pointer(&x.ref9a08783.paths_to_delete))
+	x.MaxFreed = (uint64)(x.ref9a08783.max_freed)
 }
 
 // unpackPCharString copies the data from Go string as *C.char.

@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "nix_go_util.h"
 #include "nix_api_store.h"
@@ -31,6 +32,31 @@ typedef struct go_nix_store_path_hash_part {
 
 typedef struct go_nix_store_realise_results go_nix_store_realise_results;
 typedef struct go_nix_store_path_array go_nix_store_path_array;
+typedef struct go_nix_store_roots go_nix_store_roots;
+typedef struct go_nix_store_gc_results go_nix_store_gc_results;
+
+typedef enum go_nix_store_gc_action {
+    GO_NIX_STORE_GC_RETURN_LIVE = 0,
+    GO_NIX_STORE_GC_RETURN_DEAD = 1,
+    GO_NIX_STORE_GC_DELETE_DEAD = 2,
+    GO_NIX_STORE_GC_DELETE_SPECIFIC = 3
+} go_nix_store_gc_action;
+
+typedef struct go_nix_store_path_item {
+    const StorePath *path;
+} go_nix_store_path_item;
+
+typedef struct go_nix_store_path_list {
+    const go_nix_store_path_item *items;
+    size_t len;
+} go_nix_store_path_list;
+
+typedef struct go_nix_store_gc_options {
+    go_nix_store_gc_action action;
+    bool ignore_liveness;
+    go_nix_store_path_list paths_to_delete;
+    uint64_t max_freed;
+} go_nix_store_gc_options;
 
 nix_err go_nix_libstore_init(nix_c_context *ctx);
 nix_err go_nix_libstore_init_no_load_config(nix_c_context *ctx);
@@ -70,6 +96,50 @@ bool go_nix_store_is_valid_path(
     Store *store,
     const StorePath *path
 );
+
+nix_err go_nix_store_add_temp_root(
+    nix_c_context *ctx,
+    Store *store,
+    const StorePath *path
+);
+
+char *go_nix_store_add_permanent_root(
+    nix_c_context *ctx,
+    Store *store,
+    const StorePath *path,
+    const char *gc_root
+);
+
+go_nix_store_roots *go_nix_store_find_roots(
+    nix_c_context *ctx,
+    Store *store,
+    bool censor
+);
+size_t go_nix_store_roots_count(const go_nix_store_roots *roots);
+StorePath *go_nix_store_roots_path_clone(
+    const go_nix_store_roots *roots,
+    size_t index
+);
+char *go_nix_store_roots_link(
+    const go_nix_store_roots *roots,
+    size_t index
+);
+void go_nix_store_roots_free(go_nix_store_roots *roots);
+
+go_nix_store_gc_results *go_nix_store_collect_garbage(
+    nix_c_context *ctx,
+    Store *store,
+    go_nix_store_gc_options options
+);
+size_t go_nix_store_gc_results_count(const go_nix_store_gc_results *results);
+char *go_nix_store_gc_results_path(
+    const go_nix_store_gc_results *results,
+    size_t index
+);
+uint64_t go_nix_store_gc_results_bytes_freed(
+    const go_nix_store_gc_results *results
+);
+void go_nix_store_gc_results_free(go_nix_store_gc_results *results);
 
 go_nix_store_realise_results *go_nix_store_realise_to_array(
     nix_c_context *ctx,
