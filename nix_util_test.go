@@ -168,3 +168,22 @@ func TestNixUtilSetVerbosity(t *testing.T) {
 		t.Fatalf("SetVerbosity = %v, want %v", got, NixOk)
 	}
 }
+
+func TestNixUtilInterruptState(t *testing.T) {
+	InterruptClear()
+	t.Cleanup(InterruptClear)
+
+	if InterruptRequested() {
+		t.Fatal("InterruptRequested after clear = true, want false")
+	}
+
+	InterruptRequest()
+	if !InterruptRequested() {
+		t.Fatal("InterruptRequested after request = false, want true")
+	}
+
+	InterruptClear()
+	if InterruptRequested() {
+		t.Fatal("InterruptRequested after second clear = true, want false")
+	}
+}

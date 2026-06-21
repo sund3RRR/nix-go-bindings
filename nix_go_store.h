@@ -61,6 +61,18 @@ typedef struct go_nix_store_gc_options {
 nix_err go_nix_libstore_init(nix_c_context *ctx);
 nix_err go_nix_libstore_init_no_load_config(nix_c_context *ctx);
 
+/*
+ * Request a process-global Nix interruption. For RemoteStore backends, also
+ * shut down active connections so blocking daemon protocol I/O wakes up.
+ *
+ * ctx must be separate from the context used by the active operation. A
+ * remotely interrupted store must be discarded after the active call returns.
+ */
+nix_err go_nix_store_interrupt(
+    nix_c_context *ctx,
+    Store *store
+);
+
 Store *go_nix_store_open(
     nix_c_context *ctx,
     const char *uri,

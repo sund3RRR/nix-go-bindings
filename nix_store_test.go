@@ -1,12 +1,19 @@
 package nix
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
+	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"reflect"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"testing"
+	"time"
 )
 
 const testDerivationJSON = `{
@@ -257,6 +264,300 @@ func TestNixStoreOpenAndStrings(t *testing.T) {
 	if version != nil {
 		StringFree(version)
 	}
+}
+
+func TestNixStoreInterruptDummy(t *testing.T) {
+	InterruptClear()
+	t.Cleanup(InterruptClear)
+
+	ctx := newTestContext(t)
+	store := newTestStore(t, ctx)
+
+	if got := StoreInterrupt(ctx, store); got != NixOk {
+		t.Fatalf("StoreInterrupt(dummy) = %v, want %v: %s", got, NixOk, errMsgString(t, ctx))
+	}
+	if !InterruptRequested() {
+		t.Fatal("InterruptRequested after StoreInterrupt(dummy) = false, want true")
+	}
+}
+
+func TestNixStoreInterruptNilSetsContextError(t *testing.T) {
+	InterruptClear()
+	t.Cleanup(InterruptClear)
+
+	ctx := newTestContext(t)
+	got := StoreInterrupt(ctx, nil)
+	if got == NixOk {
+		t.Fatal("StoreInterrupt(nil) = NixOk, want non-OK")
+	}
+	if ErrCode(ctx) == NixOk {
+		t.Fatal("ErrCode after StoreInterrupt(nil) = NixOk, want non-OK")
+	}
+	if msg := errMsgString(t, ctx); !strings.Contains(msg, "store must not be null") {
+		t.Fatalf("ErrMsg after StoreInterrupt(nil) = %q, want null-store message", msg)
+	}
+	if InterruptRequested() {
+		t.Fatal("InterruptRequested after StoreInterrupt(nil) = true, want false")
+	}
+}
+
+type blockingProxyWriter struct {
+	dst       io.Writer
+	block     *atomic.Bool
+	blocked   chan<- struct{}
+	release   <-chan struct{}
+	blockOnce sync.Once
+}
+
+func (w *blockingProxyWriter) Write(p []byte) (int, error) {
+	if w.block.Load() {
+		w.blockOnce.Do(func() {
+			close(w.blocked)
+		})
+		<-w.release
+	}
+	return w.dst.Write(p)
+}
+
+func TestNixStoreInterruptRemoteWakesBlockingIO(t *testing.T) {
+	InterruptClear()
+	t.Cleanup(InterruptClear)
+
+	root, err := os.MkdirTemp("/tmp", "nix-go-bindings-interrupt-")
+	if err != nil {
+		t.Fatalf("os.MkdirTemp(/tmp): %v", err)
+	}
+	resolvedRoot, err := filepath.EvalSymlinks(root)
+	if err != nil {
+		os.RemoveAll(root)
+		t.Fatalf("filepath.EvalSymlinks(%q): %v", root, err)
+	}
+	t.Cleanup(func() {
+		chmodTreeWritable(t, resolvedRoot)
+		if err := os.RemoveAll(resolvedRoot); err != nil {
+			t.Errorf("os.RemoveAll(%q): %v", resolvedRoot, err)
+		}
+	})
+
+	storeDir := filepath.Join(resolvedRoot, "store")
+	stateDir := filepath.Join(resolvedRoot, "state")
+	logDir := filepath.Join(resolvedRoot, "log")
+	for _, dir := range []string{storeDir, stateDir, logDir} {
+		if err := os.MkdirAll(dir, 0o700); err != nil {
+			t.Fatalf("os.MkdirAll(%q): %v", dir, err)
+		}
+	}
+
+	socketPath := filepath.Join(resolvedRoot, "daemon.sock")
+	listener, err := net.ListenUnix("unix", &net.UnixAddr{Name: socketPath, Net: "unix"})
+	if err != nil {
+		t.Fatalf("net.ListenUnix(%q): %v", socketPath, err)
+	}
+	if err := listener.SetDeadline(time.Now().Add(10 * time.Second)); err != nil {
+		listener.Close()
+		t.Fatalf("listener.SetDeadline: %v", err)
+	}
+
+	storeURI := "local?store=" + storeDir + "&state=" + stateDir + "&log=" + logDir
+	cmd := exec.Command(
+		"nix",
+		"--extra-experimental-features", "nix-command",
+		"--option", "sandbox", "false",
+		"daemon",
+		"--stdio",
+		"--store", storeURI,
+	)
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		listener.Close()
+		t.Fatalf("cmd.StdinPipe: %v", err)
+	}
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		listener.Close()
+		t.Fatalf("cmd.StdoutPipe: %v", err)
+	}
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	if err := cmd.Start(); err != nil {
+		listener.Close()
+		t.Fatalf("start nix daemon --stdio: %v", err)
+	}
+
+	var conn *net.UnixConn
+	releaseResponses := make(chan struct{})
+	var releaseOnce sync.Once
+	var stopOnce sync.Once
+	stopDaemon := func() string {
+		stopOnce.Do(func() {
+			releaseOnce.Do(func() {
+				close(releaseResponses)
+			})
+			_ = listener.Close()
+			if conn != nil {
+				_ = conn.Close()
+			}
+			_ = stdin.Close()
+			_ = stdout.Close()
+			if cmd.Process != nil {
+				_ = cmd.Process.Kill()
+			}
+			_ = cmd.Wait()
+		})
+		return stderr.String()
+	}
+
+	var (
+		operationCtx *NixCContext
+		interruptCtx *NixCContext
+		remoteStore  *Store
+		path         *StorePath
+	)
+	defer func() {
+		stopDaemon()
+		if path != nil {
+			StorePathFree(path)
+		}
+		if remoteStore != nil {
+			StoreFree(remoteStore)
+		}
+		if interruptCtx != nil {
+			CContextFree(interruptCtx)
+		}
+		if operationCtx != nil {
+			CContextFree(operationCtx)
+		}
+	}()
+
+	operationCtx = CContextCreate()
+	if operationCtx == nil {
+		t.Fatal("CContextCreate(operation) returned nil")
+	}
+	if got := LibutilInit(operationCtx); got != NixOk {
+		t.Fatalf("LibutilInit(operation) = %v, want %v: %s", got, NixOk, errMsgString(t, operationCtx))
+	}
+	if got := LibstoreInitNoLoadConfig(operationCtx); got != NixOk {
+		t.Fatalf("LibstoreInitNoLoadConfig(operation) = %v, want %v: %s", got, NixOk, errMsgString(t, operationCtx))
+	}
+
+	remoteStore = StoreOpen(operationCtx, "unix://"+socketPath, StoreParams{})
+	if remoteStore == nil {
+		t.Fatalf("StoreOpen(unix) returned nil: err=%v msg=%q", ErrCode(operationCtx), errMsgString(t, operationCtx))
+	}
+
+	type versionResult struct {
+		value *byte
+	}
+	versionCh := make(chan versionResult, 1)
+	go func() {
+		versionCh <- versionResult{value: StoreGetVersion(operationCtx, remoteStore)}
+	}()
+
+	conn, err = listener.AcceptUnix()
+	if err != nil {
+		log := stopDaemon()
+		t.Fatalf("listener.AcceptUnix: %v\ndaemon stderr:\n%s", err, log)
+	}
+
+	var blockResponses atomic.Bool
+	responseBlocked := make(chan struct{})
+	go func() {
+		_, _ = io.Copy(stdin, conn)
+		_ = stdin.Close()
+	}()
+	go func() {
+		writer := &blockingProxyWriter{
+			dst:     conn,
+			block:   &blockResponses,
+			blocked: responseBlocked,
+			release: releaseResponses,
+		}
+		_, _ = io.Copy(writer, stdout)
+		_ = conn.CloseWrite()
+	}()
+
+	select {
+	case result := <-versionCh:
+		if result.value == nil {
+			log := stopDaemon()
+			t.Fatalf(
+				"StoreGetVersion(remote) returned nil: err=%v msg=%q\ndaemon stderr:\n%s",
+				ErrCode(operationCtx),
+				errMsgString(t, operationCtx),
+				log,
+			)
+		}
+		StringFree(result.value)
+	case <-time.After(10 * time.Second):
+		log := stopDaemon()
+		t.Fatalf("timed out establishing remote store connection\ndaemon stderr:\n%s", log)
+	}
+
+	const rawPath = "/nix/store/00000000000000000000000000000000-interrupt-test"
+	path = StoreParsePath(operationCtx, remoteStore, rawPath)
+	if path == nil {
+		log := stopDaemon()
+		t.Fatalf(
+			"StoreParsePath(remote) returned nil: err=%v msg=%q\ndaemon stderr:\n%s",
+			ErrCode(operationCtx),
+			errMsgString(t, operationCtx),
+			log,
+		)
+	}
+
+	type validityResult struct {
+		valid bool
+		code  NixErr
+	}
+	blockResponses.Store(true)
+	validityCh := make(chan validityResult, 1)
+	go func() {
+		valid := StoreIsValidPath(operationCtx, remoteStore, path)
+		validityCh <- validityResult{valid: valid, code: ErrCode(operationCtx)}
+	}()
+
+	select {
+	case <-responseBlocked:
+	case <-time.After(10 * time.Second):
+		log := stopDaemon()
+		t.Fatalf("daemon response was not blocked\ndaemon stderr:\n%s", log)
+	}
+
+	interruptCtx = CContextCreate()
+	if interruptCtx == nil {
+		t.Fatal("CContextCreate(interrupt) returned nil")
+	}
+	if got := StoreInterrupt(interruptCtx, remoteStore); got != NixOk {
+		log := stopDaemon()
+		t.Fatalf(
+			"StoreInterrupt(remote) = %v, want %v: %s\ndaemon stderr:\n%s",
+			got,
+			NixOk,
+			errMsgString(t, interruptCtx),
+			log,
+		)
+	}
+
+	select {
+	case result := <-validityCh:
+		if result.valid {
+			t.Fatal("StoreIsValidPath after interruption = true, want false")
+		}
+		if result.code == NixOk {
+			t.Fatal("ErrCode after interrupted StoreIsValidPath = NixOk, want non-OK")
+		}
+	case <-time.After(5 * time.Second):
+		log := stopDaemon()
+		t.Fatalf("StoreInterrupt did not wake blocked remote operation\ndaemon stderr:\n%s", log)
+	}
+
+	if !InterruptRequested() {
+		t.Fatal("InterruptRequested after StoreInterrupt(remote) = false, want true")
+	}
+	InterruptClear()
+	releaseOnce.Do(func() {
+		close(releaseResponses)
+	})
 }
 
 func TestNixStoreParsePathRealPathAndValidity(t *testing.T) {
