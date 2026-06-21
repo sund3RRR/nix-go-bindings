@@ -1030,6 +1030,17 @@ func SetLogFormat(ctx *NixCContext, format string) NixErr {
 	return __v
 }
 
+// LogSinkInstall function as declared in nix-go-bindings/nix_go_main.h:21
+func LogSinkInstall(ctx *NixCContext, destination string) NixErr {
+	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
+	cdestination, cdestinationAllocMap := unpackPCharString(destination)
+	__ret := C.go_nix_log_sink_install(cctx, cdestination)
+	runtime.KeepAlive(cdestinationAllocMap)
+	runtime.KeepAlive(cctxAllocMap)
+	__v := (NixErr)(__ret)
+	return __v
+}
+
 // LibstoreInit function as declared in nix-go-bindings/nix_go_store.h:61
 func LibstoreInit(ctx *NixCContext) NixErr {
 	cctx, cctxAllocMap := (*C.nix_c_context)(unsafe.Pointer(ctx)), cgoAllocsUnknown
