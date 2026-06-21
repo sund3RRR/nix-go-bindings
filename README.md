@@ -75,6 +75,26 @@ Initialize Nix, call `SetLogFormat` if needed, install sinks, and then run Nix
 operations. Calling `SetLogFormat` after installation replaces the
 process-global logger and discards all installed sinks.
 
+`InterruptRequest`, `InterruptClear`, and `InterruptRequested` expose Nix's
+process-global logical interrupt state without installing signal handlers or
+raising `SIGINT`. Requesting interruption also wakes Nix's registered interrupt
+callbacks, including subsystems such as the curl file-transfer worker.
+`StoreInterrupt` additionally shuts down active `RemoteStore` connections so
+blocking daemon protocol I/O wakes up.
+
+Only one cancellable Nix operation may be active in the process. Call
+`StoreInterrupt` with a separate error context from the context used by the
+running operation. Wait for the active native call to return before calling
+`InterruptClear`, closing its resources, or starting another operation. A
+remotely interrupted store is unusable afterward and must be closed and
+replaced; a worker-based integration may recycle the entire worker process.
+
+Interruption is cooperative: builds, downloads, daemon operations, garbage
+collection, and store traversal generally check the flag promptly, while pure
+evaluation may respond later because evaluator checks are sparse. If the native
+call does not finish within the higher layer's grace period, terminating its
+worker process remains the hard-cancellation fallback.
+
 GC root discovery and collection return opaque `StoreRoots` and
 `StoreGCResults` handles. Release them with their matching free functions;
 strings and cloned store paths returned by their accessors remain separately
@@ -94,6 +114,11 @@ and `MaxFreed` should be `^uint64(0)` when no limit is wanted.
 - Generated array structs contain both `Items` and `Len`. `Len` must match the
   number of Go items supplied. The C shim can reject null pointers paired with a
   non-zero length, but it cannot recover the original Go slice length from C.
+- Interruption state is process-global. These bindings intentionally do not
+  enforce operation serialization, provide Go context integration, or guard
+  caller output values against partial decoding; higher-level consumers must
+  provide those policies, cancellation grace periods, and remote-store
+  replacement.
 - Nix expression GC and value reference counts remain caller-managed. Pair
   values returned by allocation/getter APIs with the upstream refcount
   functions documented by the generated binding names and Nix C API ownership
@@ -126,6 +151,7 @@ The upstream C API packages are:
   - [x] Shared `nix_c_context` and `nix_err` types are imported for store calls.
   - [x] Context lifecycle: `CContextCreate`, `CContextFree`.
   - [x] Library initialization: `LibutilInit`.
+  - [x] Process-global logical interruption state.
   - [x] Settings/version/verbosity helpers.
   - [x] Error helpers: message, name, code, clear, set.
   - [x] Generated enum constants for `NIX_OK`, `NIX_ERR_*`, and `NIX_LVL_*`.
@@ -134,6 +160,7 @@ The upstream C API packages are:
   - [x] Store lifecycle: `StoreOpen`, `StoreFree`.
   - [x] Store strings: URI, store dir, version, real path.
   - [x] Store path parsing and validity checks.
+  - [x] Daemon-aware store interruption.
   - [x] StorePath lifecycle and helpers: clone, free, name, hash, create from parts.
   - [x] Realization result adapter.
   - [x] Derivation JSON import and `AddDerivation`.
