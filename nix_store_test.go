@@ -2,6 +2,8 @@ package nix
 
 import (
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -26,6 +28,30 @@ const testDerivationJSON = `{
     "builder": "/bin/sh",
     "name": "go-bindings-test",
     "out": "/nix/store/d1nf171c83f8aczqcn20r20r1bisij3i-go-bindings-test",
+    "system": "x86_64-linux"
+  }
+}`
+
+const testCADerivationJSON = `{
+  "name": "go-bindings-gc-test",
+  "version": 4,
+  "outputs": {
+    "out": {
+      "method": "nar",
+      "hashAlgo": "sha256"
+    }
+  },
+  "inputs": {
+    "srcs": [],
+    "drvs": {}
+  },
+  "system": "x86_64-linux",
+  "builder": "/bin/sh",
+  "args": [],
+  "env": {
+    "builder": "/bin/sh",
+    "name": "go-bindings-gc-test",
+    "out": "/unused",
     "system": "x86_64-linux"
   }
 }`
@@ -87,6 +113,130 @@ func storePathHashBytes(t *testing.T, ctx *NixCContext, path *StorePath) [20]byt
 	hash.Free()
 
 	return hash.Bytes
+}
+
+func addTestCADerivation(t *testing.T, ctx *NixCContext, store *Store, name string) *StorePath {
+	t.Helper()
+
+	raw := strings.ReplaceAll(testCADerivationJSON, "go-bindings-gc-test", name)
+	derivation := DerivationFromJson(ctx, store, raw)
+	if derivation == nil {
+		t.Fatalf("DerivationFromJson(%q) returned nil: err=%v msg=%q", name, ErrCode(ctx), errMsgString(t, ctx))
+	}
+	defer DerivationFree(derivation)
+
+	path := AddDerivation(ctx, store, derivation)
+	if path == nil {
+		t.Fatalf("AddDerivation(%q) returned nil: err=%v msg=%q", name, ErrCode(ctx), errMsgString(t, ctx))
+	}
+	t.Cleanup(func() {
+		StorePathFree(path)
+	})
+	return path
+}
+
+func newGCStoreRoot(t *testing.T) string {
+	t.Helper()
+
+	root := t.TempDir()
+	resolvedRoot, err := filepath.EvalSymlinks(root)
+	if err != nil {
+		t.Fatalf("EvalSymlinks(%q): %v", root, err)
+	}
+	t.Cleanup(func() {
+		chmodTreeWritable(t, resolvedRoot)
+	})
+	return resolvedRoot
+}
+
+func openTestLocalStoreAt(t *testing.T, ctx *NixCContext, root string) *Store {
+	t.Helper()
+
+	storeDir := filepath.Join(root, "store")
+	stateDir := filepath.Join(root, "state")
+	logDir := filepath.Join(root, "log")
+	params := StoreParams{
+		Items: []StoreParam{
+			{Key: []byte("store"), KeyLen: 5, Value: []byte(storeDir), ValueLen: uint64(len(storeDir))},
+			{Key: []byte("state"), KeyLen: 5, Value: []byte(stateDir), ValueLen: uint64(len(stateDir))},
+			{Key: []byte("log"), KeyLen: 3, Value: []byte(logDir), ValueLen: uint64(len(logDir))},
+		},
+		Len: 3,
+	}
+
+	store := StoreOpen(ctx, "local", params)
+	if store == nil {
+		t.Fatalf("StoreOpen(local) returned nil: err=%v msg=%q", ErrCode(ctx), errMsgString(t, ctx))
+	}
+	return store
+}
+
+func prepareGCStore(t *testing.T, ctx *NixCContext, names ...string) (*Store, string, []*StorePath) {
+	t.Helper()
+
+	if got := LibutilInit(ctx); got != NixOk {
+		t.Fatalf("LibutilInit = %v, want %v: %s", got, NixOk, errMsgString(t, ctx))
+	}
+	if got := SettingSet(ctx, "experimental-features", "ca-derivations"); got != NixOk {
+		t.Fatalf("SettingSet(ca-derivations) = %v, want %v: %s", got, NixOk, errMsgString(t, ctx))
+	}
+	if got := LibstoreInit(ctx); got != NixOk {
+		t.Fatalf("LibstoreInit = %v, want %v: %s", got, NixOk, errMsgString(t, ctx))
+	}
+
+	root := newGCStoreRoot(t)
+	seedStore := openTestLocalStoreAt(t, ctx, root)
+	paths := make([]*StorePath, 0, len(names))
+	for _, name := range names {
+		paths = append(paths, addTestCADerivation(t, ctx, seedStore, name))
+	}
+	StoreFree(seedStore)
+
+	store := openTestLocalStoreAt(t, ctx, root)
+	t.Cleanup(func() {
+		StoreFree(store)
+	})
+	return store, root, paths
+}
+
+func storeRealPathString(t *testing.T, ctx *NixCContext, store *Store, path *StorePath) string {
+	t.Helper()
+
+	value := StoreRealPath(ctx, store, path)
+	if value == nil {
+		t.Fatalf("StoreRealPath returned nil: err=%v msg=%q", ErrCode(ctx), errMsgString(t, ctx))
+	}
+	return ownedCString(t, value)
+}
+
+func gcResultPathSet(t *testing.T, results *StoreGCResults) map[string]struct{} {
+	t.Helper()
+
+	paths := make(map[string]struct{}, StoreGCResultsCount(results))
+	for i := uint64(0); i < StoreGCResultsCount(results); i++ {
+		path := StoreGCResultsPath(results, i)
+		if path == nil {
+			t.Fatalf("StoreGCResultsPath(%d) returned nil", i)
+		}
+		paths[ownedCString(t, path)] = struct{}{}
+	}
+	return paths
+}
+
+func collectGarbage(
+	t *testing.T,
+	ctx *NixCContext,
+	store *Store,
+	options StoreGCOptions,
+) (*StoreGCResults, map[string]struct{}) {
+	t.Helper()
+
+	results := StoreCollectGarbage(ctx, store, options)
+	if results == nil {
+		t.Fatalf("StoreCollectGarbage(%v) returned nil: err=%v msg=%q", options.Action, ErrCode(ctx), errMsgString(t, ctx))
+	}
+	paths := gcResultPathSet(t, results)
+	return results, paths
 }
 
 func TestNixStoreOpenAndStrings(t *testing.T) {
@@ -380,4 +530,323 @@ func TestNixStoreCallbackBackedAdapters(t *testing.T) {
 		}
 		StorePathFree(clone)
 	}
+}
+
+func TestNixStoreGCRootsAndCollection(t *testing.T) {
+	ctx := newTestContext(t)
+	store, root, paths := prepareGCStore(
+		t,
+		ctx,
+		"gc-temp-root",
+		"gc-permanent-root",
+		"gc-dead-specific",
+		"gc-dead-all",
+	)
+	tempPath, permanentPath, deadPath, deadAllPath := paths[0], paths[1], paths[2], paths[3]
+
+	tempPathString := storeRealPathString(t, ctx, store, tempPath)
+	permanentPathString := storeRealPathString(t, ctx, store, permanentPath)
+	deadPathString := storeRealPathString(t, ctx, store, deadPath)
+
+	if got := StoreAddTempRoot(ctx, store, tempPath); got != NixOk {
+		t.Fatalf("StoreAddTempRoot = %v, want %v: %s", got, NixOk, errMsgString(t, ctx))
+	}
+
+	rootPath := filepath.Join(root, "roots", "..", "roots", "permanent")
+	canonicalRootPath := filepath.Clean(rootPath)
+	returnedRoot := StoreAddPermanentRoot(ctx, store, permanentPath, rootPath)
+	if returnedRoot == nil {
+		t.Fatalf("StoreAddPermanentRoot returned nil: err=%v msg=%q", ErrCode(ctx), errMsgString(t, ctx))
+	}
+	if got := ownedCString(t, returnedRoot); got != canonicalRootPath {
+		t.Fatalf("StoreAddPermanentRoot = %q, want %q", got, canonicalRootPath)
+	}
+	if target, err := os.Readlink(canonicalRootPath); err != nil {
+		t.Fatalf("Readlink(%q): %v", canonicalRootPath, err)
+	} else if target != permanentPathString {
+		t.Fatalf("permanent root target = %q, want %q", target, permanentPathString)
+	}
+
+	for _, censor := range []bool{false, true} {
+		roots := StoreFindRoots(ctx, store, censor)
+		if roots == nil {
+			t.Fatalf("StoreFindRoots(censor=%t) returned nil: err=%v msg=%q", censor, ErrCode(ctx), errMsgString(t, ctx))
+		}
+
+		found := false
+		for i := uint64(0); i < StoreRootsCount(roots); i++ {
+			path := StoreRootsPathClone(roots, i)
+			link := StoreRootsLink(roots, i)
+			if path == nil || link == nil {
+				StorePathFree(path)
+				StringFree(link)
+				StoreRootsFree(roots)
+				t.Fatalf("StoreFindRoots accessor %d returned nil", i)
+			}
+
+			pathString := storeRealPathString(t, ctx, store, path)
+			linkString := ownedCString(t, link)
+			StorePathFree(path)
+			if pathString == permanentPathString && linkString == canonicalRootPath {
+				found = true
+			}
+		}
+		if got := StoreRootsPathClone(roots, StoreRootsCount(roots)); got != nil {
+			StorePathFree(got)
+			StoreRootsFree(roots)
+			t.Fatal("StoreRootsPathClone(out of range) returned non-nil")
+		}
+		if got := StoreRootsLink(roots, StoreRootsCount(roots)); got != nil {
+			StringFree(got)
+			StoreRootsFree(roots)
+			t.Fatal("StoreRootsLink(out of range) returned non-nil")
+		}
+		StoreRootsFree(roots)
+		if !found {
+			t.Fatalf("StoreFindRoots(censor=%t) did not include %q -> %q", censor, canonicalRootPath, permanentPathString)
+		}
+	}
+
+	liveResults, livePaths := collectGarbage(t, ctx, store, StoreGCOptions{
+		Action:   StoreGCReturnLive,
+		MaxFreed: ^uint64(0),
+	})
+	if got := StoreGCResultsPath(liveResults, StoreGCResultsCount(liveResults)); got != nil {
+		StringFree(got)
+		StoreGCResultsFree(liveResults)
+		t.Fatal("StoreGCResultsPath(out of range) returned non-nil")
+	}
+	StoreGCResultsFree(liveResults)
+	for _, path := range []string{tempPathString, permanentPathString} {
+		if _, ok := livePaths[path]; !ok {
+			t.Fatalf("return-live results missing rooted path %q", path)
+		}
+	}
+
+	deadResults, deadPaths := collectGarbage(t, ctx, store, StoreGCOptions{
+		Action:   StoreGCReturnDead,
+		MaxFreed: ^uint64(0),
+	})
+	StoreGCResultsFree(deadResults)
+	if _, ok := deadPaths[deadPathString]; !ok {
+		t.Fatalf("return-dead results missing %q", deadPathString)
+	}
+	for _, path := range []string{tempPathString, permanentPathString} {
+		if _, ok := deadPaths[path]; ok {
+			t.Fatalf("return-dead results unexpectedly include rooted path %q", path)
+		}
+	}
+
+	limitedResults, limitedPaths := collectGarbage(t, ctx, store, StoreGCOptions{
+		Action:   StoreGCDeleteDead,
+		MaxFreed: 0,
+	})
+	if got := StoreGCResultsBytesFreed(limitedResults); got != 0 {
+		StoreGCResultsFree(limitedResults)
+		t.Fatalf("delete-dead with MaxFreed=0 freed %d bytes, want 0", got)
+	}
+	StoreGCResultsFree(limitedResults)
+	if len(limitedPaths) != 0 {
+		t.Fatalf("delete-dead with MaxFreed=0 returned %d paths, want 0", len(limitedPaths))
+	}
+	if _, err := os.Stat(deadPathString); err != nil {
+		t.Fatalf("Stat(%q) after delete-dead with MaxFreed=0: %v", deadPathString, err)
+	}
+
+	specificResults, specificPaths := collectGarbage(t, ctx, store, StoreGCOptions{
+		Action: StoreGCDeleteSpecific,
+		PathsToDelete: StorePathList{
+			Items: []StorePathItem{{Path: deadPath}},
+			Len:   1,
+		},
+		MaxFreed: ^uint64(0),
+	})
+	if got := StoreGCResultsBytesFreed(specificResults); got == 0 {
+		StoreGCResultsFree(specificResults)
+		t.Fatal("delete-specific reported zero bytes freed")
+	}
+	StoreGCResultsFree(specificResults)
+	if _, ok := specificPaths[deadPathString]; !ok {
+		t.Fatalf("delete-specific results missing %q", deadPathString)
+	}
+	if _, err := os.Stat(deadPathString); !os.IsNotExist(err) {
+		t.Fatalf("Stat(%q) after delete-specific = %v, want not-exist", deadPathString, err)
+	}
+
+	deadAllPathString := storeRealPathString(t, ctx, store, deadAllPath)
+	allResults, allPaths := collectGarbage(t, ctx, store, StoreGCOptions{
+		Action:   StoreGCDeleteDead,
+		MaxFreed: ^uint64(0),
+	})
+	if got := StoreGCResultsBytesFreed(allResults); got == 0 {
+		StoreGCResultsFree(allResults)
+		t.Fatal("delete-dead reported zero bytes freed")
+	}
+	StoreGCResultsFree(allResults)
+	if _, ok := allPaths[deadAllPathString]; !ok {
+		t.Fatalf("delete-dead results missing %q", deadAllPathString)
+	}
+	if _, err := os.Stat(deadAllPathString); !os.IsNotExist(err) {
+		t.Fatalf("Stat(%q) after delete-dead = %v, want not-exist", deadAllPathString, err)
+	}
+}
+
+func TestNixStoreGCIgnoreLiveness(t *testing.T) {
+	ctx := newTestContext(t)
+	store, root, seededPaths := prepareGCStore(t, ctx, "gc-ignore-liveness")
+	path := seededPaths[0]
+	pathString := storeRealPathString(t, ctx, store, path)
+	directRoot := filepath.Join(root, "state", "gcroots", "direct")
+	if err := os.MkdirAll(filepath.Dir(directRoot), 0o700); err != nil {
+		t.Fatalf("MkdirAll(%q): %v", filepath.Dir(directRoot), err)
+	}
+	if err := os.Symlink(pathString, directRoot); err != nil {
+		t.Fatalf("Symlink(%q, %q): %v", pathString, directRoot, err)
+	}
+
+	options := StoreGCOptions{
+		Action: StoreGCDeleteSpecific,
+		PathsToDelete: StorePathList{
+			Items: []StorePathItem{{Path: path}},
+			Len:   1,
+		},
+		MaxFreed: ^uint64(0),
+	}
+	if results := StoreCollectGarbage(ctx, store, options); results != nil {
+		StoreGCResultsFree(results)
+		t.Fatal("delete-specific without IgnoreLiveness unexpectedly deleted a rooted path")
+	}
+	if got := ErrCode(ctx); got == NixOk {
+		t.Fatal("delete-specific without IgnoreLiveness did not set a context error")
+	}
+	if _, err := os.Stat(pathString); err != nil {
+		t.Fatalf("Stat(%q) after protected delete-specific: %v", pathString, err)
+	}
+
+	ClearErr(ctx)
+	options.IgnoreLiveness = true
+	results, paths := collectGarbage(t, ctx, store, options)
+	StoreGCResultsFree(results)
+	if _, ok := paths[pathString]; !ok {
+		t.Fatalf("ignore-liveness delete results missing %q", pathString)
+	}
+	if _, err := os.Stat(pathString); !os.IsNotExist(err) {
+		t.Fatalf("Stat(%q) after IgnoreLiveness delete = %v, want not-exist", pathString, err)
+	}
+}
+
+func TestNixStoreGCAdapterErrorsAndOwnership(t *testing.T) {
+	ctx := newTestContext(t)
+	store := newTestStore(t, ctx)
+
+	const rawPath = "/nix/store/00000000000000000000000000000000-gc-errors"
+	path := StoreParsePath(ctx, store, rawPath)
+	if path == nil {
+		t.Fatalf("StoreParsePath returned nil: err=%v msg=%q", ErrCode(ctx), errMsgString(t, ctx))
+	}
+	t.Cleanup(func() {
+		StorePathFree(path)
+	})
+
+	if got := StoreAddTempRoot(ctx, store, path); got != NixOk {
+		t.Fatalf("StoreAddTempRoot(dummy) = %v, want %v: %s", got, NixOk, errMsgString(t, ctx))
+	}
+
+	if root := StoreAddPermanentRoot(ctx, store, path, filepath.Join(t.TempDir(), "root")); root != nil {
+		StringFree(root)
+		t.Fatal("StoreAddPermanentRoot(dummy) unexpectedly succeeded")
+	}
+	if got := ErrCode(ctx); got == NixOk {
+		t.Fatal("StoreAddPermanentRoot(dummy) did not set a context error")
+	}
+
+	ClearErr(ctx)
+	if roots := StoreFindRoots(ctx, store, false); roots != nil {
+		StoreRootsFree(roots)
+		t.Fatal("StoreFindRoots(dummy) unexpectedly succeeded")
+	}
+	if got := ErrCode(ctx); got == NixOk {
+		t.Fatal("StoreFindRoots(dummy) did not set a context error")
+	}
+
+	ClearErr(ctx)
+	if results := StoreCollectGarbage(ctx, store, StoreGCOptions{
+		Action:   StoreGCReturnDead,
+		MaxFreed: ^uint64(0),
+	}); results != nil {
+		StoreGCResultsFree(results)
+		t.Fatal("StoreCollectGarbage(dummy) unexpectedly succeeded")
+	}
+	if got := ErrCode(ctx); got == NixOk {
+		t.Fatal("StoreCollectGarbage(dummy) did not set a context error")
+	}
+
+	ClearErr(ctx)
+	localStore, _ := newTestLocalStore(t, ctx)
+	if results := StoreCollectGarbage(ctx, localStore, StoreGCOptions{
+		Action:   StoreGCAction(99),
+		MaxFreed: ^uint64(0),
+	}); results != nil {
+		StoreGCResultsFree(results)
+		t.Fatal("StoreCollectGarbage(invalid action) unexpectedly succeeded")
+	}
+	if got := ErrCode(ctx); got == NixOk {
+		t.Fatal("StoreCollectGarbage(invalid action) did not set a context error")
+	}
+
+	ClearErr(ctx)
+	if results := StoreCollectGarbage(ctx, localStore, StoreGCOptions{
+		Action: StoreGCDeleteSpecific,
+		PathsToDelete: StorePathList{
+			Len: 1,
+		},
+		MaxFreed: ^uint64(0),
+	}); results != nil {
+		StoreGCResultsFree(results)
+		t.Fatal("StoreCollectGarbage(invalid path list) unexpectedly succeeded")
+	}
+	if got := ErrCode(ctx); got == NixOk {
+		t.Fatal("StoreCollectGarbage(invalid path list) did not set a context error")
+	}
+
+	ClearErr(ctx)
+	if results := StoreCollectGarbage(ctx, localStore, StoreGCOptions{
+		Action: StoreGCDeleteSpecific,
+		PathsToDelete: StorePathList{
+			Items: []StorePathItem{{}},
+			Len:   1,
+		},
+		MaxFreed: ^uint64(0),
+	}); results != nil {
+		StoreGCResultsFree(results)
+		t.Fatal("StoreCollectGarbage(nil path item) unexpectedly succeeded")
+	}
+	if got := ErrCode(ctx); got == NixOk {
+		t.Fatal("StoreCollectGarbage(nil path item) did not set a context error")
+	}
+
+	if got := StoreRootsCount(nil); got != 0 {
+		t.Fatalf("StoreRootsCount(nil) = %d, want 0", got)
+	}
+	if got := StoreRootsPathClone(nil, 0); got != nil {
+		StorePathFree(got)
+		t.Fatal("StoreRootsPathClone(nil, 0) returned non-nil")
+	}
+	if got := StoreRootsLink(nil, 0); got != nil {
+		StringFree(got)
+		t.Fatal("StoreRootsLink(nil, 0) returned non-nil")
+	}
+	StoreRootsFree(nil)
+
+	if got := StoreGCResultsCount(nil); got != 0 {
+		t.Fatalf("StoreGCResultsCount(nil) = %d, want 0", got)
+	}
+	if got := StoreGCResultsPath(nil, 0); got != nil {
+		StringFree(got)
+		t.Fatal("StoreGCResultsPath(nil, 0) returned non-nil")
+	}
+	if got := StoreGCResultsBytesFreed(nil); got != 0 {
+		t.Fatalf("StoreGCResultsBytesFreed(nil) = %d, want 0", got)
+	}
+	StoreGCResultsFree(nil)
 }

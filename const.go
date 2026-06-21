@@ -8,7 +8,7 @@ package nix
 /*
 #cgo pkg-config: nix-util-c nix-store-c nix-fetchers-c nix-expr-c nix-flake-c nix-main-c
 #cgo CXXFLAGS: -std=c++23
-#cgo LDFLAGS: -lnixflake -lnixutil
+#cgo LDFLAGS: -lnixflake -lnixstore -lnixutil
 #cgo darwin LDFLAGS: -lc++
 #cgo linux LDFLAGS: -lstdc++
 #include "nix_go_util.h"
@@ -67,6 +67,17 @@ const (
 	NixTypeFunction ValueType = 9
 	NixTypeExternal ValueType = 10
 	NixTypeFailed   ValueType = 11
+)
+
+// StoreGCAction as declared in nix-go-bindings/nix_go_store.h:43
+type StoreGCAction int32
+
+// StoreGCAction enumeration from nix-go-bindings/nix_go_store.h:43
+const (
+	StoreGCReturnLive     StoreGCAction = iota
+	StoreGCReturnDead     StoreGCAction = 1
+	StoreGCDeleteDead     StoreGCAction = 2
+	StoreGCDeleteSpecific StoreGCAction = 3
 )
 
 const ()

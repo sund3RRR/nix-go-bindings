@@ -32,6 +32,7 @@
 
           nixCppLibs = with pkgs.nixVersions.latest.libs; [
             nix-flake
+            nix-store
           ];
 
           nixLibs = nixCLibs ++ nixCppLibs;
