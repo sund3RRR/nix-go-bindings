@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+> **This project has been archived.**
+>
+> `nix-go-bindings` is now maintained as [`pkg/raw`](https://github.com/sund3RRR/gonix/tree/master/pkg/raw) within the [gonix](https://github.com/sund3RRR/gonix) repository.
+>
+> Please use `github.com/sund3RRR/gonix/pkg/raw` for low-level bindings or gonix’s high-level APIs for new projects. No further changes will be made in this repository.
+
 # nix-go-bindings
 
 Experimental Go bindings for the [Nix](https://github.com/NixOS/nix) C API.
